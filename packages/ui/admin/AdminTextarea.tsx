@@ -3,14 +3,21 @@
 import { useId } from 'react';
 import { cn } from '../lib/cn';
 
-export interface AdminInputProps
-  extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'className'> {
+export interface AdminTextareaProps
+  extends Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'className'> {
   label?: string;
   error?: string;
   className?: string;
 }
 
-export function AdminInput({ label, error, className, id, ...props }: AdminInputProps) {
+export function AdminTextarea({
+  label,
+  error,
+  rows = 3,
+  className,
+  id,
+  ...props
+}: AdminTextareaProps) {
   const autoId = useId();
   const inputId = id ?? autoId;
 
@@ -24,10 +31,11 @@ export function AdminInput({ label, error, className, id, ...props }: AdminInput
           {label}
         </label>
       )}
-      <input
+      <textarea
         id={inputId}
+        rows={rows}
         className={cn(
-          'w-full rounded-lg border border-white/10 bg-[#1A1A1A] px-3 py-2.5 text-sm text-white placeholder:text-white/30 transition-colors focus:border-primary focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
+          'w-full resize-none rounded-lg border border-white/10 bg-[#1A1A1A] px-3 py-2.5 text-sm text-white placeholder:text-white/30 transition-colors focus:border-primary focus:outline-none disabled:cursor-not-allowed disabled:opacity-50',
           error && 'border-red-500/60',
           className
         )}
