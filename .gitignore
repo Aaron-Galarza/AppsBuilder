@@ -1,0 +1,28 @@
+# Dependencias
+node_modules/
+
+# Builds y artefactos
+dist/
+.next/
+out/
+*.tsbuildinfo
+.turbo/
+.vercel/
+
+# Entornos locales (los .env.example SÍ se versionan)
+.env
+.env.local
+.env.*.local
+
+# ZIPs generados por el builder
+*.zip
+
+# Claves y certificados
+*.pem
+*.key
+
+# Logs y sistema
+turbopack.logs
+*.log
+.DS_Store
+Thumbs.db
