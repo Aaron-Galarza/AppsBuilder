@@ -1,0 +1,60 @@
+'use client'
+
+import { useState, useEffect, useRef } from 'react'
+import { BarChart3, ShoppingBag, Utensils, Tag, Settings, ImageIcon } from 'lucide-react'
+import { OverviewTab } from '@saas/blocks/admin'
+import { OrdersTab } from '@saas/blocks/admin'
+import { MenuTab } from '@saas/blocks/admin'
+import { CouponsTab } from '@saas/blocks/admin'
+import { GalleryTab } from '@saas/blocks/admin'
+import { ConfigTab } from '@saas/blocks/admin'
+
+type Tab = 'overview' | 'orders' | 'menu' | 'coupons' | 'gallery' | 'config'
+
+const NAVT = [
+  { k: 'overview' as Tab, l: 'Vista General', I: BarChart3 },
+  { k: 'orders'   as Tab, l: 'Pedidos',       I: ShoppingBag },
+  { k: 'menu'     as Tab, l: 'Menú',          I: Utensils },
+  { k: 'coupons'  as Tab, l: 'Cupones',       I: Tag },
+  { k: 'gallery'  as Tab, l: 'Galería',       I: ImageIcon },
+  { k: 'config'   as Tab, l: 'Configuración', I: Settings },
+]
+
+export default function AdminPage() {
+  const [tab, setTab] = useState<Tab>('overview')
+
+  return (
+    <div className="flex flex-col flex-1 overflow-hidden">
+      <nav className="flex items-center gap-1.5 px-4 py-3 border-b border-white/10 bg-background overflow-x-auto scrollbar-none shrink-0">
+        {NAVT.map(({ k, l, I }) => {
+          const isA = tab === k
+          return (
+            <button
+              key={k}
+              onClick={() => setTab(k)}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-all active:scale-95 ${
+                isA
+                  ? 'bg-primary text-black'
+                  : 'border border-white/15 text-white/50 hover:text-white hover:border-white/30'
+              }`}
+            >
+              <I className="w-3.5 h-3.5" />
+              {l}
+            </button>
+          )
+        })}
+      </nav>
+
+      <div className="flex-1 overflow-y-auto overscroll-contain">
+        <div className="max-w-6xl mx-auto p-5 md:p-6">
+          {tab === 'overview' && <OverviewTab />}
+          {tab === 'orders'   && <OrdersTab />}
+          {tab === 'menu'     && <MenuTab />}
+          {tab === 'coupons'  && <CouponsTab />}
+          {tab === 'gallery'  && <GalleryTab />}
+          {tab === 'config'   && <ConfigTab />}
+        </div>
+      </div>
+    </div>
+  )
+}
