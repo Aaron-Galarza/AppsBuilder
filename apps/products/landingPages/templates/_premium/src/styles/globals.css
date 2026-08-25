@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: INJECT_PRIMARY_COLOR;
+  --color-secondary: INJECT_SECONDARY_COLOR;
+  --color-accent: INJECT_ACCENT_COLOR;
+  --color-background: #0a0a0a;
+  --color-foreground: #ffffff;
+  --color-card: #161616;
+  --color-muted: #1a1a1a;
+  --color-muted-foreground: #a0a0a0;
+  --color-border: rgba(255, 255, 255, 0.1);
+  --font-sans: var(--font-body), sans-serif;
+  --font-heading: var(--font-heading), sans-serif;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+@utility scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
