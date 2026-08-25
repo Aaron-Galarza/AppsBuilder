@@ -3,54 +3,46 @@
 import { useState } from 'react'
 import { Download, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { useBuilderStore } from '../stores/builderStore'
+import { generateRepo, downloadBlob } from '../lib/api'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
 export function DownloadButton() {
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [progress, setProgress] = useState(0)
   const store = useBuilderStore()
 
   const handleDownload = async () => {
     setStatus('loading')
     setErrorMsg('')
+    setProgress(0)
 
     try {
-      const payload = {
-        product: store.product,
-        template: store.template,
-        selectedBlocks: store.selectedBlocks,
-        config: {
-          name: store.config.name,
-          slug: store.config.slug,
-          colors: store.config.colors,
-          fonts: store.config.fonts,
-        },
-        textos: store.textos,
-      }
+      const blob = await generateRepo(store, (pct) => setProgress(pct))
 
-      const res = await fetch('/api/generate-repo', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      })
-
-      const data = await res.json()
-
-      if (!res.ok) {
-        throw new Error(data.error || 'Error al generar el proyecto')
-      }
+      const slug = store.config.slug || store.config.name.toLowerCase().replace(/\s+/g, '-')
+      downloadBlob(blob, `${slug}.zip`)
 
       setStatus('success')
       setTimeout(() => setStatus('idle'), 3000)
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus('error')
-      setErrorMsg(err.message || 'Error desconocido')
+      setErrorMsg(err instanceof Error ? err.message : 'Error desconocido')
     }
   }
 
   return (
     <div className="flex flex-col gap-2">
+      {status === 'loading' && (
+        <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+          <div
+            className="h-full bg-primary transition-all duration-300 ease-out rounded-full"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      )}
+
       <button
         onClick={handleDownload}
         disabled={status === 'loading'}
@@ -65,9 +57,9 @@ export function DownloadButton() {
         }`}
       >
         {status === 'idle' && <><Download className="w-5 h-5" /> Generar y Descargar</>}
-        {status === 'loading' && <><Loader2 className="w-5 h-5 animate-spin" /> Generando proyecto...</>}
-        {status === 'success' && <><CheckCircle className="w-5 h-5" /> ¡Listo! Revisá la consola</>}
-        {status === 'error' && <><AlertCircle className="w-5 h-5" /> Error — Reintentar</>}
+        {status === 'loading' && <><Loader2 className="w-5 h-5 animate-spin" /> Generando... {progress}%</>}
+        {status === 'success' && <><CheckCircle className="w-5 h-5" /> ¡Descargado!</>}
+        {status === 'error' && <><AlertCircle className="w-5 h-5" /> Reintentar</>}
       </button>
 
       {errorMsg && (

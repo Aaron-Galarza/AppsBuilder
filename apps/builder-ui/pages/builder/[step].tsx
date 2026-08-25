@@ -264,22 +264,56 @@ export default function BuilderStep() {
               </div>
 
               <div className="rounded-xl border border-white/10 bg-card p-4 flex flex-col gap-3">
-                <div className="flex justify-between text-sm">
+                <div className="flex items-center gap-3 text-sm">
+                  <span className={store.product ? 'text-green-400' : 'text-white/30'}>
+                    {store.product ? '✓' : '○'}
+                  </span>
                   <span className="text-white/40">Producto</span>
-                  <span className="text-white font-medium">{store.product || '—'}</span>
+                  <span className="text-white font-medium ml-auto">{store.product || '—'}</span>
                 </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex items-center gap-3 text-sm">
+                  <span className={store.template ? 'text-green-400' : 'text-white/30'}>
+                    {store.template ? '✓' : '○'}
+                  </span>
                   <span className="text-white/40">Plantilla</span>
-                  <span className="text-white font-medium">{store.template || '—'}</span>
+                  <span className="text-white font-medium ml-auto">{store.template || '—'}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-white/40">Nombre</span>
-                  <span className="text-white font-medium">{store.config.name || '—'}</span>
-                </div>
-                <div className="flex justify-between text-sm">
+                <div className="flex items-center gap-3 text-sm">
+                  <span className={store.selectedBlocks.length > 0 ? 'text-green-400' : 'text-white/30'}>
+                    {store.selectedBlocks.length > 0 ? '✓' : '○'}
+                  </span>
                   <span className="text-white/40">Bloques</span>
-                  <span className="text-white font-medium">{store.selectedBlocks.length}</span>
+                  <span className="text-white font-medium ml-auto">{store.selectedBlocks.length}</span>
                 </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className="text-green-400">✓</span>
+                  <span className="text-white/40">Colores</span>
+                  <span className="text-white font-medium ml-auto flex items-center gap-2">
+                    <span className="w-3 h-3 rounded-full" style={{ background: store.config.colors.primary }} />
+                    <span className="w-3 h-3 rounded-full" style={{ background: store.config.colors.secondary }} />
+                    <span className="w-3 h-3 rounded-full" style={{ background: store.config.colors.accent }} />
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className={Object.keys(store.textos).length > 0 ? 'text-green-400' : 'text-white/30'}>
+                    {Object.keys(store.textos).length > 0 ? '✓' : '○'}
+                  </span>
+                  <span className="text-white/40">Textos</span>
+                  <span className="text-white font-medium ml-auto">{Object.keys(store.textos).length} bloques</span>
+                </div>
+                <div className="flex items-center gap-3 text-sm">
+                  <span className={store.config.logo ? 'text-green-400' : 'text-white/30'}>
+                    {store.config.logo ? '✓' : '○'}
+                  </span>
+                  <span className="text-white/40">Logo</span>
+                  <span className="text-white font-medium ml-auto">{store.config.logo ? 'Subido' : 'Opcional'}</span>
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4">
+                <p className="text-xs text-yellow-400/80 text-center">
+                  Completar MONGODB_URI, JWT_SECRET y demás credenciales en .env.local de cada app antes de deployar
+                </p>
               </div>
 
               <DownloadButton />
