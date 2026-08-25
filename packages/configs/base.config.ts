@@ -22,4 +22,5 @@ export interface ProjectConfig {
   address?: string;
   /** Solo si el proyecto tiene delivery */
   mapboxToken?: string;
+  apiUrl?: string;
 }

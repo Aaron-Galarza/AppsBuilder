@@ -1,6 +1,18 @@
 import type { ProjectConfig } from './base.config';
 import { isValidHex } from '@saas/utils';
 
+export function slugify(name: string): string {
+  return name
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '');
+}
+
 /** Partial profundo: permite sobrescribir solo algunas keys anidadas (ej: solo colors.primary) */
 type PartialDeep<T> = {
   [K in keyof T]?: T[K] extends object ? PartialDeep<T[K]> : T[K];
