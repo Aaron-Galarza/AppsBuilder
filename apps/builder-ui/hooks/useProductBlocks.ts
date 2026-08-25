@@ -8,8 +8,8 @@ export function useProductBlocks(
     return { available: [], mandatory: [] }
   }
 
-  const available = [...(PRODUCT_BLOCKS[product]?.[template] ?? [])]
-  const mandatory = [...(MANDATORY_BLOCKS[product] ?? [])]
+  const available: string[] = [...(PRODUCT_BLOCKS[product]?.[template] ?? [])]
+  const mandatory: string[] = [...(MANDATORY_BLOCKS[product] ?? [])]
 
   return { available, mandatory }
 }

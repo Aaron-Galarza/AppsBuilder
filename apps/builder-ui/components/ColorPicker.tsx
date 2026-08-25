@@ -18,7 +18,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
           style={{ backgroundColor: value }}
         />
         <div className="flex flex-col gap-1 flex-1">
-          <HexColorPicker color={value} onChange={onChange} style={{ width: '100%', height: '120px' }} />
+          <HexColorPicker color={value} onChange={(c) => onChange(c.hex)} style={{ width: '100%', height: '120px' }} />
           <input
             type="text"
             value={value}
