@@ -1,1 +1,30 @@
-{"compilerOptions": {"target": "ESNext", "module": "ESNext", "strict": true, "esModuleInterop": true, "skipLibCheck": true, "forceConsistentCasingInFileNames": true, "isolatedModules": true, "outDir": "./dist", "rootDir": "./src"}, "include": ["**/*"]}
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": ".",
+    "jsx": "react-jsx",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"]
+  },
+  "include": [
+    "index.ts",
+    "types/**/*",
+    "hero/**/*",
+    "menu/**/*",
+    "cart/**/*",
+    "checkout/**/*",
+    "admin/**/*",
+    "about/**/*",
+    "cta/**/*",
+    "contact/**/*",
+    "gallery/**/*",
+    "testimonials/**/*",
+    "featured/**/*",
+    "offer/**/*",
+    "newsletter/**/*",
+    "features/**/*",
+    "pricing/**/*",
+    "faq/**/*"
+  ],
+  "exclude": ["node_modules", "dist", "**/*.md"]
+}

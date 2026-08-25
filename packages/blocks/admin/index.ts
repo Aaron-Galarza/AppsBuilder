@@ -1,0 +1,14 @@
+export { OverviewTab } from './OverviewTab';
+export type { OverviewTabProps } from './OverviewTab';
+export { OrdersTab } from './OrdersTab';
+export type { OrdersTabProps } from './OrdersTab';
+export { MenuTab } from './MenuTab';
+export type { MenuTabProps } from './MenuTab';
+export { CouponsTab } from './CouponsTab';
+export type { CouponsTabProps } from './CouponsTab';
+export { GalleryTab } from './GalleryTab';
+export type { GalleryTabProps } from './GalleryTab';
+export { ConfigTab } from './ConfigTab';
+export type { ConfigTabProps } from './ConfigTab';
+export { QuickOrderForm } from './QuickOrderForm';
+export type { QuickOrderFormProps } from './QuickOrderForm';

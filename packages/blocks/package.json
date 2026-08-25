@@ -1,1 +1,39 @@
-{"name": "@apps-builder/blocks", "version": "1.0.0", "private": true, "scripts": {"build": "tsc build"}, "devDependencies": {"typescript": "^5.0.0"}}
+﻿{
+  "name": "@saas/blocks",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./styles/tailwind.css"
+  },
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@saas/hooks": "workspace:*",
+    "@saas/types": "workspace:*",
+    "@saas/ui": "workspace:*",
+    "@saas/utils": "workspace:*",
+    "lucide-react": "^0.454.0",
+    "mapbox-gl": "^3.9.0"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "react-dom": ">=18"
+  },
+  "devDependencies": {
+    "@types/mapbox-gl": "^3.4.0",
+    "@types/node": "^20.17.0",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.0.0"
+  }
+}
