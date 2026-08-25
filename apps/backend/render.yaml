@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: saas-backend
+    runtime: node
+    plan: free
+    buildCommand: pnpm install --frozen-lockfile && pnpm --filter @saas/backend build
+    startCommand: pnpm --filter @saas/backend start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: 20.19.5
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 4h
+      - key: CLIENT_URL
+        sync: false
+      - key: STORE_LAT
+        sync: false
+      - key: STORE_LNG
+        sync: false
+      - key: MAPBOX_TOKEN
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
