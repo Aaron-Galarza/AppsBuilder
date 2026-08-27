@@ -2,16 +2,14 @@
 
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
+import { User } from '@saas/types';
 import { apiFetch } from './lib/api';
 
-interface AuthUser {
-  id: string;
-  email: string;
-  role?: string;
-}
+// Re-exportar el tipo canonical para que consumidores no importen de @saas/types directamente
+export type { User as AuthUser };
 
 interface AuthState {
-  user: AuthUser | null;
+  user: User | null;
   token: string | null;
   isLogged: boolean;
 
@@ -28,14 +26,16 @@ export const useAuthStore = create<AuthState>()(
       isLogged: false,
 
       login: async (email, password) => {
-        const data = await apiFetch<{ token: string; user?: AuthUser }>(
+        const data = await apiFetch<{ token: string; user?: User }>(
           '/api/users/login',
           { method: 'POST', body: JSON.stringify({ email, password }) }
         );
         localStorage.setItem('saas-auth-storage-token', data.token);
+        // Normalizar: el backend devuelve _id, no id
+        const user: User = data.user ?? { _id: '', email, name: email.split('@')[0], role: 'admin' };
         set({
           token: data.token,
-          user: data.user ?? { id: '', email },
+          user,
           isLogged: true,
         });
       },

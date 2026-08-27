@@ -2,7 +2,8 @@
 
 import { Order, OrderStatus, Product } from '@saas/types';
 import { useCallback, useState } from 'react';
-import { apiFetch } from './lib/api';
+import { apiFetch, authHeaders } from './lib/api';
+import { useAuthStore } from './useAuthStore';
 
 interface QuickOrderItem {
   product: Product;
@@ -20,6 +21,7 @@ interface QuickOrderCustomer {
  * aunque el local esté cerrado al público.
  */
 export function useQuickOrder() {
+  const token = useAuthStore((s) => s.token);
   const [items, setItems] = useState<QuickOrderItem[]>([]);
   const [customer, setCustomer] = useState<QuickOrderCustomer>({ name: '', phone: '' });
   const [notes, setNotes] = useState('');
@@ -73,6 +75,7 @@ export function useQuickOrder() {
       try {
         return await apiFetch<Order>('/api/orders', {
           method: 'POST',
+          headers: authHeaders(token),
           body: JSON.stringify({
             source: 'manual',
             customer: { name: customer.name.trim(), phone: customer.phone.trim() },
@@ -81,7 +84,7 @@ export function useQuickOrder() {
               quantity: i.quantity,
               addons: [],
             })),
-            deliveryType: deliveryType === 'delivery' ? deliveryType : undefined,
+            deliveryType,
             paymentMethod,
             notes: notes ? notes.slice(0, 300) : undefined,
           }),

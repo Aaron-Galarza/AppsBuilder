@@ -11,7 +11,7 @@ interface StoreStatus {
 
 /** Estado del local (abierto/cerrado + banner) con refetch al volver a la pestaña */
 export function useStoreStatus() {
-  const [status, setStatus] = useState<StoreStatus>({ isOpen: true });
+  const [status, setStatus] = useState<StoreStatus>({ isOpen: false }); // Default cerrado por seguridad
   const [loading, setLoading] = useState(true);
 
   const fetchStatus = async () => {

@@ -10,6 +10,13 @@ interface UploadOptions {
 }
 
 async function getCloudinary() {
+  if (
+    !process.env.CLOUDINARY_CLOUD_NAME ||
+    !process.env.CLOUDINARY_API_KEY ||
+    !process.env.CLOUDINARY_API_SECRET
+  ) {
+    return null
+  }
   const { v2 } = await import('cloudinary')
   v2.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -29,6 +36,10 @@ async function uploadImage(
   options: UploadOptions
 ): Promise<string> {
   const cloudinary = await getCloudinary()
+  if (!cloudinary) {
+    console.warn(`Cloudinary no configurado, imagen "${options.publicId}" no subida`)
+    return ''
+  }
   const sharp = await getSharp()
 
   const buffer = Buffer.from(await file.arrayBuffer())

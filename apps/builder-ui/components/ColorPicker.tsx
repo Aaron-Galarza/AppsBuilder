@@ -1,6 +1,6 @@
 'use client'
 
-import { HexColorPicker } from 'react-color'
+import { SketchPicker } from 'react-color'
 
 interface ColorPickerProps {
   label: string
@@ -18,7 +18,7 @@ export function ColorPicker({ label, value, onChange }: ColorPickerProps) {
           style={{ backgroundColor: value }}
         />
         <div className="flex flex-col gap-1 flex-1">
-          <HexColorPicker color={value} onChange={(c) => onChange(c.hex)} style={{ width: '100%', height: '120px' }} />
+          <SketchPicker color={value} onChangeComplete={(c) => onChange(c.hex)} style={{ width: '100%', height: '120px' }} />
           <input
             type="text"
             value={value}
