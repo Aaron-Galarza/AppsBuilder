@@ -4,18 +4,18 @@ import { connectDB } from './config/db';
 import { createApp } from './app';
 import { initSocket } from './socket/socket';
 
-function main(): void {
+async function main(): Promise<void> {
   // Fallar rápido si falta config crítica
   const env = validateEnv();
+
+  // DB con reintentos: activa mock si MongoDB no está disponible
+  await connectDB();
 
   const app = createApp();
   const server = http.createServer(app);
 
   // WebSockets para notificar pedidos nuevos a los admins
   initSocket(server);
-
-  // DB con reintentos NO fatal: /api/health sigue respondiendo
-  void connectDB();
 
   server.listen(env.port, () => {
     console.log(`[server] Escuchando en http://localhost:${env.port} (${env.nodeEnv})`);

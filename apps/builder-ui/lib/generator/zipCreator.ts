@@ -96,6 +96,19 @@ export async function createZip(
     zip.file(file.path, file.content)
   }
 
+  const rootPkg = {
+    name: state.config.slug || 'project',
+    private: true,
+    scripts: {
+      dev: 'pnpm --filter "./apps/**" dev',
+      build: 'pnpm --filter "./apps/**" build',
+    },
+  }
+  zip.file('package.json', JSON.stringify(rootPkg, null, 2))
+
+  const workspaceYaml = `packages:\n  - 'packages/*'\n  - 'apps/*'\n  - 'apps/products/*'\n  - 'apps/products/*/templates/*'\n`
+  zip.file('pnpm-workspace.yaml', workspaceYaml)
+
   const syncScript = generateSyncScript(state.selectedBlocks, state.product)
   zip.file('sync-master.sh', syncScript)
 

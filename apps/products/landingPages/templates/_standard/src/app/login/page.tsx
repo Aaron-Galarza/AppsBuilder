@@ -3,8 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
-import { useAuthStore } from '@saas/hooks'
-import api from '@saas/hooks'
+import { useAuthStore, apiFetch } from '@saas/hooks'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -27,12 +26,14 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const response = await api.post('/users/login', { email, password })
-      const { token: newToken, user } = response.data
-      setAuth(newToken, user)
+      const data = await apiFetch<{ token: string; user: unknown }>('/users/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password }),
+      })
+      setAuth(data.token, data.user)
       router.push('/admin')
     } catch (err: any) {
-      const message = err?.response?.data?.message || 'Credenciales incorrectas. Intentá de nuevo.'
+      const message = err?.message || 'Credenciales incorrectas. Intentá de nuevo.'
       setError(message)
     } finally {
       setLoading(false)
