@@ -69,12 +69,22 @@ function injectTextos(
 
   const testimonials = state.textos['testimonials'] || {}
   result = result.replace(/INJECT_TESTIMONIALS_TITLE/g, safeStr(testimonials['title']))
+  result = result.replace(/INJECT_TESTIMONIALS_SUBTITLE/g, safeStr(testimonials['subtitle']))
 
   const offer = state.textos['offer'] || {}
   result = result.replace(/INJECT_OFFER_TITLE/g, safeStr(offer['title']))
+  result = result.replace(/INJECT_OFFER_SUBTITLE/g, safeStr(offer['subtitle']))
+  result = result.replace(/INJECT_OFFER_BANNER_TITLE/g, safeStr(offer['bannerTitle']))
+  result = result.replace(/INJECT_OFFER_BANNER_DESCRIPTION/g, safeStr(offer['bannerDescription']))
+  result = result.replace(/INJECT_OFFER_DISCOUNT_TEXT/g, safeStr(offer['discountText']))
+  result = result.replace(/INJECT_OFFER_BUTTON_TEXT/g, safeStr(offer['buttonText']))
+  result = result.replace(/INJECT_OFFER_BACKGROUND_IMAGE/g, imageUrls['offer'] || '')
 
   const newsletter = state.textos['newsletter'] || {}
   result = result.replace(/INJECT_NEWSLETTER_TITLE/g, safeStr(newsletter['title']))
+  result = result.replace(/INJECT_NEWSLETTER_SUBTITLE/g, safeStr(newsletter['subtitle']))
+  result = result.replace(/INJECT_NEWSLETTER_PLACEHOLDER/g, safeStr(newsletter['placeholder']))
+  result = result.replace(/INJECT_NEWSLETTER_BUTTON_TEXT/g, safeStr(newsletter['buttonText']))
 
   const features = state.textos['features'] || {}
   result = result.replace(/INJECT_FEATURES_TITLE/g, safeStr(features['title']))
@@ -82,6 +92,9 @@ function injectTextos(
   const pricing = state.textos['pricing'] || {}
   result = result.replace(/INJECT_PRICING_TITLE/g, safeStr(pricing['title']))
   result = result.replace(/INJECT_PRICING_SUBTITLE/g, safeStr(pricing['subtitle']))
+
+  result = result.replace(/INJECT_TENANT_NAME/g, state.config.name)
+  result = result.replace(/INJECT_MENU_SUBTITLE/g, safeStr(menu['description']))
 
   result = result.replace(/INJECT_LOGO_URL/g, imageUrls['logo'] || '')
   result = result.replace(/INJECT_FAVICON_URL/g, imageUrls['favicon'] || '')

@@ -72,11 +72,20 @@ export const BLOCK_FIELDS: Record<string, { key: string; label: string; placehol
   ],
   testimonials: [
     { key: 'title', label: 'Título', placeholder: 'Lo que dicen nuestros clientes' },
+    { key: 'subtitle', label: 'Subtítulo', placeholder: 'Opiniones de nuestros clientes' },
   ],
   offer: [
     { key: 'title', label: 'Título', placeholder: 'Ofertas Especiales' },
+    { key: 'subtitle', label: 'Subtítulo', placeholder: 'No te pierdas nuestras promos' },
+    { key: 'bannerTitle', label: 'Título del banner', placeholder: '2x1 todos los martes' },
+    { key: 'bannerDescription', label: 'Descripción del banner', placeholder: 'Válido solo para delivery' },
+    { key: 'discountText', label: 'Texto de descuento', placeholder: '20% OFF' },
+    { key: 'buttonText', label: 'Texto del botón', placeholder: 'Ordenar ahora' },
   ],
   newsletter: [
     { key: 'title', label: 'Título', placeholder: 'Suscribite a nuestro newsletter' },
+    { key: 'subtitle', label: 'Subtítulo', placeholder: 'Recibí ofertas exclusivas' },
+    { key: 'placeholder', label: 'Placeholder del input', placeholder: 'Tu email' },
+    { key: 'buttonText', label: 'Texto del botón', placeholder: 'Suscribirme' },
   ],
 }
