@@ -9,6 +9,12 @@ import { useState } from 'react';
 
 export interface CouponSectionProps {
   primaryColor?: string;
+  couponCode?: string;
+  couponLoading?: boolean;
+  couponError?: string | null;
+  appliedCoupon?: Coupon | null;
+  onInput?: (value: string) => void;
+  onApply?: () => void;
 }
 
 type CouponState =
@@ -17,9 +23,16 @@ type CouponState =
   | { status: 'applied'; message: string }
   | { status: 'error'; message: string };
 
-/** Input para validar y aplicar cupón de descuento (POST /api/coupons/validate/:code) */
-export function CouponSection({ primaryColor = '#111' }: CouponSectionProps) {
-  const coupon = useCartStore((s) => s.coupon);
+export function CouponSection({
+  primaryColor = '#111',
+  couponCode: controlledCode,
+  couponLoading: controlledLoading,
+  couponError: controlledError,
+  appliedCoupon: controlledCoupon,
+  onInput,
+  onApply,
+}: CouponSectionProps) {
+  const storeCoupon = useCartStore((s) => s.coupon);
   const setCoupon = useCartStore((s) => s.setCoupon);
   const clearCoupon = useCartStore((s) => s.clearCoupon);
   const items = useCartStore((s) => s.items);
@@ -27,14 +40,27 @@ export function CouponSection({ primaryColor = '#111' }: CouponSectionProps) {
   const paymentMethod = useCartStore((s) => s.paymentMethod);
   const getTotals = useCartStore((s) => s.getTotals);
 
-  const [code, setCode] = useState('');
-  const [state, setState] = useState<CouponState>({ status: 'idle' });
+  const isControlled = controlledCode !== undefined || onInput !== undefined;
 
-  const handleApply = async () => {
-    const trimmed = code.trim().toUpperCase();
+  const [internalCode, setInternalCode] = useState('');
+  const [internalState, setInternalState] = useState<CouponState>({ status: 'idle' });
+
+  const code = isControlled ? controlledCode! : internalCode;
+  const loading = isControlled ? controlledLoading ?? false : internalState.status === 'loading';
+  const error = isControlled ? controlledError ?? null : internalState.status === 'error' ? internalState.message : null;
+  const coupon = isControlled ? controlledCoupon ?? null : storeCoupon;
+
+  const setCode = isControlled ? onInput! : setInternalCode;
+
+  const handleApplyControlled = () => {
+    if (onApply) onApply();
+  };
+
+  const handleApplyInternal = async () => {
+    const trimmed = internalCode.trim().toUpperCase();
     if (!trimmed) return;
 
-    setState({ status: 'loading' });
+    setInternalState({ status: 'loading' });
     try {
       const validated = await apiFetch<Coupon>(
         `/api/coupons/validate/${encodeURIComponent(trimmed)}`,
@@ -48,19 +74,21 @@ export function CouponSection({ primaryColor = '#111' }: CouponSectionProps) {
         }
       );
       setCoupon(validated);
-      setState({ status: 'applied', message: `Cupón ${trimmed} aplicado` });
+      setInternalState({ status: 'applied', message: `Cupón ${trimmed} aplicado` });
     } catch (err) {
-      setState({
+      setInternalState({
         status: 'error',
         message: err instanceof Error ? err.message : 'Cupón inválido',
       });
     }
   };
 
+  const handleApply = isControlled ? handleApplyControlled : handleApplyInternal;
+
   const handleRemove = () => {
     clearCoupon();
     setCode('');
-    setState({ status: 'idle' });
+    if (!isControlled) setInternalState({ status: 'idle' });
   };
 
   if (coupon) {
@@ -83,6 +111,10 @@ export function CouponSection({ primaryColor = '#111' }: CouponSectionProps) {
     );
   }
 
+  const displayStatus = isControlled
+    ? (controlledLoading ? 'loading' : controlledError ? 'error' : 'idle')
+    : internalState.status;
+
   return (
     <div className="flex flex-col gap-1.5">
       <div className="flex gap-2">
@@ -104,7 +136,7 @@ export function CouponSection({ primaryColor = '#111' }: CouponSectionProps) {
         </div>
         <Button
           onClick={handleApply}
-          disabled={!code.trim() || state.status === 'loading' || items.length === 0}
+          disabled={!code.trim() || loading || items.length === 0}
           size="default"
           className="shrink-0"
           style={{ backgroundColor: primaryColor }}
@@ -113,16 +145,16 @@ export function CouponSection({ primaryColor = '#111' }: CouponSectionProps) {
         </Button>
       </div>
 
-      {state.status === 'error' && (
+      {displayStatus === 'error' && (controlledError || (!isControlled && internalState.status === 'error')) && (
         <p className="inline-flex items-center gap-1.5 text-xs font-medium text-red-600">
           <XCircle size={13} />
-          {state.message}
+          {controlledError || (!isControlled && internalState.status === 'error' ? internalState.message : '')}
         </p>
       )}
-      {state.status === 'applied' && (
+      {displayStatus === 'applied' && (
         <p className="inline-flex items-center gap-1.5 text-xs font-medium text-green-600">
           <CheckCircle2 size={13} />
-          {state.message}
+          {!isControlled && internalState.status === 'applied' ? internalState.message : 'Cupón aplicado'}
         </p>
       )}
     </div>
