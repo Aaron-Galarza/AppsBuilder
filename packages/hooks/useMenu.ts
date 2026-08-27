@@ -59,8 +59,8 @@ export function useMenu() {
     try {
       const [productsData, categoriesData, addonsData] = await Promise.all([
         apiFetch<Product[]>('/api/products/public'),
-        apiFetch<Category[]>('/api/categories'),
-        apiFetch<Addon[]>('/api/addons'),
+        apiFetch<Category[]>('/api/categories/public'),
+        apiFetch<Addon[]>('/api/addons/public'),
       ]);
 
       const withAddons = mergeAddonsIntoProducts(productsData, addonsData);
