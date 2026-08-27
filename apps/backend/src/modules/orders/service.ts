@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import mongoose from 'mongoose';
 import { CREDIT_SURCHARGE_RATE } from '@saas/utils';
 import { AppError } from '../../utils/AppError';
 import { getRangeBounds, AnalyticsRange } from '../../utils/dateRange';
@@ -84,18 +85,30 @@ async function buildOrderItems(incoming: IncomingItem[]): Promise<OrderItemDoc[]
   );
 }
 
-async function nextOrderNumber(): Promise<string> {
-  const startOfDay = new Date();
-  startOfDay.setUTCHours(3, 0, 0, 0); // medianoche Argentina
-  const todayCount = await Order.countDocuments({
-    createdAt: { $gte: startOfDay },
-  }).exec();
+/**
+ * Genera el siguiente número de pedido de forma atómica usando un contador en MongoDB.
+ * Formato: YYYYMMDD-001, YYYYMMDD-002, etc.
+ * Resuelve la condición de carrera donde dos pedidos concurrentes podían generar el mismo número.
+ */
+const counterSchema = new mongoose.Schema({
+  _id: { type: String, required: true }, // formato: YYYYMMDD
+  seq: { type: Number, default: 0 },
+});
+const Counter = mongoose.models.OrderCounter || mongoose.model('OrderCounter', counterSchema);
 
+async function nextOrderNumber(): Promise<string> {
   const datePart = new Date()
     .toLocaleDateString('sv-SE', { timeZone: 'America/Argentina/Buenos_Aires' })
     .replaceAll('-', '');
 
-  return `${datePart}-${String(todayCount + 1).padStart(3, '0')}`;
+  const counter = await Counter.findOneAndUpdate(
+    { _id: datePart },
+    { $inc: { seq: 1 } },
+    { new: true, upsert: true }
+  ).exec();
+
+  const seq = counter?.seq ?? 1;
+  return `${datePart}-${String(seq).padStart(3, '0')}`;
 }
 
 /**
@@ -135,7 +148,7 @@ export async function createOrder(payload: {
   }
 
   // 3. Delivery
-  const deliveryType = payload.deliveryType ?? (isManual ? 'pickup' : 'pickup');
+  const deliveryType = payload.deliveryType ?? 'pickup';
   let deliveryCost = 0;
 
   if (deliveryType === 'delivery') {

@@ -57,13 +57,20 @@ export async function registerTopProduct(order: OrderDoc): Promise<void> {
   await daily.save();
 }
 
-/** Cancelado después de delivered → revierte */
+/** Cancelado después de delivered → revierte payment breakdown y cancelled count */
 export async function revertDaily(order: OrderDoc): Promise<void> {
   const date = argDate(order.createdAt ?? new Date());
   const daily = await Daily.findOne({ date }).exec();
   if (!daily) return;
 
   daily.cancelled += 1;
+
+  // Revertir el monto del método de pago para que no quede inflado
+  const method = order.paymentMethod as keyof DailyDoc['byPaymentMethod'];
+  if (method in daily.byPaymentMethod) {
+    daily.byPaymentMethod[method] = Math.max(0, daily.byPaymentMethod[method] - order.total);
+  }
+
   await daily.save();
 }
 

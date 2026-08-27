@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { getEnv } from './env';
+import { activateMock } from '../mock/store';
 
 const MAX_RETRIES = 5;
 const RETRY_DELAY_MS = 3000;
@@ -28,6 +29,8 @@ export async function connectDB(): Promise<boolean> {
   }
 
   console.error('[db] No se pudo conectar a MongoDB. El server sigue arriba sin DB.');
+  console.error('[db] Activando mock store con datos de data.json...');
+  activateMock();
   return false;
 }
 

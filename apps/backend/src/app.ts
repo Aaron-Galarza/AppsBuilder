@@ -6,6 +6,8 @@ import { rateLimiter } from './middlewares/rateLimit';
 import { requestLogger } from './middlewares/logger';
 import { errorHandler } from './middlewares/error';
 import mainRouter from './routes';
+import mockRouter from './mock/routes';
+import { isMockActive } from './mock/store';
 
 export function createApp(): Application {
   const env = getEnv();
@@ -44,8 +46,14 @@ export function createApp(): Application {
   app.use(rateLimiter);
 
   app.get('/', (_req, res) => {
-    res.json({ success: true, data: { message: 'API funcionando', version: '1.0.0' } });
+    res.json({ success: true, data: { message: 'API funcionando', version: '1.0.0', mock: isMockActive() } });
   });
+
+  // Si MongoDB no está disponible, usar mock routes ANTES de las rutas reales
+  if (isMockActive()) {
+    console.log('[app] MongoDB no disponible - montando mock routes con data.json');
+    app.use(mockRouter);
+  }
 
   app.use('/api', mainRouter);
 

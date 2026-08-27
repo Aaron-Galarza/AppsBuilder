@@ -16,11 +16,11 @@ const router: Router = Router();
 // Públicos
 router.get('/public', getPublicProducts);
 
-// Admin (JWT)
+// Admin (JWT) — rutas específicas ANTES de las parameterizadas
 router.get('/admin', requireAuth, getAdminProducts);
 router.post('/admin', requireAuth, validate(productCreateSchema), createProduct);
-router.put('/admin/:id', requireAuth, validate(productUpdateSchema), updateProduct);
 router.put('/admin/toggleActive/:id', requireAuth, toggleProductActive);
+router.put('/admin/:id', requireAuth, validate(productUpdateSchema), updateProduct);
 router.delete('/admin/:id', requireAuth, deleteProduct);
 
 export default router;

@@ -29,6 +29,7 @@ export function initSocket(httpServer: HttpServer): IOServer {
 
   io.on('connection', (socket: Socket) => {
     socket.join('admins');
+    socket.join('public'); // Room para notificaciones de estado (emergency close, etc.)
     console.log(`[socket] Admin conectado (${socket.id})`);
 
     socket.on('disconnect', () => {

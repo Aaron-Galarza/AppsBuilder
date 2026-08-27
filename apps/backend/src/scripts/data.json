@@ -1,0 +1,650 @@
+{
+  "_comment": "==============================================================================",
+  "_comment2": "MOCK DATA - AppsBuilder - Simulación completa de base de datos",
+  "_comment3": "==============================================================================",
+  "_como_funciona": "Cuando MongoDB NO está disponible, el backend carga estos datos en memoria.",
+  "_como_revertir": [
+    "1. Eliminar o renombrar este archivo data.json",
+    "2. Configurar MONGODB_URI en .env apuntando a una instancia real",
+    "3. Ejecutar: pnpm --filter @saas/backend seed (para poblar la DB real)",
+    "4. Los datos de este archivo NO se escriben en la DB real"
+  ],
+  "_como_instanciar_db_real": [
+    "1. Crear cuenta en MongoDB Atlas (tier gratuito M0)",
+    "2. Crear cluster y usuario de base de datos",
+    "3. Copiar connection string a MONGODB_URI en apps/backend/.env",
+    "4. Ejecutar: pnpm --filter @saas/backend seed",
+    "5. El seed crea: admin@local.dev / admin123 + menú demo completo",
+    "6. Verificar con: curl http://localhost:4000/api/health"
+  ],
+  "_formato_ids": "Los _id son strings hexadecinales simulados. En MongoDB real serían ObjectId.",
+
+  "users": [
+    {
+      "_id": "u00000000000000000000001",
+      "email": "admin@local.dev",
+      "password": "$2a$10$XFE/UQEHkPKQSaQjVCqkMO8z3KxqKJ1s3KjYqZqZqZqZqZqZqZqZq",
+      "name": "Administrador",
+      "role": "admin",
+      "active": true,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "u00000000000000000000002",
+      "email": "supervisor@local.dev",
+      "password": "$2a$10$XFE/UQEHkPKQSaQjVCqkMO8z3KxqKJ1s3KjYqZqZqZqZqZqZqZqZq",
+      "name": "Supervisor",
+      "role": "admin",
+      "active": true,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+
+  "categories": [
+    {
+      "_id": "c00000000000000000000001",
+      "name": "Pizzas",
+      "icon": "utensils",
+      "active": true,
+      "order": 1,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "c00000000000000000000002",
+      "name": "Empanadas",
+      "icon": "beef",
+      "active": true,
+      "order": 2,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "c00000000000000000000003",
+      "name": "Bebidas",
+      "icon": "cup-soda",
+      "active": true,
+      "order": 3,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "c00000000000000000000004",
+      "name": "Postres",
+      "icon": "cake",
+      "active": true,
+      "order": 4,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "c00000000000000000000005",
+      "name": "combos",
+      "icon": "gift",
+      "active": false,
+      "order": 5,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+
+  "products": [
+    {
+      "_id": "p00000000000000000000001",
+      "title": "Pizza Muzzarella",
+      "description": "Clásica con salsa de tomate y muzzarella derretida",
+      "price": 8500,
+      "image": "https://res.cloudinary.com/demo/image/upload/v1/sample.jpg",
+      "category": "c00000000000000000000001",
+      "available": true,
+      "featured": true,
+      "order": 1,
+      "addons": ["a00000000000000000000001", "a00000000000000000000002"],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000002",
+      "title": "Pizza Napolitana",
+      "description": "Con tomate en rodajas, muzzarella y albahaca fresca",
+      "price": 9500,
+      "image": "https://res.cloudinary.com/demo/image/upload/v1/sample.jpg",
+      "category": "c00000000000000000000001",
+      "available": true,
+      "featured": false,
+      "order": 2,
+      "addons": ["a00000000000000000000001"],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000003",
+      "title": "Pizza Fugazzeta",
+      "description": "Con cebolla caramelizada y muzzarella",
+      "price": 9000,
+      "image": "",
+      "category": "c00000000000000000000001",
+      "available": true,
+      "featured": true,
+      "order": 3,
+      "addons": ["a00000000000000000000001"],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000004",
+      "title": "Pizza de Pepperoni",
+      "description": "Con pepperoni importado y muzzarella",
+      "price": 10000,
+      "image": "",
+      "category": "c00000000000000000000001",
+      "available": false,
+      "featured": false,
+      "order": 4,
+      "addons": [],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000005",
+      "title": "Empanada de Carne",
+      "description": "Carne cortada a cuchillo, cebolla, huevo duro",
+      "price": 1200,
+      "image": "",
+      "category": "c00000000000000000000002",
+      "available": true,
+      "featured": true,
+      "order": 1,
+      "addons": [],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000006",
+      "title": "Empanada de Pollo",
+      "description": "Pollo desmenuzado con verdeo",
+      "price": 1200,
+      "image": "",
+      "category": "c00000000000000000000002",
+      "available": true,
+      "featured": false,
+      "order": 2,
+      "addons": [],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000007",
+      "title": "Empanada de Jamón y Queso",
+      "description": "Jamón cocido y muzzarella",
+      "price": 1300,
+      "image": "",
+      "category": "c00000000000000000000002",
+      "available": true,
+      "featured": false,
+      "order": 3,
+      "addons": [],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000008",
+      "title": "Coca-Cola 500ml",
+      "description": "Gaseosa original 500ml",
+      "price": 1500,
+      "image": "",
+      "category": "c00000000000000000000003",
+      "available": true,
+      "featured": false,
+      "order": 1,
+      "addons": [],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000009",
+      "title": "Agua Mineral 500ml",
+      "description": "Agua sin gas",
+      "price": 1000,
+      "image": "",
+      "category": "c00000000000000000000003",
+      "available": true,
+      "featured": false,
+      "order": 2,
+      "addons": [],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000010",
+      "title": "Helado de Chocolate",
+      "description": "Helado artesanal de chocolate 2 bochas",
+      "price": 2500,
+      "image": "",
+      "category": "c00000000000000000000004",
+      "available": true,
+      "featured": true,
+      "order": 1,
+      "addons": ["a00000000000000000000003"],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000011",
+      "title": "Flan con Dulce de Leche",
+      "description": "Flan casero con dulce de leche y crema",
+      "price": 2000,
+      "image": "",
+      "category": "c00000000000000000000004",
+      "available": true,
+      "featured": false,
+      "order": 2,
+      "addons": [],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "p00000000000000000000012",
+      "title": "Combo Familiar",
+      "description": "2 Pizzas Muzzarella + 6 Empanadas + 2 Bebidas",
+      "price": 22000,
+      "image": "",
+      "category": "c00000000000000000000005",
+      "available": true,
+      "featured": true,
+      "order": 1,
+      "addons": [],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+
+  "addons": [
+    {
+      "_id": "a00000000000000000000001",
+      "name": "Extra Muzzarella",
+      "price": 800,
+      "available": true,
+      "categories": [
+        { "_id": "c00000000000000000000001", "name": "Pizzas" }
+      ],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "a00000000000000000000002",
+      "name": "Aceitunas",
+      "price": 500,
+      "available": true,
+      "categories": [
+        { "_id": "c00000000000000000000001", "name": "Pizzas" }
+      ],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "a00000000000000000000003",
+      "name": "Topping Extra",
+      "price": 600,
+      "available": true,
+      "categories": [
+        { "_id": "c00000000000000000000004", "name": "Postres" }
+      ],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "a00000000000000000000004",
+      "name": "Salsa Extra",
+      "price": 300,
+      "available": false,
+      "categories": [
+        { "_id": "c00000000000000000000002", "name": "Empanadas" }
+      ],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+
+  "orders": [
+    {
+      "_id": "o00000000000000000000001",
+      "orderNumber": "20260825-001",
+      "customer": { "name": "María López", "phone": "1155551234" },
+      "items": [
+        {
+          "productId": "p00000000000000000000001",
+          "title": "Pizza Muzzarella",
+          "price": 8500,
+          "quantity": 2,
+          "addons": [
+            { "addonId": "a00000000000000000000001", "name": "Extra Muzzarella", "price": 800, "quantity": 1 }
+          ],
+          "itemTotal": 18600
+        }
+      ],
+      "deliveryType": "delivery",
+      "deliveryAddress": "Av. Corrientes 1234, Piso 2",
+      "deliveryCoordinates": { "lat": -34.6037, "lng": -58.3816 },
+      "deliveryCost": 500,
+      "paymentMethod": "cash",
+      "couponCode": null,
+      "discount": 0,
+      "surcharge": 0,
+      "subtotal": 18600,
+      "total": 19100,
+      "status": "pending",
+      "notes": "Sin cebolla en una de las pizzas",
+      "source": "web",
+      "createdAt": "2026-08-25T14:30:00.000Z",
+      "updatedAt": "2026-08-25T14:30:00.000Z"
+    },
+    {
+      "_id": "o00000000000000000000002",
+      "orderNumber": "20260825-002",
+      "customer": { "name": "Carlos García", "phone": "1166667890" },
+      "items": [
+        {
+          "productId": "p00000000000000000000005",
+          "title": "Empanada de Carne",
+          "price": 1200,
+          "quantity": 6,
+          "addons": [],
+          "itemTotal": 7200
+        },
+        {
+          "productId": "p00000000000000000000008",
+          "title": "Coca-Cola 500ml",
+          "price": 1500,
+          "quantity": 2,
+          "addons": [],
+          "itemTotal": 3000
+        }
+      ],
+      "deliveryType": "pickup",
+      "deliveryAddress": null,
+      "deliveryCoordinates": null,
+      "deliveryCost": 0,
+      "paymentMethod": "debito",
+      "couponCode": "TEST10",
+      "discount": 1020,
+      "surcharge": 0,
+      "subtotal": 10200,
+      "total": 9180,
+      "status": "confirmed",
+      "notes": null,
+      "source": "web",
+      "createdAt": "2026-08-25T15:00:00.000Z",
+      "updatedAt": "2026-08-25T15:05:00.000Z"
+    },
+    {
+      "_id": "o00000000000000000000003",
+      "orderNumber": "20260825-003",
+      "customer": { "name": "Ana Martínez", "phone": "1177778888" },
+      "items": [
+        {
+          "productId": "p00000000000000000000003",
+          "title": "Pizza Fugazzeta",
+          "price": 9000,
+          "quantity": 1,
+          "addons": [],
+          "itemTotal": 9000
+        }
+      ],
+      "deliveryType": "delivery",
+      "deliveryAddress": "Av. Santa Fe 4567",
+      "deliveryCoordinates": { "lat": -34.5885, "lng": -58.4200 },
+      "deliveryCost": 800,
+      "paymentMethod": "credito",
+      "couponCode": null,
+      "discount": 0,
+      "surcharge": 1470,
+      "subtotal": 9000,
+      "total": 11270,
+      "status": "preparing",
+      "notes": "Agregar extras deEmbalar bien",
+      "source": "web",
+      "createdAt": "2026-08-25T15:30:00.000Z",
+      "updatedAt": "2026-08-25T15:35:00.000Z"
+    },
+    {
+      "_id": "o00000000000000000000004",
+      "orderNumber": "20260825-004",
+      "customer": { "name": "Roberto Sánchez", "phone": "1188889999" },
+      "items": [
+        {
+          "productId": "p00000000000000000000010",
+          "title": "Helado de Chocolate",
+          "price": 2500,
+          "quantity": 2,
+          "addons": [
+            { "addonId": "a00000000000000000000003", "name": "Topping Extra", "price": 600, "quantity": 1 }
+          ],
+          "itemTotal": 6200
+        }
+      ],
+      "deliveryType": "delivery",
+      "deliveryAddress": "Calle Falsa 123",
+      "deliveryCoordinates": { "lat": -34.6100, "lng": -58.3900 },
+      "deliveryCost": 600,
+      "paymentMethod": "transferencia",
+      "couponCode": null,
+      "discount": 0,
+      "surcharge": 0,
+      "subtotal": 6200,
+      "total": 6800,
+      "status": "ready",
+      "notes": null,
+      "source": "manual",
+      "createdAt": "2026-08-25T16:00:00.000Z",
+      "updatedAt": "2026-08-25T16:10:00.000Z"
+    },
+    {
+      "_id": "o00000000000000000000005",
+      "orderNumber": "20260824-001",
+      "customer": { "name": "Lucía Fernández", "phone": "1199990000" },
+      "items": [
+        {
+          "productId": "p00000000000000000000012",
+          "title": "Combo Familiar",
+          "price": 22000,
+          "quantity": 1,
+          "addons": [],
+          "itemTotal": 22000
+        }
+      ],
+      "deliveryType": "delivery",
+      "deliveryAddress": "Av. Libertador 800",
+      "deliveryCoordinates": { "lat": -34.5700, "lng": -58.4200 },
+      "deliveryCost": 1000,
+      "paymentMethod": "cash",
+      "couponCode": null,
+      "discount": 0,
+      "surcharge": 0,
+      "subtotal": 22000,
+      "total": 23000,
+      "status": "delivered",
+      "notes": "Llamar al llegar",
+      "source": "web",
+      "createdAt": "2026-08-24T20:00:00.000Z",
+      "updatedAt": "2026-08-24T20:45:00.000Z"
+    },
+    {
+      "_id": "o00000000000000000000006",
+      "orderNumber": "20260824-002",
+      "customer": { "name": "Pedro Gómez", "phone": "1144445555" },
+      "items": [
+        {
+          "productId": "p00000000000000000000002",
+          "title": "Pizza Napolitana",
+          "price": 9500,
+          "quantity": 1,
+          "addons": [],
+          "itemTotal": 9500
+        }
+      ],
+      "deliveryType": "pickup",
+      "deliveryAddress": null,
+      "deliveryCoordinates": null,
+      "deliveryCost": 0,
+      "paymentMethod": "debito",
+      "couponCode": "TEST10",
+      "discount": 950,
+      "surcharge": 0,
+      "subtotal": 9500,
+      "total": 8550,
+      "status": "cancelled",
+      "notes": "Cliente canceló por demora",
+      "source": "web",
+      "createdAt": "2026-08-24T19:00:00.000Z",
+      "updatedAt": "2026-08-24T19:30:00.000Z"
+    }
+  ],
+
+  "coupons": [
+    {
+      "_id": "cp0000000000000000000001",
+      "code": "TEST10",
+      "discountType": "percentage",
+      "discountValue": 10,
+      "active": true,
+      "validDays": [0, 1, 2, 3, 4, 5, 6],
+      "validPaymentMethods": ["cash", "debito", "credito", "transferencia"],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "cp0000000000000000000002",
+      "code": "FIJO500",
+      "discountType": "fixed",
+      "discountValue": 500,
+      "active": true,
+      "validDays": [0, 1, 2, 3, 4, 5, 6],
+      "validPaymentMethods": ["cash", "debito"],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "cp0000000000000000000003",
+      "code": "VENCIDO",
+      "discountType": "percentage",
+      "discountValue": 20,
+      "active": false,
+      "validDays": [0, 1, 2, 3, 4, 5, 6],
+      "validPaymentMethods": ["cash", "debito", "credito", "transferencia"],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "cp0000000000000000000004",
+      "code": "SOLOEFEC",
+      "discountType": "percentage",
+      "discountValue": 15,
+      "active": true,
+      "validDays": [5, 6],
+      "validPaymentMethods": ["cash"],
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+
+  "schedules": [
+    {
+      "_id": "sc0000000000000000000001",
+      "timezone": "America/Argentina/Buenos_Aires",
+      "days": [
+        { "day": 1, "open": "11:00", "close": "14:30", "active": true },
+        { "day": 1, "open": "19:00", "close": "23:30", "active": true },
+        { "day": 2, "open": "11:00", "close": "14:30", "active": true },
+        { "day": 2, "open": "19:00", "close": "23:30", "active": true },
+        { "day": 3, "open": "11:00", "close": "14:30", "active": true },
+        { "day": 3, "open": "19:00", "close": "23:30", "active": true },
+        { "day": 4, "open": "11:00", "close": "14:30", "active": true },
+        { "day": 4, "open": "19:00", "close": "23:30", "active": true },
+        { "day": 5, "open": "11:00", "close": "14:30", "active": true },
+        { "day": 5, "open": "19:00", "close": "00:30", "active": true },
+        { "day": 6, "open": "11:00", "close": "00:30", "active": true },
+        { "day": 0, "open": "11:00", "close": "23:00", "active": true }
+      ],
+      "emergencyClosed": false,
+      "bannerUrl": null,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+
+  "deliveryRanges": [
+    {
+      "_id": "dr0000000000000000000001",
+      "minKm": 0,
+      "maxKm": 2,
+      "price": 300,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "dr0000000000000000000002",
+      "minKm": 2.01,
+      "maxKm": 5,
+      "price": 500,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "dr0000000000000000000003",
+      "minKm": 5.01,
+      "maxKm": 8,
+      "price": 800,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "dr0000000000000000000004",
+      "minKm": 8.01,
+      "maxKm": 12,
+      "price": 1200,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+
+  "daily": [
+    {
+      "_id": "d00000000000000000000001",
+      "date": "2026-08-24",
+      "orders": 15,
+      "delivered": 12,
+      "cancelled": 2,
+      "revenue": 185000,
+      "byPaymentMethod": { "cash": 60000, "debito": 55000, "credito": 40000, "transferencia": 30000 },
+      "topProducts": [
+        { "productId": "p00000000000000000000001", "title": "Pizza Muzzarella", "quantity": 8, "revenue": 68000 },
+        { "productId": "p00000000000000000000005", "title": "Empanada de Carne", "quantity": 12, "revenue": 14400 },
+        { "productId": "p00000000000000000000012", "title": "Combo Familiar", "quantity": 3, "revenue": 66000 }
+      ],
+      "createdAt": "2026-08-25T03:00:00.000Z"
+    },
+    {
+      "_id": "d00000000000000000000002",
+      "date": "2026-08-25",
+      "orders": 8,
+      "delivered": 4,
+      "cancelled": 0,
+      "revenue": 72000,
+      "byPaymentMethod": { "cash": 25000, "debito": 22000, "credito": 15000, "transferencia": 10000 },
+      "topProducts": [
+        { "productId": "p00000000000000000000001", "title": "Pizza Muzzarella", "quantity": 4, "revenue": 34000 },
+        { "productId": "p00000000000000000000005", "title": "Empanada de Carne", "quantity": 6, "revenue": 7200 }
+      ],
+      "createdAt": "2026-08-25T15:00:00.000Z"
+    }
+  ],
+
+  "gallery": [
+    {
+      "_id": "g00000000000000000000001",
+      "url": "https://res.cloudinary.com/demo/image/upload/v1/sample.jpg",
+      "alt": "Interior del local",
+      "order": 1,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "g00000000000000000000002",
+      "url": "https://res.cloudinary.com/demo/image/upload/v1/sample.jpg",
+      "alt": "Nuestras pizzas artesanales",
+      "order": 2,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    },
+    {
+      "_id": "g00000000000000000000003",
+      "url": "https://res.cloudinary.com/demo/image/upload/v1/sample.jpg",
+      "alt": "Equipo de trabajo",
+      "order": 3,
+      "createdAt": "2026-08-24T00:00:00.000Z"
+    }
+  ],
+
+  "config": {
+    "storeName": "Pizza App Demo",
+    "storeSlogan": "Las mejores pizzas de la ciudad",
+    "primaryColor": "#FF6B35",
+    "secondaryColor": "#004E89",
+    "accentColor": "#FFC300",
+    "fontHeading": "Poppins",
+    "fontBody": "Inter",
+    "logoUrl": "https://res.cloudinary.com/demo/image/upload/v1/sample.jpg",
+    "faviconUrl": "https://res.cloudinary.com/demo/image/upload/v1/sample.jpg",
+    "mapboxToken": "",
+    "createdAt": "2026-08-24T00:00:00.000Z"
+  }
+}
