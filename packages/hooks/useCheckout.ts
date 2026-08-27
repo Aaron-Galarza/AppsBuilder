@@ -1,7 +1,7 @@
 'use client';
 
 import { Coupon } from '@saas/types';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { apiFetch } from './lib/api';
 import { DeliveryCoordinates, useCartStore } from './useCartStore';
 
@@ -28,6 +28,7 @@ export function useCheckout(navigate?: (path: string) => void) {
   const items = useCartStore((s) => s.items);
   const deliveryType = useCartStore((s) => s.deliveryType);
   const paymentMethod = useCartStore((s) => s.paymentMethod);
+  const setPaymentMethod = useCartStore((s) => s.setPaymentMethod);
   const coupon = useCartStore((s) => s.coupon);
   const deliveryAddress = useCartStore((s) => s.deliveryAddress);
   const deliveryCoordinates = useCartStore((s) => s.deliveryCoordinates);
@@ -35,7 +36,9 @@ export function useCheckout(navigate?: (path: string) => void) {
   const clearCoupon = useCartStore((s) => s.clearCoupon);
   const clearCart = useCartStore((s) => s.clearCart);
 
-  const totals = useCartStore((s) => s.getTotals());
+  // useMemo para evitar re-renders infinitos: getTotals retorna nuevo objeto cada vez
+  const cartGetTotals = useCartStore((s) => s.getTotals);
+  const totals = useMemo(() => cartGetTotals(), [cartGetTotals]);
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -44,6 +47,11 @@ export function useCheckout(navigate?: (path: string) => void) {
   const [couponCode, setCouponCode] = useState('');
   const [couponLoading, setCouponLoading] = useState(false);
   const [couponError, setCouponError] = useState<string | null>(null);
+
+  const handleCouponInput = useCallback((value: string) => {
+    setCouponCode(value);
+    setCouponError(null);
+  }, []);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -74,7 +82,7 @@ export function useCheckout(navigate?: (path: string) => void) {
     }
   }, [couponCode, paymentMethod, deliveryType, totals.subtotal, setCoupon, clearCoupon]);
 
-  const buildPayload = (): Record<string, unknown> => ({
+  const buildPayload = useCallback((): Record<string, unknown> => ({
     customer: { name: sanitizeText(name), phone: phone.trim(), address: deliveryAddress || undefined },
     items: items.map((item) => ({
       productId: item.product._id,
@@ -84,12 +92,12 @@ export function useCheckout(navigate?: (path: string) => void) {
     deliveryType,
     paymentMethod,
     couponCode: coupon?.code ?? undefined,
-    notes: notes ? sanitizeText(notes).slice(0, 300) : undefined,
+    notes: notes ? sanitizeText(notes).slice(0, 60) : undefined,
     delivery:
       deliveryType === 'delivery'
         ? { address: deliveryAddress, ...(deliveryCoordinates ?? {}) }
         : undefined,
-  });
+  }), [name, phone, items, deliveryType, paymentMethod, coupon, notes, deliveryAddress, deliveryCoordinates]);
 
   const submitOrder = useCallback(
     async (payload: Record<string, unknown>) => {
@@ -148,13 +156,14 @@ export function useCheckout(navigate?: (path: string) => void) {
     deliveryAddress,
     deliveryCoordinates,
     submitOrder,
+    buildPayload,
   ]);
 
   /** Usuario confirma igual: el costo se coordina por WhatsApp */
   const confirmUnresolvedDelivery = useCallback(async () => {
     setUnresolvedAddressModal(false);
     await submitOrder({ ...buildPayload(), skipDeliveryCost: true });
-  }, [submitOrder]);
+  }, [submitOrder, buildPayload]);
 
   const cancelUnresolvedDelivery = useCallback(() => {
     setUnresolvedAddressModal(false);
@@ -172,7 +181,9 @@ export function useCheckout(navigate?: (path: string) => void) {
     items,
     deliveryType,
     paymentMethod,
+    setPaymentMethod,
     coupon,
+    isDeliveryLoading: false,
     name,
     setName,
     phone,
@@ -182,6 +193,7 @@ export function useCheckout(navigate?: (path: string) => void) {
 
     couponCode,
     setCouponCode,
+    handleCouponInput,
     couponLoading,
     couponError,
     validateCoupon: validateCouponCode,
