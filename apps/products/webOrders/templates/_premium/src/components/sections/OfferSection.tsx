@@ -10,12 +10,11 @@ export function OfferSection() {
         <p className="text-white/50 text-center text-sm mb-10">INJECT_OFFER_SUBTITLE</p>
         <OfferBanner
           title="INJECT_OFFER_BANNER_TITLE"
-          description="INJECT_OFFER_BANNER_DESCRIPTION"
-          discountText="INJECT_OFFER_DISCOUNT_TEXT"
-          buttonText="INJECT_OFFER_BUTTON_TEXT"
-          buttonHref="#product-list-top"
+          text="INJECT_OFFER_BANNER_DESCRIPTION"
+          badgeText="INJECT_OFFER_DISCOUNT_TEXT"
+          ctaText="INJECT_OFFER_BUTTON_TEXT"
+          ctaHref="#product-list-top"
           primaryColor="INJECT_PRIMARY_COLOR"
-          backgroundImage="INJECT_OFFER_BACKGROUND_IMAGE"
         />
       </div>
     </section>

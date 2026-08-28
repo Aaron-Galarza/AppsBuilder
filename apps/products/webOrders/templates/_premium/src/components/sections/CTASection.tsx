@@ -6,10 +6,10 @@ export function CTASection() {
   return (
     <CTASimple
       title="INJECT_CTA_TITLE"
-      subtitle="INJECT_CTA_SUBTITLE"
-      buttonText="INJECT_CTA_BUTTON_TEXT"
-      buttonHref="#product-list-top"
-      buttonColor="INJECT_PRIMARY_COLOR"
+      text="INJECT_CTA_SUBTITLE"
+      ctaText="INJECT_CTA_BUTTON_TEXT"
+      ctaHref="#product-list-top"
+      primaryColor="INJECT_PRIMARY_COLOR"
     />
   )
 }

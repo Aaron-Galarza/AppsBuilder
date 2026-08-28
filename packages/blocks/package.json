@@ -2,14 +2,30 @@
   "name": "@saas/blocks",
   "version": "0.0.1",
   "private": true,
-  "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "main": "./index.ts",
+  "types": "./index.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./index.ts",
+      "default": "./index.ts"
     },
-    "./styles.css": "./styles/tailwind.css"
+    "./styles.css": "./styles/tailwind.css",
+    "./hero": "./hero/index.ts",
+    "./menu": "./menu/index.ts",
+    "./about": "./about/index.ts",
+    "./cta": "./cta/index.ts",
+    "./contact": "./contact/index.ts",
+    "./gallery": "./gallery/index.ts",
+    "./testimonials": "./testimonials/index.ts",
+    "./offer": "./offer/index.ts",
+    "./newsletter": "./newsletter/index.ts",
+    "./cart": "./cart/index.ts",
+    "./checkout": "./checkout/index.ts",
+    "./admin": "./admin/index.ts",
+    "./featured": "./featured/index.ts",
+    "./features": "./features/index.ts",
+    "./pricing": "./pricing/index.ts",
+    "./faq": "./faq/index.ts"
   },
   "scripts": {
     "build": "tsc",
@@ -20,7 +36,7 @@
     "@saas/types": "workspace:*",
     "@saas/ui": "workspace:*",
     "@saas/utils": "workspace:*",
-    "lucide-react": "^0.454.0",
+    "lucide-react": "^0.468.0",
     "mapbox-gl": "^3.9.0"
   },
   "peerDependencies": {

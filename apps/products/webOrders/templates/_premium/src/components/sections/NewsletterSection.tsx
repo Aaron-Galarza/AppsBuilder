@@ -9,8 +9,6 @@ export function NewsletterSection() {
         <h2 className="text-3xl font-heading font-bold text-white mb-2">INJECT_NEWSLETTER_TITLE</h2>
         <p className="text-white/50 text-sm mb-8">INJECT_NEWSLETTER_SUBTITLE</p>
         <NewsletterForm
-          placeholder="INJECT_NEWSLETTER_PLACEHOLDER"
-          buttonText="INJECT_NEWSLETTER_BUTTON_TEXT"
           primaryColor="INJECT_PRIMARY_COLOR"
         />
       </div>

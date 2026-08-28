@@ -26,13 +26,22 @@ export default function OrderConfirmationPage() {
   const [notFound, setNotFound] = useState(false)
 
   useEffect(() => {
+    let mounted = true
     const raw = sessionStorage.getItem('order_confirmation')
-    if (!raw) { setOrder(prev => { if (!prev) setNotFound(true); return prev }); return }
-    try {
-      const parsed = JSON.parse(raw)
-      setOrder(parsed)
-      sessionStorage.removeItem('order_confirmation')
-    } catch { setNotFound(true) }
+    if (!raw) {
+      requestAnimationFrame(() => { if (mounted) setNotFound(true) })
+      return
+    }
+    Promise.resolve()
+      .then(() => JSON.parse(raw) as OrderSnapshot)
+      .then((parsed) => {
+        if (mounted) {
+          setOrder(parsed)
+          sessionStorage.removeItem('order_confirmation')
+        }
+      })
+      .catch(() => { if (mounted) setNotFound(true) })
+    return () => { mounted = false }
   }, [])
 
   if (notFound) {

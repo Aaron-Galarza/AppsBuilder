@@ -50,8 +50,8 @@ export default function CartPage() {
             </button>
           </div>
           <div className="space-y-3">
-            {items.map((item, index) => (
-              <CartItemCard key={`${item.product.id}-${index}`} item={item} index={index} />
+            {items.map((item) => (
+              <CartItemCard key={`${item.product._id}-${item.cartItemId}`} item={item} />
             ))}
           </div>
         </section>

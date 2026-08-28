@@ -12,7 +12,7 @@ export default function CheckoutPage() {
     paymentMethod, setPaymentMethod,
     couponCode, couponLoading, couponError, validateCoupon, handleCouponInput,
     submitting, submitError, isConfirmDisabled, handleConfirmOrder,
-    unresolvedAddressModal, confirmUnresolvedDelivery, cancelUnresolvedDelivery,
+    unresolvedAddressModal, confirmUnresolvedDelivery, cancelUnresolvedDelivery, deliveryAddress,
     subtotal, discount, total, surcharge,
   } = useCheckout()
 
@@ -41,10 +41,10 @@ export default function CheckoutPage() {
         <section>
           <h2 className="text-sm font-bold text-white/50 uppercase tracking-wider mb-3 px-1">Método de pago</h2>
           <div className="flex gap-2">
-            {(['efectivo', 'debito', 'credito', 'transferencia'] as const).map((method) => (
+            {(['cash', 'debito', 'credito', 'transferencia'] as const).map((method) => (
               <button key={method} onClick={() => setPaymentMethod(method)}
                 className={`flex-1 py-2.5 px-2 rounded-xl font-bold text-sm transition-all capitalize ${paymentMethod === method ? 'bg-primary text-black' : 'bg-muted border border-white/10 text-white/60 hover:text-white'}`}>
-                {method}
+                {method === 'cash' ? 'Efectivo' : method}
               </button>
             ))}
           </div>
@@ -75,7 +75,7 @@ export default function CheckoutPage() {
         </section>
       </main>
 
-      <DeliveryAddressWarningModal isOpen={unresolvedAddressModal} onConfirm={confirmUnresolvedDelivery} onCancel={cancelUnresolvedDelivery} />
+      <DeliveryAddressWarningModal isOpen={unresolvedAddressModal} addressText={deliveryAddress} onConfirm={confirmUnresolvedDelivery} onCancel={cancelUnresolvedDelivery} />
     </div>
   )
 }

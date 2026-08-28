@@ -206,6 +206,7 @@ export function useCheckout(navigate?: (path: string) => void) {
     unresolvedAddressModal,
     confirmUnresolvedDelivery,
     cancelUnresolvedDelivery,
+    deliveryAddress,
 
     ...totals,
   };

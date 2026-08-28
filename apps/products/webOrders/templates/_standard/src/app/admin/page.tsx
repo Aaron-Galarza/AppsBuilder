@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { BarChart3, ShoppingBag, Utensils, Tag, Settings, ImageIcon } from 'lucide-react'
+import { BarChart3, ShoppingBag, Utensils, Tag, Settings, Image as ImageIcon } from 'lucide-react'
 import { OverviewTab } from '@saas/blocks/admin'
 import { OrdersTab } from '@saas/blocks/admin'
 import { MenuTab } from '@saas/blocks/admin'

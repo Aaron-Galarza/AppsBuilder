@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Loader2 } from 'lucide-react'
 import api from '@/services/api'
 import { useAuthStore } from '@/stores/auth.store'
 
@@ -24,9 +23,11 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const res = await api.post('/users/login', { email, password })
-      const data = res.data || res
-      const token = data?.data?.token || data?.token || data?.data
+      const res = await api.post<{ data: { token: string; user?: unknown } }>('/users/login', {
+        email,
+        password,
+      })
+      const token = res.data?.token
 
       if (!token || typeof token !== 'string') {
         throw new Error('No se encontró un token válido en la respuesta')
@@ -34,9 +35,10 @@ export default function LoginPage() {
 
       login(token)
       setTimeout(() => { router.push('/admin') }, 150)
-    } catch (err: any) {
-      if (err.message === 'No autorizado') return
-      setError(err.message || 'Credenciales inválidas')
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Credenciales inválidas'
+      if (message === 'No autorizado') return
+      setError(message)
     } finally {
       setLoading(false)
     }

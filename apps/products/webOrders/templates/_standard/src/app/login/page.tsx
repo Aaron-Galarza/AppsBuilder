@@ -32,8 +32,8 @@ export default function LoginPage() {
       })
       setAuth(data.token, data.user)
       router.push('/admin')
-    } catch (err: any) {
-      const message = err?.message || 'Credenciales incorrectas. Intentá de nuevo.'
+} catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Credenciales incorrectas. Intentá de nuevo.'
       setError(message)
     } finally {
       setLoading(false)

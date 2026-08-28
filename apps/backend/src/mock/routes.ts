@@ -166,7 +166,8 @@ router.put('/api/products/admin/toggleActive/:id', (req: Request, res: Response)
 
   const updated = getCollection('products').findOneAndUpdate(
     { _id: id },
-    { available: !product.available }
+    { available: !product.available },
+    { new: true }
   );
   return ok(res, updated);
 });
@@ -174,7 +175,7 @@ router.put('/api/products/admin/toggleActive/:id', (req: Request, res: Response)
 /** PUT /api/products/admin/:id - Actualizar producto */
 router.put('/api/products/admin/:id', (req: Request, res: Response) => {
   const { id } = req.params;
-  const updated = getCollection('products').findOneAndUpdate({ _id: id }, req.body);
+  const updated = getCollection('products').findOneAndUpdate({ _id: id }, req.body, { new: true });
   if (!updated) return fail(res, 404, 'Producto no encontrado');
   return ok(res, updated);
 });
@@ -232,7 +233,7 @@ router.post('/api/coupons/admin', (req: Request, res: Response) => {
 /** PUT /api/coupons/admin/:id - Actualizar cupón */
 router.put('/api/coupons/admin/:id', (req: Request, res: Response) => {
   const { id } = req.params;
-  const updated = getCollection('coupons').findOneAndUpdate({ _id: id }, req.body);
+  const updated = getCollection('coupons').findOneAndUpdate({ _id: id }, req.body, { new: true });
   if (!updated) return fail(res, 404, 'Cupón no encontrado');
   return ok(res, updated);
 });
@@ -242,7 +243,7 @@ router.put('/api/coupons/admin/:id/toggle', (req: Request, res: Response) => {
   const { id } = req.params;
   const coupon = getCollection('coupons').findById(id);
   if (!coupon) return fail(res, 404, 'Cupón no encontrado');
-  const updated = getCollection('coupons').findOneAndUpdate({ _id: id }, { active: !coupon.active });
+  const updated = getCollection('coupons').findOneAndUpdate({ _id: id }, { active: !coupon.active }, { new: true });
   return ok(res, updated);
 });
 
@@ -273,7 +274,7 @@ router.post('/api/categories/admin', (req: Request, res: Response) => {
 /** PUT /api/categories/admin/:id - Actualizar categoría */
 router.put('/api/categories/admin/:id', (req: Request, res: Response) => {
   const { id } = req.params;
-  const updated = getCollection('categories').findOneAndUpdate({ _id: id }, req.body);
+  const updated = getCollection('categories').findOneAndUpdate({ _id: id }, req.body, { new: true });
   if (!updated) return fail(res, 404, 'Categoría no encontrada');
   return ok(res, updated);
 });
@@ -305,7 +306,7 @@ router.post('/api/addons/admin', (req: Request, res: Response) => {
 /** PUT /api/addons/admin/:id - Actualizar addon */
 router.put('/api/addons/admin/:id', (req: Request, res: Response) => {
   const { id } = req.params;
-  const updated = getCollection('addons').findOneAndUpdate({ _id: id }, req.body);
+  const updated = getCollection('addons').findOneAndUpdate({ _id: id }, req.body, { new: true });
   if (!updated) return fail(res, 404, 'Addon no encontrado');
   return ok(res, updated);
 });
@@ -315,7 +316,7 @@ router.put('/api/addons/admin/toggleActive/:id', (req: Request, res: Response) =
   const { id } = req.params;
   const addon = getCollection('addons').findById(id);
   if (!addon) return fail(res, 404, 'Addon no encontrado');
-  const updated = getCollection('addons').findOneAndUpdate({ _id: id }, { available: !addon.available });
+  const updated = getCollection('addons').findOneAndUpdate({ _id: id }, { available: !addon.available }, { new: true });
   return ok(res, updated);
 });
 
@@ -346,7 +347,7 @@ router.post('/api/orders', (req: Request, res: Response) => {
 router.put('/api/orders/admin/:id/status', (req: Request, res: Response) => {
   const { id } = req.params;
   const { status } = req.body;
-  const updated = getCollection('orders').findOneAndUpdate({ _id: id }, { status });
+  const updated = getCollection('orders').findOneAndUpdate({ _id: id }, { status }, { new: true });
   if (!updated) return fail(res, 404, 'Pedido no encontrado');
   return ok(res, updated);
 });
@@ -355,48 +356,128 @@ router.put('/api/orders/admin/:id/status', (req: Request, res: Response) => {
 // CONFIG
 // ═══════════════════════════════════════════════════════════════════════════
 
+// Adaptadores entre el formato legacy (data.json, "days" numéricos con open/close/active)
+// y el StoreConfig moderno ({schedule.days:[{day:'monday',openTime,closeTime,closed}], rain, deliveryRanges}).
+const JSDOW: Record<string, number> = { sunday: 0, monday: 1, tuesday: 2, wednesday: 3, thursday: 4, friday: 5, saturday: 6 };
+const DAY_KEYS = Object.keys(JSDOW);
+
+function legacyToModernDays(days: unknown) {
+  const raw = (Array.isArray(days) ? days : []) as Record<string, unknown>[];
+  const byDow = new Map<number, Record<string, unknown>>();
+  for (const d of raw) {
+    const idx = Number(d.day);
+    if (!byDow.has(idx)) byDow.set(idx, d);
+  }
+  return DAY_KEYS.map((key, i) => {
+    const d = byDow.get(i);
+    return {
+      day: key,
+      openTime: (d?.open as string) ?? '00:00',
+      closeTime: (d?.close as string) ?? '23:59',
+      closed: d ? !(d.active ?? true) : true,
+    };
+  });
+}
+
+function modernToLegacyDays(days: unknown) {
+  const raw = (Array.isArray(days) ? days : []) as Record<string, unknown>[];
+  return raw.map((d) => ({
+    day: JSDOW[String(d.day)] ?? 0,
+    open: (d.openTime as string) ?? '00:00',
+    close: (d.closeTime as string) ?? '23:59',
+    active: !d.closed,
+  }));
+}
+
+function toStoreConfig(schedule: Record<string, unknown>) {
+  const ranges = getCollection('deliveryRanges').find().map((r) => ({
+    _id: r._id,
+    minKm: r.minKm as number,
+    maxKm: r.maxKm as number,
+    cost: (r.cost ?? r.price ?? 0) as number,
+  }));
+  return {
+    _id: schedule._id,
+    isOpen: schedule.emergencyClosed ? false : true,
+    emergencyClosed: schedule.emergencyClosed ?? false,
+    bannerUrl: schedule.bannerUrl ?? '',
+    rain: (schedule.rain as Record<string, unknown>) ?? { enabled: false, extraCost: 0 },
+    schedule: {
+      timezone: (schedule.timezone as string) ?? 'America/Argentina/Buenos_Aires',
+      days: legacyToModernDays(schedule.days),
+    },
+    deliveryRanges: ranges,
+  };
+}
+
 /** GET /api/config - Configuración del store */
 router.get('/api/config', (_req: Request, res: Response) => {
   const schedule = getCollection('schedules').find()[0];
-  return ok(res, schedule ?? {});
+  if (!schedule) return ok(res, { isOpen: true, emergencyClosed: false, bannerUrl: '', rain: { enabled: false, extraCost: 0 }, schedule: { timezone: 'America/Argentina/Buenos_Aires', days: [] }, deliveryRanges: [] });
+  return ok(res, toStoreConfig(schedule));
 });
 
 /** PUT /api/config/schedule - Actualizar horarios */
 router.put('/api/config/schedule', (req: Request, res: Response) => {
   const schedule = getCollection('schedules').find()[0];
   if (!schedule) return fail(res, 404, 'No hay schedule configurado');
-  const updated = getCollection('schedules').findOneAndUpdate({ _id: schedule._id }, req.body);
-  return ok(res, updated);
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const next = (body.schedule ?? body) as Record<string, unknown>;
+  const updated = getCollection('schedules').findOneAndUpdate(
+    { _id: schedule._id },
+    {
+      timezone: (next.timezone as string) ?? schedule.timezone,
+      days: modernToLegacyDays(next.days),
+    },
+    { new: true }
+  );
+  return ok(res, updated ? toStoreConfig(updated) : null);
 });
 
 /** PUT /api/config/banner - Actualizar banner */
 router.put('/api/config/banner', (req: Request, res: Response) => {
   const schedule = getCollection('schedules').find()[0];
   if (!schedule) return fail(res, 404, 'No hay schedule configurado');
-  const updated = getCollection('schedules').findOneAndUpdate({ _id: schedule._id }, { bannerUrl: req.body.bannerUrl });
-  return ok(res, updated);
+  const updated = getCollection('schedules').findOneAndUpdate({ _id: schedule._id }, { bannerUrl: req.body.bannerUrl }, { new: true });
+  return ok(res, updated ? toStoreConfig(updated) : null);
 });
 
 /** PUT /api/config/rain - Modo lluvia */
 router.put('/api/config/rain', (req: Request, res: Response) => {
   const schedule = getCollection('schedules').find()[0];
   if (!schedule) return fail(res, 404, 'No hay schedule configurado');
-  const updated = getCollection('schedules').findOneAndUpdate({ _id: schedule._id }, { rainMode: req.body.rainMode });
-  return ok(res, updated);
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const rain = (body.rain ?? body) as Record<string, unknown>;
+  const updated = getCollection('schedules').findOneAndUpdate(
+    { _id: schedule._id },
+    { rain: { enabled: rain.enabled ?? false, extraCost: Number(rain.extraCost ?? 0) } },
+    { new: true }
+  );
+  return ok(res, updated ? toStoreConfig(updated) : null);
 });
 
 /** PUT /api/config/emergency - Modo emergencia */
 router.put('/api/config/emergency', (req: Request, res: Response) => {
   const schedule = getCollection('schedules').find()[0];
   if (!schedule) return fail(res, 404, 'No hay schedule configurado');
-  const updated = getCollection('schedules').findOneAndUpdate({ _id: schedule._id }, { emergencyClosed: req.body.emergencyClosed });
-  return ok(res, updated);
+  const body = (req.body ?? {}) as Record<string, unknown>;
+  const closed = body.closed ?? body.emergencyClosed ?? false;
+  const updated = getCollection('schedules').findOneAndUpdate(
+    { _id: schedule._id },
+    { emergencyClosed: closed === true },
+    { new: true }
+  );
+  return ok(res, updated ? toStoreConfig(updated) : null);
 });
 
 /** POST /api/config/delivery-ranges - Agregar rango de delivery */
 router.post('/api/config/delivery-ranges', (req: Request, res: Response) => {
-  const range = getCollection('deliveryRanges').create(req.body);
-  return ok(res, range);
+  const [range] = [req.body].map((b) => {
+    const cost = Number(b.cost ?? b.price ?? 0);
+    return { ...b, cost, price: cost };
+  });
+  const created = getCollection('deliveryRanges').create(range);
+  return ok(res, created);
 });
 
 /** DELETE /api/config/delivery-ranges/:id - Eliminar rango de delivery */

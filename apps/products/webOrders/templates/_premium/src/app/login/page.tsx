@@ -17,20 +17,21 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       })
-      const data = await res.json()
+const body = await res.json()
+      const token = body?.data?.token || body?.token
 
       if (!res.ok) {
-        setError(data.message || 'Credenciales inválidas')
+        setError(body?.data?.message || body?.message || 'Credenciales inválidas')
         setLoading(false)
         return
       }
 
-      localStorage.setItem('token', data.token)
+      if (token) localStorage.setItem('token', token)
       router.push('/admin')
     } catch {
       setError('Error al conectar con el servidor')

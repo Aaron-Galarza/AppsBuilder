@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { LogOut, LayoutDashboard, ShoppingBag, Tag, Image, Settings, ClipboardList } from 'lucide-react'
+import { LogOut, LayoutDashboard, ShoppingBag, Tag, Image as ImageIcon, Settings, ClipboardList } from 'lucide-react'
 
 type AdminTab = 'overview' | 'orders' | 'menu' | 'coupons' | 'gallery' | 'config'
 
@@ -11,7 +11,7 @@ const tabs: { id: AdminTab; label: string; icon: React.ReactNode }[] = [
   { id: 'orders', label: 'Pedidos', icon: <ClipboardList className="w-4 h-4" /> },
   { id: 'menu', label: 'Menú', icon: <ShoppingBag className="w-4 h-4" /> },
   { id: 'coupons', label: 'Cupones', icon: <Tag className="w-4 h-4" /> },
-  { id: 'gallery', label: 'Galería', icon: <Image className="w-4 h-4" /> },
+  { id: 'gallery', label: 'Galería', icon: <ImageIcon className="w-4 h-4" /> },
   { id: 'config', label: 'Config', icon: <Settings className="w-4 h-4" /> },
 ]
 

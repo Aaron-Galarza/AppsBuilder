@@ -7,10 +7,10 @@ export function CTASection() {
     <section className="scroll-mt-20">
       <CTASimple
         title="INJECT_CTA_TITLE"
-        subtitle="INJECT_CTA_SUBTITLE"
-        buttonText="INJECT_CTA_BUTTON_TEXT"
-        buttonHref="#menu"
-        buttonColor="INJECT_PRIMARY_COLOR"
+        text="INJECT_CTA_SUBTITLE"
+        ctaText="INJECT_CTA_BUTTON_TEXT"
+        ctaHref="#menu"
+        primaryColor="INJECT_PRIMARY_COLOR"
       />
     </section>
   )
