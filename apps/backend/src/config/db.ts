@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 import { getEnv } from './env';
 import { activateMock } from '../mock/store';
 
-const MAX_RETRIES = 5;
-const RETRY_DELAY_MS = 3000;
+const MAX_RETRIES = Number(process.env.MONGODB_MAX_RETRIES ?? 5);
+const RETRY_DELAY_MS = Number(process.env.MONGODB_RETRY_DELAY_MS ?? 3000);
+const SELECTION_TIMEOUT_MS = Number(process.env.MONGODB_SELECTION_TIMEOUT_MS ?? 5000);
 
 /**
  * Conexión a MongoDB con reintentos.
@@ -15,7 +16,7 @@ export async function connectDB(): Promise<boolean> {
 
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
-      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
+      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: SELECTION_TIMEOUT_MS });
       console.log(`[db] MongoDB conectado (${mongoose.connection.name})`);
       return true;
     } catch (err) {

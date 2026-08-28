@@ -6,6 +6,22 @@
 - pnpm >= 9
 - Git
 
+## Comando único (recomendado)
+
+Desde la raíz de AppsBuilder, un solo comando detecta prerequisitos, instala si falta,
+levanta los servicios que no estén corriendo y abre el navegador en el form:
+
+```bash
+pnpm start
+```
+
+- Form (builder-ui): `http://localhost:3001`
+- Admin (web-admin): `http://localhost:3002`
+- Backend: `http://localhost:4000`
+
+Si MongoDB no responde en `27017`, el backend arranca directo contra el mock store
+(`data.json`) sin esperar los reintentos.
+
 ## Instalación
 
 ```bash
@@ -30,7 +46,7 @@ cd apps/backend
 pnpm dev
 ```
 
-El backend queda disponible en `http://localhost:3000`.
+El backend queda disponible en `http://localhost:4000`.
 
 ## Generar un Proyecto
 
