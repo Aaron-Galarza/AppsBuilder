@@ -41,7 +41,8 @@ function num(name: string, fallback: number): number {
 }
 
 export function loadEnv(): Env {
-  const clientUrls = required('CLIENT_URL')
+  const clientUrlsStr = (process.env.CLIENT_URL ?? 'http://localhost:3000,http://localhost:3001,http://localhost:3002').trim();
+  const clientUrls = clientUrlsStr
     .split(',')
     .map((u) => u.trim())
     .filter(Boolean);
@@ -53,8 +54,8 @@ export function loadEnv(): Env {
   return {
     port: num('PORT', 4000),
     nodeEnv: (process.env.NODE_ENV ?? 'development').trim(),
-    mongoUri: required('MONGODB_URI'),
-    jwtSecret: required('JWT_SECRET'),
+    mongoUri: (process.env.MONGODB_URI ?? 'mongodb://localhost:27017/appsbuilder-demo').trim(),
+    jwtSecret: (process.env.JWT_SECRET ?? 'demo-secret-key-do-not-use-in-production').trim(),
     jwtExpiresIn: (process.env.JWT_EXPIRES_IN ?? '4h').trim(),
     clientUrls,
     storeLat: num('STORE_LAT', -34.6037),

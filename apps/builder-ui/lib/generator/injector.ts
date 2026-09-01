@@ -240,7 +240,16 @@ export function renameEnvFiles(files: FileEntry[]): FileEntry[] {
   return files.map((file) => {
     if (file.path.endsWith('.env.local.example')) {
       const newPath = file.path.replace('.env.local.example', '.env.local')
-      return { path: newPath, content: file.content }
+      let envContent = String(file.content)
+      // Inyectar API_URL por defecto para desarrollo
+      if (envContent.includes('NEXT_PUBLIC_API_URL=')) {
+        envContent = envContent.replace('NEXT_PUBLIC_API_URL=', 'NEXT_PUBLIC_API_URL=http://localhost:4000')
+      }
+      return { path: newPath, content: envContent }
+    }
+    if (file.path.endsWith('apps/backend/.env.example')) {
+      const envContent = String(file.content).replace('MONGODB_URI=mongodb://localhost:27017/saas-orders', 'MONGODB_URI=')
+      return { path: 'apps/backend/.env', content: envContent }
     }
     return file
   })

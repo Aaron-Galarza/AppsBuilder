@@ -25,6 +25,7 @@ const ALWAYS_PACKAGES = [
   'packages/types',
   'packages/hooks',
   'packages/configs',
+  'packages/blocks',
 ]
 
 const PRODUCT_APPS: Record<string, string[]> = {
