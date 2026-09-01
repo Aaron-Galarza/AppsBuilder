@@ -93,41 +93,16 @@ foreach ($svc in $services) {
 
 if ($missing.Count -gt 0) {
   Write-Host "[~] Levantando: $((($missing | ForEach-Object { $_.Name }) -join ', '))..." -ForegroundColor Yellow
-  $logDir = Join-Path $Root '.devlogs'
-  if (-not (Test-Path $logDir)) { New-Item -ItemType Directory -Path $logDir | Out-Null }
 
   $filters = $missing | ForEach-Object { "--filter=$($_.Filter)" }
-  $args = @('-r', '--parallel') + $filters + @('run', 'dev')
-  $stdout = Join-Path $logDir 'dev.stdout.log'
-  $stderr = Join-Path $logDir 'dev.stderr.log'
 
-  # pnpm.cmd (no la shim .ps1) porque Start-Process no ejecuta scripts de PowerShell
-  $pnpmCmd = (Get-Command pnpm.cmd -ErrorAction SilentlyContinue).Source
-  if (-not $pnpmCmd) { $pnpmCmd = (Get-Command pnpm -ErrorAction SilentlyContinue).Source }
-
-  $proc = Start-Process -FilePath $pnpmCmd -ArgumentList $args -WorkingDirectory $Root -PassThru -NoNewWindow -RedirectStandardOutput $stdout -RedirectStandardError $stderr
-  Write-Host "[~] pnpm dev en background (pid $($proc.Id)); logs en .devlogs/"
-
-  # Esperar el form y el backend
-  $formOk = Wait-Http 'http://localhost:3001'
-  $backOk = Wait-Http 'http://localhost:4000/api/health'
-  if (-not $formOk) {
-    Write-Host '[ERROR] El form (3001) no respondió a tiempo. Revisá .devlogs/dev.stderr.log' -ForegroundColor Red
-    Get-Content $stderr -Tail 30 -ErrorAction SilentlyContinue | Write-Host -ForegroundColor Red
-    exit 1
-  }
+  # Invocar pnpm dev en primer plano (se cierra con Ctrl+C)
+  Write-Host '[~] Ejecutando pnpm dev (Ctrl+C para detener)' -ForegroundColor Yellow
+  & pnpm -r --parallel @filters run dev
 } else {
   Write-Host '[ok] Todo arriba' -ForegroundColor Green
+
+  # Si todo ya estaba corriendo, abrir el navegador
+  Write-Host "[ok] Abriendo http://localhost:3001 ..." -ForegroundColor Green
+  Start-Process 'http://localhost:3001'
 }
-
-# 5) Abrir el navegador en el form
-Write-Host "[ok] Abriendo http://localhost:3001 ..." -ForegroundColor Green
-Start-Process 'http://localhost:3001'
-
-Write-Host ''
-Write-Host 'Servicios:' -ForegroundColor Cyan
-Write-Host "  Form     -> http://localhost:3001"
-Write-Host "  Admin    -> http://localhost:3002"
-Write-Host "  Backend  -> http://localhost:4000"
-Write-Host ''
-Write-Host 'Para detener todo: Ctrl+C en la ventana donde corre pnpm dev, o matá el proceso pnpm.' -ForegroundColor DarkGray

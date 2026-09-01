@@ -11,7 +11,8 @@
     "build": "turbo run build",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
-    "start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start.ps1"
+    "start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/start.ps1",
+    "stop": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop.ps1"
   },
   "devDependencies": {
     "turbo": "^2.10.11",
