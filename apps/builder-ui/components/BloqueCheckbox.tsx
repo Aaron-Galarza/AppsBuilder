@@ -17,40 +17,30 @@ export function BloqueCheckbox({ block, isSelected, isMandatory, onToggle }: Blo
     <button
       onClick={() => !isMandatory && onToggle(block)}
       disabled={isMandatory}
-      className={`flex items-start gap-3 p-4 rounded-xl border-2 text-left transition-all w-full ${
+      className={`panel flex items-start gap-3 p-3 text-left w-full transition-all ${
         isMandatory
-          ? 'border-primary/30 bg-primary/5 cursor-default'
+          ? 'border-foreground cursor-default'
           : isSelected
-          ? 'border-primary bg-primary/5'
-          : 'border-white/10 bg-card hover:border-white/20 hover:bg-white/5'
+          ? 'border-foreground cursor-pointer'
+          : 'hover:border-border2 cursor-pointer'
       }`}
     >
-      <div
-        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 mt-0.5 transition-all ${
-          isSelected
-            ? 'bg-primary border-primary'
-            : 'border-white/20 bg-transparent'
+      <span
+        className={`text-xs mt-0.5 shrink-0 font-bold ${
+          isMandatory ? 'lv-w' : isSelected ? 'lv-o' : 'text-[#555]'
         }`}
       >
-        {isSelected && (
-          <svg className="w-3 h-3 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
-            <polyline points="20 6 9 17 4 12" />
-          </svg>
-        )}
-      </div>
+        {isSelected ? '[x]' : '[ ]'}
+      </span>
 
-      <div className="flex flex-col gap-0.5 min-w-0">
+      <div className="flex flex-col min-w-0">
         <div className="flex items-center gap-2">
-          <span className={`text-sm font-semibold ${isSelected ? 'text-primary' : 'text-white'}`}>
+          <span className={`text-xs uppercase tracking-[0.1em] ${isSelected || isMandatory ? 'text-foreground' : 'text-muted-foreground'}`}>
             {label}
           </span>
-          {isMandatory && (
-            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-bold uppercase">
-              Obligatorio
-            </span>
-          )}
+          {isMandatory && <span className="pill pill-w">Obligatorio</span>}
         </div>
-        <span className="text-xs text-white/40">{description}</span>
+        <span className="hint mt-1">{description}</span>
       </div>
     </button>
   )

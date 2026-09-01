@@ -1,45 +1,54 @@
 import { useRouter } from 'next/router'
-import { Rocket } from 'lucide-react'
+import { Terminal } from 'lucide-react'
 
 export default function Home() {
   const router = useRouter()
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
-      <div className="flex flex-col items-center gap-6 max-w-lg text-center">
-        <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
-          <Rocket className="w-8 h-8 text-primary" />
-        </div>
-
-        <div>
-          <h1 className="text-3xl font-bold text-white mb-2">AppsBuilder</h1>
-          <p className="text-sm text-white/40">
-            Generador de repositorios customizados para clientes.
-            Elegí plantilla, configurá colores y textos, descargá el ZIP listo para deployar.
-          </p>
-        </div>
-
-        <div className="flex flex-col gap-3 w-full max-w-xs">
-          <button
-            onClick={() => router.push('/builder')}
-            className="bg-primary text-black font-extrabold py-3.5 px-6 rounded-xl hover:bg-primary/90 transition-all active:scale-[0.98]"
-          >
-            Empezar
-          </button>
-        </div>
-
-        <div className="flex flex-col gap-2 mt-4">
-          <div className="flex items-center gap-2 text-xs text-white/30">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-            <span>6 pasos simples</span>
+      <div className="w-full max-w-lg">
+        <div className="border-b border-border pb-3 mb-6">
+          <div className="flex items-center gap-2 text-[10px] tracking-[0.2em] text-muted-foreground uppercase">
+            <span className="lv-o">OK</span>
+            <span>AppsBuilder v1.0</span>
+            <span className="lv-w">·</span>
+            <span>generador de repositorios</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-white/30">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-            <span>Preview en tiempo real</span>
+        </div>
+
+        <div className="panel p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <Terminal className="w-8 h-8 text-ok" strokeWidth={1.5} />
+            <div>
+              <h1 className="text-sm tracking-[0.2em] uppercase text-foreground">AppsBuilder</h1>
+              <p className="hint mt-0.5">Generador de repositorios customizados para clientes</p>
+            </div>
           </div>
-          <div className="flex items-center gap-2 text-xs text-white/30">
-            <div className="w-1.5 h-1.5 rounded-full bg-green-400" />
-            <span>ZIP listo para Vercel + Render</span>
+
+          <div className="kv">
+            <span className="k">Proceso</span>
+            <span className="v">7 pasos: producto, plantilla, bloques, config, textos, imágenes, descarga</span>
+          </div>
+          <div className="kv">
+            <span className="k">Modo demo</span>
+            <span className="v">Un click rellena todo con datos simulados</span>
+          </div>
+          <div className="kv">
+            <span className="k">Output</span>
+            <span className="v">ZIP listo para Vercel + Render</span>
+          </div>
+          <div className="kv">
+            <span className="k">SQL</span>
+            <span className="v">npm run dev = datos simulados · pnpm seed = BD real</span>
+          </div>
+
+          <div className="flex justify-end mt-6">
+            <button
+              onClick={() => router.push('/builder')}
+              className="btn btn-ok"
+            >
+              Comenzar
+            </button>
           </div>
         </div>
       </div>

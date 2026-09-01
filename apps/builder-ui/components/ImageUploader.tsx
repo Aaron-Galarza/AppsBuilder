@@ -1,7 +1,8 @@
-'use client'
+﻿'use client'
 
+import Image from 'next/image'
 import { useCallback, useState } from 'react'
-import { Upload, X, ImageIcon } from 'lucide-react'
+import { X, ImageIcon } from 'lucide-react'
 
 interface ImageUploaderProps {
   label: string
@@ -18,12 +19,12 @@ export function ImageUploader({ label, value, onChange, recommended }: ImageUplo
     setError('')
 
     if (!file.type.startsWith('image/')) {
-      setError('Solo se permiten archivos de imagen')
+      setError('ERROR: SOLO SE PERMITEN ARCHIVOS DE IMAGEN')
       return
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      setError('El archivo no puede superar 5MB')
+      setError('ERROR: EL ARCHIVO NO PUEDE SUPERAR 5MB')
       return
     }
 
@@ -46,29 +47,30 @@ export function ImageUploader({ label, value, onChange, recommended }: ImageUplo
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-xs font-bold text-white/50 uppercase tracking-wider">{label}</label>
+      <label className="lbl">{label}</label>
 
       {preview && value ? (
-        <div className="relative rounded-xl border border-white/10 overflow-hidden bg-card">
-          <img src={preview} alt={label} className="w-full h-32 object-cover" />
-          <button
-            onClick={handleRemove}
-            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center text-white/60 hover:text-white transition-colors"
-          >
-            <X className="w-3 h-3" />
-          </button>
-          <div className="px-3 py-2 border-t border-white/5">
-            <p className="text-[10px] text-white/30 truncate">{value.name}</p>
+        <div className="panel overflow-hidden">
+          <div className="flex items-start justify-between p-2 border-b border-border">
+            <p className="text-[10px] text-muted-foreground truncate flex-1">{value.name}</p>
+            <button
+              onClick={handleRemove}
+              className="btn btn-err shrink-0 ml-2 px-2 py-1 text-[10px]"
+              title="Quitar imagen"
+            >
+              <X className="w-3 h-3" />
+            </button>
           </div>
+          <Image src={preview} alt={label} width={640} height={256} unoptimized className="w-full h-32 object-cover" />
         </div>
       ) : (
         <label
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
-          className="flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed border-white/10 bg-card hover:border-primary/30 hover:bg-white/5 transition-all cursor-pointer"
+          className="dropzone flex flex-col items-center justify-center gap-2"
         >
-          <ImageIcon className="w-8 h-8 text-white/20" />
-          <span className="text-xs text-white/30">Arrastrá una imagen o hacé click</span>
+          <ImageIcon className="w-6 h-6" strokeWidth={1.5} />
+          <span>ARRASTRÃ UNA IMAGEN O HACÃ‰ CLICK</span>
           <input
             type="file"
             accept="image/*"
@@ -81,13 +83,9 @@ export function ImageUploader({ label, value, onChange, recommended }: ImageUplo
         </label>
       )}
 
-      {recommended && (
-        <p className="text-[10px] text-white/20">Recomendado: {recommended}</p>
-      )}
+      {recommended && <span className="hint">Recomendado: {recommended}</span>}
 
-      {error && (
-        <p className="text-[10px] text-red-400">{error}</p>
-      )}
+      {error && <span className="text-[10px] text-err">{error}</span>}
     </div>
   )
 }

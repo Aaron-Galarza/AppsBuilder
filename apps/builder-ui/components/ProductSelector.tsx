@@ -25,12 +25,12 @@ export function ProductSelector() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="text-center mb-2">
-        <h2 className="text-xl font-bold text-white">¿Qué vas a crear?</h2>
-        <p className="text-sm text-white/40 mt-1">Elegí el tipo de proyecto para tu cliente</p>
+      <div className="mb-2">
+        <h2 className="lbl">¿Qué vas a crear?</h2>
+        <p className="hint">Elegí el tipo de proyecto para tu cliente</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {products.map((p) => {
           const Icon = p.icon
           const isSelected = product === p.id
@@ -39,49 +39,34 @@ export function ProductSelector() {
             <button
               key={p.id}
               onClick={() => setProduct(p.id)}
-              className={`relative flex flex-col items-start p-5 rounded-xl border-2 text-left transition-all ${
-                isSelected
-                  ? 'border-primary bg-primary/5'
-                  : 'border-white/10 bg-card hover:border-white/20 hover:bg-white/5'
+              className={`panel text-left p-4 cursor-pointer transition-all ${
+                isSelected ? 'border-foreground' : 'hover:border-border2'
               }`}
             >
-              <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${
-                isSelected ? 'bg-primary/20 text-primary' : 'bg-white/5 text-white/40'
-              }`}>
-                <Icon className="w-5 h-5" />
+              <div className="flex items-center justify-between mb-3">
+                <Icon className={`w-5 h-5 ${isSelected ? 'text-ok' : 'text-muted-foreground'}`} strokeWidth={1.5} />
+                <span className={`text-[10px] ${isSelected ? 'lv-o' : 'text-[#555]'}`}>
+                  {isSelected ? '[x]' : '[ ]'}
+                </span>
               </div>
 
-              <h3 className={`font-bold text-base mb-1 ${isSelected ? 'text-primary' : 'text-white'}`}>
+              <h3 className={`text-xs tracking-[0.12em] uppercase pb-2 border-b border-border mb-3 ${isSelected ? 'text-ok' : 'text-foreground'}`}>
                 {p.title}
               </h3>
-              <p className="text-xs text-white/40 mb-3">{p.description}</p>
+              <p className="hint mb-3">{p.description}</p>
 
-              <ul className="flex flex-col gap-1 mt-auto">
+              <ul className="flex flex-col gap-1">
                 {p.features.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-xs text-white/50">
-                    <div className={`w-1 h-1 rounded-full ${isSelected ? 'bg-primary' : 'bg-white/20'}`} />
-                    {f}
+                  <li key={f} className="kv border-none py-0">
+                    <span className="k">·</span>
+                    <span className="v text-left text-muted-foreground">{f}</span>
                   </li>
                 ))}
               </ul>
-
-              {isSelected && (
-                <div className="absolute top-3 right-3 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
-                  <Check className="w-3 h-3 text-black" />
-                </div>
-              )}
             </button>
           )
         })}
       </div>
     </div>
-  )
-}
-
-function Check({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="20 6 9 17 4 12" />
-    </svg>
   )
 }

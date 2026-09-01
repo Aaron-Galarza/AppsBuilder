@@ -35,35 +35,28 @@ export function DownloadButton() {
   return (
     <div className="flex flex-col gap-2">
       {status === 'loading' && (
-        <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
-          <div
-            className="h-full bg-primary transition-all duration-300 ease-out rounded-full"
-            style={{ width: `${progress}%` }}
-          />
+        <div className="bar-wrap">
+          <div className="bar bar-ok" style={{ width: `${progress}%` }} />
         </div>
       )}
 
       <button
         onClick={handleDownload}
         disabled={status === 'loading'}
-        className={`flex items-center justify-center gap-2 w-full py-4 px-6 rounded-xl font-extrabold text-base transition-all ${
-          status === 'loading'
-            ? 'bg-primary/50 text-black/50 cursor-not-allowed'
-            : status === 'success'
-            ? 'bg-green-500 text-white'
-            : status === 'error'
-            ? 'bg-red-500 text-white'
-            : 'bg-primary text-black hover:bg-primary/90 active:scale-[0.98]'
+        className={`btn btn-ok-solid w-full py-3 text-sm tracking-[0.1em] uppercase ${
+          status === 'success' ? '!bg-muted-foreground !border-muted-foreground !text-background' : ''
         }`}
       >
-        {status === 'idle' && <><Download className="w-5 h-5" /> Generar y Descargar</>}
-        {status === 'loading' && <><Loader2 className="w-5 h-5 animate-spin" /> Generando... {progress}%</>}
-        {status === 'success' && <><CheckCircle className="w-5 h-5" /> ¡Descargado!</>}
-        {status === 'error' && <><AlertCircle className="w-5 h-5" /> Reintentar</>}
+        {status === 'idle' && <><Download className="w-4 h-4" /> Generar y Descargar</>}
+        {status === 'loading' && <><Loader2 className="w-4 h-4 animate-spin" /> Generando... {progress}%</>}
+        {status === 'success' && <><CheckCircle className="w-4 h-4" /> ¡Descargado!</>}
+        {status === 'error' && <><AlertCircle className="w-4 h-4" /> Reintentar</>}
       </button>
 
       {errorMsg && (
-        <p className="text-xs text-red-400 text-center bg-red-400/10 px-3 py-2 rounded-lg">{errorMsg}</p>
+        <p className="text-xs text-err text-center bg-errbg border border-[#7a2020] px-3 py-2">
+          {errorMsg}
+        </p>
       )}
     </div>
   )
