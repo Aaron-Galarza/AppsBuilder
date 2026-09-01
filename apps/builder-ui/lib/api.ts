@@ -62,6 +62,7 @@ export async function generateRepo(
     textos: state.textos,
     imagenes: base64Imagenes,
     configImages: base64Config,
+    useDemoData: !!state.useDemoData,
   }
 
   onProgress?.(60)

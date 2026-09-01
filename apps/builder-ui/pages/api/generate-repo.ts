@@ -25,6 +25,7 @@ const BuilderStateSchema = z.object({
     logo: z.string().nullable().optional(),
     favicon: z.string().nullable().optional(),
   }).optional(),
+  useDemoData: z.boolean().optional(),
 })
 
 export const config = {
@@ -82,6 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
       textos: rest.textos,
       imagenes: imagenesFiles,
+      useDemoData: !!rest.useDemoData,
     }
 
     const zip = await generateRepo(state as any)

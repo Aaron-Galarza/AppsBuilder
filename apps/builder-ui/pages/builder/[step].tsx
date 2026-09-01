@@ -11,6 +11,7 @@ import { TextEditor } from '../../components/TextEditor'
 import { ImageUploader } from '../../components/ImageUploader'
 import { PreviewPanel } from '../../components/PreviewPanel'
 import { DownloadButton } from '../../components/DownloadButton'
+import { DemoToggle } from '../../components/DemoToggle'
 import { useBuilderStore } from '../../stores/builderStore'
 import { useProductBlocks } from '../../hooks/useProductBlocks'
 import { useFormValidation } from '../../hooks/useFormValidation'
@@ -68,14 +69,14 @@ export default function BuilderStep() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
-        <button
-          onClick={handleCancel}
-          className="text-xs text-white/30 hover:text-white/60 transition-colors"
-        >
+      <div className="flex items-center justify-between gap-3 px-4 py-2 border-b border-border">
+        <button onClick={handleCancel} className="btn btn-err" title="Cancelar y perder cambios">
           Cancelar
         </button>
-        <span className="text-xs text-white/20">Paso {step} de 7</span>
+        <DemoToggle />
+        <span className="text-[10px] tracking-widest text-muted-foreground uppercase">
+          Paso {step} / 7
+        </span>
       </div>
 
       <StepIndicator currentStep={step} totalSteps={7} labels={STEP_LABELS} />
@@ -86,9 +87,9 @@ export default function BuilderStep() {
 
           {step === 3 && (
             <div className="flex flex-col gap-4">
-              <div className="text-center mb-2">
-                <h2 className="text-xl font-bold text-white">Elegí los bloques</h2>
-                <p className="text-sm text-white/40 mt-1">Seleccioná qué secciones incluir en el proyecto</p>
+              <div className="mb-2">
+                <h2 className="lbl">Elegí los bloques</h2>
+                <p className="hint">Seleccioná qué secciones incluir en el proyecto</p>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {available.map((block) => (
@@ -106,30 +107,30 @@ export default function BuilderStep() {
 
           {step === 4 && (
             <div className="flex flex-col gap-6">
-              <div className="text-center mb-2">
-                <h2 className="text-xl font-bold text-white">Configuración del proyecto</h2>
-                <p className="text-sm text-white/40 mt-1">Colores, tipografía y nombre</p>
+              <div className="mb-2">
+                <h2 className="lbl">Configuración del proyecto</h2>
+                <p className="hint">Colores, tipografía y nombre</p>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Nombre del proyecto</label>
+                <label className="lbl">Nombre del proyecto</label>
                 <input
                   type="text"
                   value={store.config.name}
                   onChange={(e) => store.setConfig({ name: e.target.value })}
                   placeholder="Ej: PizzaYa"
-                  className="bg-muted border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none focus:border-primary/50 transition-colors"
+                  className="field"
                 />
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-xs font-bold text-white/50 uppercase tracking-wider">Slug (kebab-case)</label>
+                <label className="lbl">Slug (kebab-case)</label>
                 <input
                   type="text"
                   value={store.config.slug}
                   onChange={(e) => store.setConfig({ slug: e.target.value })}
                   placeholder="Ej: pizzaya"
-                  className="bg-muted border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/20 outline-none focus:border-primary/50 transition-colors font-mono"
+                  className="field"
                 />
               </div>
 
@@ -168,24 +169,22 @@ export default function BuilderStep() {
 
           {step === 5 && (
             <div className="flex flex-col gap-4">
-              <div className="text-center mb-2">
-                <h2 className="text-xl font-bold text-white">Textos del proyecto</h2>
-                <p className="text-sm text-white/40 mt-1">Configurá el contenido de cada bloque</p>
+              <div className="mb-2">
+                <h2 className="lbl">Textos del proyecto</h2>
+                <p className="hint">Configurá el contenido de cada bloque</p>
               </div>
 
               {store.selectedBlocks.length === 0 ? (
-                <p className="text-sm text-white/30 text-center py-8">No hay bloques seleccionados</p>
+                <p className="hint text-center py-8">No hay bloques seleccionados</p>
               ) : (
                 <div className="flex flex-col gap-4">
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {store.selectedBlocks.map((b) => (
                       <button
                         key={b}
                         onClick={() => setActiveTextBlock(b)}
-                        className={`text-xs px-3 py-1.5 rounded-lg transition-all ${
-                          activeTextBlock === b
-                            ? 'bg-primary text-black font-bold'
-                            : 'bg-white/5 text-white/40 hover:text-white'
+                        className={`btn ${
+                          activeTextBlock === b ? 'border-foreground text-foreground' : 'text-muted-foreground'
                         }`}
                       >
                         {b}
@@ -207,9 +206,9 @@ export default function BuilderStep() {
 
           {step === 6 && (
             <div className="flex flex-col gap-4">
-              <div className="text-center mb-2">
-                <h2 className="text-xl font-bold text-white">Imágenes del proyecto</h2>
-                <p className="text-sm text-white/40 mt-1">Subí logo, favicon e imágenes de los bloques</p>
+              <div className="mb-2">
+                <h2 className="lbl">Imágenes del proyecto</h2>
+                <p className="hint">Subí logo, favicon e imágenes de los bloques</p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -258,61 +257,55 @@ export default function BuilderStep() {
 
           {step === 7 && (
             <div className="flex flex-col gap-6">
-              <div className="text-center mb-2">
-                <h2 className="text-xl font-bold text-white">Resumen y descarga</h2>
-                <p className="text-sm text-white/40 mt-1">Revisá la configuración antes de generar</p>
+              <div className="mb-2">
+                <h2 className="lbl">Resumen y descarga</h2>
+                <p className="hint">Revisá la configuración antes de generar</p>
               </div>
 
-              <div className="rounded-xl border border-white/10 bg-card p-4 flex flex-col gap-3">
-                <div className="flex items-center gap-3 text-sm">
-                  <span className={store.product ? 'text-green-400' : 'text-white/30'}>
-                    {store.product ? '✓' : '○'}
-                  </span>
-                  <span className="text-white/40">Producto</span>
-                  <span className="text-white font-medium ml-auto">{store.product || '—'}</span>
+              <div className="panel p-4 flex flex-col">
+                {store.useDemoData && (
+                  <div className="mb-3">
+                    <span className="pill pill-ok">Demo</span>
+                  </div>
+                )}
+                <div className="kv">
+                  <span className="k">Producto</span>
+                  <span className="v">{store.product || '—'}</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <span className={store.template ? 'text-green-400' : 'text-white/30'}>
-                    {store.template ? '✓' : '○'}
-                  </span>
-                  <span className="text-white/40">Plantilla</span>
-                  <span className="text-white font-medium ml-auto">{store.template || '—'}</span>
+                <div className="kv">
+                  <span className="k">Plantilla</span>
+                  <span className="v">{store.template || '—'}</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <span className={store.selectedBlocks.length > 0 ? 'text-green-400' : 'text-white/30'}>
-                    {store.selectedBlocks.length > 0 ? '✓' : '○'}
-                  </span>
-                  <span className="text-white/40">Bloques</span>
-                  <span className="text-white font-medium ml-auto">{store.selectedBlocks.length}</span>
+                <div className="kv">
+                  <span className="k">Bloques</span>
+                  <span className="v">{store.selectedBlocks.length} seleccionados</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <span className="text-green-400">✓</span>
-                  <span className="text-white/40">Colores</span>
-                  <span className="text-white font-medium ml-auto flex items-center gap-2">
-                    <span className="w-3 h-3 rounded-full" style={{ background: store.config.colors.primary }} />
-                    <span className="w-3 h-3 rounded-full" style={{ background: store.config.colors.secondary }} />
-                    <span className="w-3 h-3 rounded-full" style={{ background: store.config.colors.accent }} />
+                <div className="kv">
+                  <span className="k">Colores</span>
+                  <span className="v flex items-center justify-end gap-2">
+                    <span className="w-3 h-3 rounded-full border border-border2" style={{ background: store.config.colors.primary }} />
+                    <span className="w-3 h-3 rounded-full border border-border2" style={{ background: store.config.colors.secondary }} />
+                    <span className="w-3 h-3 rounded-full border border-border2" style={{ background: store.config.colors.accent }} />
                   </span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <span className={Object.keys(store.textos).length > 0 ? 'text-green-400' : 'text-white/30'}>
-                    {Object.keys(store.textos).length > 0 ? '✓' : '○'}
-                  </span>
-                  <span className="text-white/40">Textos</span>
-                  <span className="text-white font-medium ml-auto">{Object.keys(store.textos).length} bloques</span>
+                <div className="kv">
+                  <span className="k">Textos</span>
+                  <span className="v">{Object.keys(store.textos).length} bloques completados</span>
                 </div>
-                <div className="flex items-center gap-3 text-sm">
-                  <span className={store.config.logo ? 'text-green-400' : 'text-white/30'}>
-                    {store.config.logo ? '✓' : '○'}
-                  </span>
-                  <span className="text-white/40">Logo</span>
-                  <span className="text-white font-medium ml-auto">{store.config.logo ? 'Subido' : 'Opcional'}</span>
+                <div className="kv">
+                  <span className="k">Logo</span>
+                  <span className="v">{store.config.logo ? 'Subido' : 'Opcional'}</span>
+                </div>
+                <div className="kv">
+                  <span className="k">Datos demo (DB simulada)</span>
+                  <span className="v">{store.useDemoData ? 'Sí' : 'No'}</span>
                 </div>
               </div>
 
-              <div className="rounded-xl border border-yellow-500/30 bg-yellow-500/10 p-4">
-                <p className="text-xs text-yellow-400/80 text-center">
-                  Completar MONGODB_URI, JWT_SECRET y demás credenciales en .env.local de cada app antes de deployar
+              <div className="bg-warnbg border border-[#6b4e10] rounded px-4 py-3">
+                <p className="text-xs text-warn text-center">
+                  COMPLETAR MONGODB_URI, JWT_SECRET Y DEMÁS CREDENCIALES EN .ENV.LOCAL DE CADA APP ANTES DE
+                  DEPLOYAR
                 </p>
               </div>
 
@@ -327,21 +320,14 @@ export default function BuilderStep() {
       </div>
 
       {step >= 2 && step <= 6 && (
-        <div className="flex items-center justify-between px-4 py-4 border-t border-white/10">
-          <button
-            onClick={handlePrev}
-            className="px-4 py-2.5 rounded-xl text-sm text-white/40 hover:text-white transition-colors"
-          >
+        <div className="flex items-center justify-between px-4 py-4 border-t border-border">
+          <button onClick={handlePrev} className="btn">
             Atrás
           </button>
           <button
             onClick={handleNext}
             disabled={!isValid}
-            className={`px-6 py-3 rounded-xl font-bold text-sm transition-all ${
-              isValid
-                ? 'bg-primary text-black hover:bg-primary/90 active:scale-[0.98]'
-                : 'bg-white/5 text-white/20 cursor-not-allowed'
-            }`}
+            className="btn btn-ok"
           >
             Siguiente
           </button>
