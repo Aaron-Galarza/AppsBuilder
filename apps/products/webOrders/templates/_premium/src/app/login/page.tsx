@@ -1,93 +1,109 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, LogIn, Lock, User } from 'lucide-react'
+import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { useAuthStore } from '@saas/hooks'
+import { Input } from '@saas/ui'
 
 export default function LoginPage() {
   const router = useRouter()
+  const { login, isLogged, token } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    if (isLogged || token) router.replace('/admin')
+  }, [isLogged, token, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
     setLoading(true)
-
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-const body = await res.json()
-      const token = body?.data?.token || body?.token
-
-      if (!res.ok) {
-        setError(body?.data?.message || body?.message || 'Credenciales inválidas')
-        setLoading(false)
-        return
-      }
-
-      if (token) localStorage.setItem('token', token)
-      router.push('/admin')
-    } catch {
-      setError('Error al conectar con el servidor')
+      await login(email, password)
+      router.replace('/admin')
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Credenciales incorrectas. Intentá de nuevo.')
+    } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
-      <button onClick={() => router.push('/')} className="absolute top-6 left-6 w-10 h-10 flex items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 hover:text-white transition-colors">
-        <ArrowLeft className="w-5 h-5" />
-      </button>
-
-      <div className="w-full max-w-sm flex flex-col items-center gap-8">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-14 h-14 rounded-2xl bg-primary/15 border border-primary/30 flex items-center justify-center">
-            <Lock className="w-7 h-7 text-primary" />
-          </div>
-          <div className="text-center">
-            <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
-            <p className="text-sm text-white/40 mt-1">INJECT_TENANT_NAME</p>
+    <main className="flex min-h-screen items-center justify-center bg-background px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-6 flex flex-col items-center gap-3 text-center">
+          <img
+            src="INJECT_LOGO_URL"
+            alt="INJECT_TENANT_NAME"
+            className="h-14 w-14 rounded-full border border-white/10 object-cover"
+          />
+          <div>
+            <h1 className="text-xl font-bold tracking-wide text-white">INJECT_TENANT_NAME</h1>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-white/40">
+              Panel de administración
+            </p>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-          <div>
-            <label className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-1.5 block">Email</label>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-card p-6">
+          <div className="space-y-1.5">
+            <label htmlFor="login-email" className="block text-xs font-semibold uppercase tracking-wider text-white/50">
+              Email
+            </label>
+            <Input
+              id="login-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="admin@email.com"
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <label htmlFor="login-password" className="block text-xs font-semibold uppercase tracking-wider text-white/50">
+              Contraseña
+            </label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm text-white placeholder-white/30 focus:outline-none focus:border-primary/50 transition-colors"
-                placeholder="admin@ejemplo.com" />
+              <Input
+                id="login-password"
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/40 transition-colors hover:text-white"
+                aria-label={showPassword ? 'Ocultar contraseña' : 'Ver contraseña'}
+              >
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+              </button>
             </div>
           </div>
 
-          <div>
-            <label className="text-xs font-semibold text-white/50 uppercase tracking-wider mb-1.5 block">Contraseña</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required
-                className="w-full rounded-xl border border-white/10 bg-white/5 py-3 pl-10 pr-4 text-sm text-white placeholder-white/30 focus:outline-none focus:border-primary/50 transition-colors"
-                placeholder="••••••••" />
-            </div>
-          </div>
+          {error && <p className="text-xs font-medium text-red-400">{error}</p>}
 
-          {error && <p className="text-red-400 text-sm text-center bg-red-400/10 px-4 py-2 rounded-xl">{error}</p>}
-
-          <button type="submit" disabled={loading}
-            className={`w-full py-3 rounded-xl font-extrabold text-sm flex items-center justify-center gap-2 transition-all duration-300 ${
-              loading ? 'bg-zinc-800 text-white/30 cursor-not-allowed' : 'bg-primary text-black hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'
-            }`}>
-            {loading ? 'Ingresando...' : 'Iniciar Sesión'}
-            {!loading && <LogIn className="w-4 h-4" />}
+          <button
+            type="submit"
+            disabled={loading || !email || !password}
+            className="inline-flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-all disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ backgroundColor: 'var(--color-primary)', color: '#000' }}
+          >
+            <LogIn size={16} /> {loading ? 'Ingresando...' : 'Iniciar Sesión'}
           </button>
         </form>
+
+        <p className="mt-4 text-center text-[10px] text-white/30">Solo personal autorizado</p>
       </div>
-    </div>
+    </main>
   )
 }
