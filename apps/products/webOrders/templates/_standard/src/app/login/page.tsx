@@ -3,11 +3,11 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
-import { useAuthStore, apiFetch } from '@saas/hooks'
+import { useAuthStore } from '@saas/hooks'
 
 export default function LoginPage() {
   const router = useRouter()
-  const { token, setAuth } = useAuthStore()
+  const { login, isLogged, token } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -15,10 +15,10 @@ export default function LoginPage() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    if (token) {
+    if (isLogged || token) {
       router.replace('/admin')
     }
-  }, [token, router])
+  }, [isLogged, token, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,13 +26,9 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const data = await apiFetch<{ token: string; user: unknown }>('/users/login', {
-        method: 'POST',
-        body: JSON.stringify({ email, password }),
-      })
-      setAuth(data.token, data.user)
-      router.push('/admin')
-} catch (err: unknown) {
+      await login(email, password)
+      router.replace('/admin')
+    } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Credenciales incorrectas. Intentá de nuevo.'
       setError(message)
     } finally {
