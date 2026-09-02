@@ -7,9 +7,9 @@ import { printComanda } from './utils/comanda';
 import { useAuthStore } from './useAuthStore';
 
 /** Rango de fechas soportado por GET /api/orders/admin y /api/analytics */
-export type AdminRange = 'hoy' | 'semana' | 'mes';
+export type AdminRange = 'hoy' | 'ayer' | 'semana' | 'mes';
 
-const VALID_RANGES: AdminRange[] = ['hoy', 'semana', 'mes'];
+const VALID_RANGES: AdminRange[] = ['hoy', 'ayer', 'semana', 'mes'];
 
 const VALID_STATUSES: OrderStatus[] = [
   'pending',

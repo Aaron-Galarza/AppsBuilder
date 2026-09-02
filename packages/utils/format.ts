@@ -33,21 +33,32 @@ export function formatOrderNumber(
 }
 
 /** Fecha legible es-AR. Ej: "24/08/2026" */
-export function formatDate(date: Date, timezone: string = ARGENTINA_TIMEZONE): string {
+export function formatDate(date: Date | string | number | null | undefined, timezone: string = ARGENTINA_TIMEZONE): string {
+  const d = toDate(date);
+  if (!d) return '--';
   return new Intl.DateTimeFormat('es-AR', {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
     timeZone: timezone,
-  }).format(date);
+  }).format(d);
 }
 
 /** Hora legible 24hs. Ej: "14:35" */
-export function formatTime(date: Date, timezone: string = ARGENTINA_TIMEZONE): string {
+export function formatTime(date: Date | string | number | null | undefined, timezone: string = ARGENTINA_TIMEZONE): string {
+  const d = toDate(date);
+  if (!d) return '--';
   return new Intl.DateTimeFormat('es-AR', {
     hour: '2-digit',
     minute: '2-digit',
     hour12: false,
     timeZone: timezone,
-  }).format(date);
+  }).format(d);
+}
+
+/** Normaliza múltiples formatos de fecha a un Date válido (o null si es inválido/faltante). */
+function toDate(date: Date | string | number | null | undefined): Date | null {
+  if (date == null || date === '') return null;
+  const d = date instanceof Date ? date : new Date(date);
+  return Number.isNaN(d.getTime()) ? null : d;
 }

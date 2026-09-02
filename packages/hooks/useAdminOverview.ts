@@ -5,10 +5,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { apiFetch, authHeaders } from './lib/api';
 import { useAuthStore } from './useAuthStore';
 
-export type OverviewRange = 'hoy' | 'semana' | 'mes';
+export type OverviewRange = 'hoy' | 'ayer' | 'semana' | 'mes';
 
-const VALID_RANGES: OverviewRange[] = ['hoy', 'semana', 'mes'];
-/** TTL del cache: 5 min para hoy/semana, 10 min para mes */
+const VALID_RANGES: OverviewRange[] = ['hoy', 'ayer', 'semana', 'mes'];
+/** TTL del cache: 5 min para hoy/ayer/semana, 10 min para mes */
 const ttlFor = (range: OverviewRange) => (range === 'mes' ? 10 : 5) * 60 * 1000;
 
 interface CachedStats {
