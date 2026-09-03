@@ -5,7 +5,7 @@ export const PRODUCT_BLOCKS = {
     premium: ['hero', 'menu', 'about', 'cta', 'contact', 'gallery', 'testimonials', 'offer', 'newsletter'],
   },
   landingPages: {
-    basic: ['hero', 'cta'],
+    basic: ['hero', 'cta', 'contact'],
     standard: ['hero', 'about', 'cta', 'contact'],
     premium: ['hero', 'about', 'cta', 'contact', 'gallery', 'testimonials', 'offer', 'newsletter'],
   },

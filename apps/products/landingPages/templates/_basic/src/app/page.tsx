@@ -1,36 +1,42 @@
 'use client'
 
-import { HeroSection } from '@/components/sections/HeroSection'
-import { CTASection } from '@/components/sections/CTASection'
-import { ContactSection } from '@/components/sections/ContactSection'
+import { HeroSimple } from '@saas/blocks/hero'
+import { CTASimple } from '@saas/blocks/cta'
+import { ContactInfo } from '@saas/blocks/contact'
 
 export default function HomePage() {
   return (
-    <main className="flex min-h-screen flex-col">
-      <HeroSection
+    <>
+      {/* BLOCK: hero */}
+      <HeroSimple
         title="INJECT_HERO_TITLE"
         subtitle="INJECT_HERO_SUBTITLE"
-        imageSrc="INJECT_HERO_IMAGE"
+        imageSrc="INJECT_HERO_IMAGE_URL"
         primaryColor="INJECT_PRIMARY_COLOR"
         ctaText="INJECT_HERO_CTA_TEXT"
         ctaHref="#contact"
+        isOpen={true}
       />
-      <CTASection
+
+      {/* BLOCK: cta */}
+      <CTASimple
         title="INJECT_CTA_TITLE"
-        subtitle="INJECT_CTA_SUBTITLE"
-        buttonText="INJECT_CTA_BUTTON_TEXT"
-        buttonHref="INJECT_CTA_BUTTON_HREF"
-        buttonColor="INJECT_PRIMARY_COLOR"
-      />
-      <ContactSection
-        title="INJECT_CONTACT_TITLE"
-        subtitle="INJECT_CONTACT_SUBTITLE"
-        phone="INJECT_CONTACT_PHONE"
-        email="INJECT_CONTACT_EMAIL"
-        address="INJECT_CONTACT_ADDRESS"
-        whatsappNumber="INJECT_WHATSAPP_NUMBER"
+        text="INJECT_CTA_SUBTITLE"
+        ctaText="INJECT_CTA_BUTTON_TEXT"
+        ctaHref="#contact"
         primaryColor="INJECT_PRIMARY_COLOR"
       />
-    </main>
+
+      {/* BLOCK: contact */}
+      <section id="contact" className="mx-auto w-full max-w-3xl scroll-mt-20 px-4 py-16">
+        <div className="flex justify-center">
+          <ContactInfo
+            address="INJECT_CONTACT_ADDRESS"
+            phone="INJECT_CONTACT_PHONE"
+            primaryColor="INJECT_PRIMARY_COLOR"
+          />
+        </div>
+      </section>
+    </>
   )
 }

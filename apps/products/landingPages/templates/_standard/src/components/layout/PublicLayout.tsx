@@ -1,15 +1,9 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import { Header } from './Header'
 import { Footer } from './Footer'
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
-  const isPrivateRoute = pathname?.startsWith('/admin') || pathname === '/login'
-
-  if (isPrivateRoute) return <>{children}</>
-
   return (
     <>
       <Header />
