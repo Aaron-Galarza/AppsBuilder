@@ -23,6 +23,18 @@ export const clientConfig: ProjectConfig = {
   },
   logo: 'https://res.cloudinary.com/xxx/image/upload/logos/pizzaya-logo.png',
   favicon: 'https://res.cloudinary.com/xxx/image/upload/logos/pizzaya-favicon.ico',
+  textos: {
+    hero: { title: 'Bienvenidos', subtitle: 'Las mejores pizzas', ctaText: 'Ver menú' },
+    contact: { address: 'Av. Corrientes 1234', phone: '+54 11 5555-1234', hours: 'Lun-Dom 18:00 a 00:00' },
+  },
+  images: {
+    logo: 'https://res.cloudinary.com/xxx/image/upload/logos/pizzaya-logo.png',
+    favicon: 'https://res.cloudinary.com/xxx/image/upload/logos/pizzaya-favicon.ico',
+    hero: '',
+    about: '',
+    offer: '',
+  },
+  blocks: ['menu', 'cart', 'checkout', 'admin', 'hero', 'about'],
   whatsapp: '5491155551234',
   instagram: 'pizzaya_oficial',
   address: 'Av. Corrientes 1234, CABA',

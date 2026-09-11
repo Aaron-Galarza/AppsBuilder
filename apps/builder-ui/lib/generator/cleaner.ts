@@ -199,13 +199,20 @@ function consumeElement(text: string, start: number): number {
   return -1
 }
 
+export function getEffectiveBlocks(
+  selectedBlocks: string[],
+  product: string = 'webOrders'
+): Set<string> {
+  const alwaysBlocks = ALWAYS_INCLUDE[product] || []
+  return new Set([...selectedBlocks, ...alwaysBlocks])
+}
+
 export function cleanUnusedBlocks(
   files: FileEntry[],
   selectedBlocks: string[],
   product: string = 'webOrders'
 ): FileEntry[] {
-  const alwaysBlocks = ALWAYS_INCLUDE[product] || []
-  const effectiveBlocks = new Set([...selectedBlocks, ...alwaysBlocks])
+  const effectiveBlocks = getEffectiveBlocks(selectedBlocks, product)
 
   return files
     .filter((file) => {

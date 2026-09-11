@@ -1,4 +1,5 @@
 import type { FileEntry } from './types'
+import { getEffectiveBlocks } from './cleaner'
 
 interface InjectorState {
   product: 'webOrders' | 'landingPages' | null
@@ -10,6 +11,7 @@ interface InjectorState {
     fonts: { heading: string; body: string }
   }
   textos: Record<string, Record<string, string>>
+  selectedBlocks: string[]
 }
 
 function hexValid(hex: string): boolean {
@@ -102,6 +104,10 @@ function injectTextos(
   result = result.replace(/INJECT_ABOUT_IMAGE_URL/g, imageUrls['about'] || '')
 
   result = result.replace(/INJECT_PRIMARY_COLOR/g, state.config.colors.primary)
+  result = result.replace(/INJECT_SECONDARY_COLOR/g, state.config.colors.secondary)
+  result = result.replace(/INJECT_ACCENT_COLOR/g, state.config.colors.accent)
+  result = result.replace(/INJECT_FONT_HEADING/g, state.config.fonts.heading)
+  result = result.replace(/INJECT_FONT_BODY/g, state.config.fonts.body)
 
   return result
 }
@@ -232,6 +238,60 @@ export type { ProjectConfig } from './base.config';
 
   return {
     path: `packages/configs/${slug}.config.ts`,
+    content,
+  }
+}
+
+/**
+ * Genera el archivo site.config.ts con la configuración completa del proyecto
+ * (incluye textos, images, blocks) — usado por @saas/configs/site en el ZIP.
+ */
+export function generateSiteConfig(
+  state: InjectorState,
+  imageUrls: Record<string, string>,
+): FileEntry {
+  const slug = state.config.slug || 'project'
+  const cfg = state.config
+  const textosStr = JSON.stringify(state.textos, null, 2)
+  const blocksStr = JSON.stringify([...getEffectiveBlocks(state.selectedBlocks, state.product ?? 'webOrders')])
+
+  const content = `import type { ProjectConfig } from './base.config';
+
+export const clientConfig: ProjectConfig = {
+  name: ${JSON.stringify(cfg.name)},
+  slug: ${JSON.stringify(slug)},
+  colors: {
+    primary: ${JSON.stringify(cfg.colors.primary)},
+    secondary: ${JSON.stringify(cfg.colors.secondary)},
+    accent: ${JSON.stringify(cfg.colors.accent)},
+  },
+  fonts: {
+    heading: ${JSON.stringify(cfg.fonts.heading)},
+    body: ${JSON.stringify(cfg.fonts.body)},
+  },
+  logo: ${JSON.stringify(imageUrls['logo'] || '')},
+  favicon: ${JSON.stringify(imageUrls['favicon'] || '')},
+  textos: ${textosStr},
+  images: {
+    logo: ${JSON.stringify(imageUrls['logo'] || '')},
+    favicon: ${JSON.stringify(imageUrls['favicon'] || '')},
+    hero: ${JSON.stringify(imageUrls['hero'] || '')},
+    about: ${JSON.stringify(imageUrls['about'] || '')},
+    offer: ${JSON.stringify(imageUrls['offer'] || '')},
+  },
+  blocks: ${blocksStr},
+  whatsapp: '',
+  instagram: '',
+  address: '',
+  mapboxToken: '',
+  apiUrl: '',
+};
+
+export type { ProjectConfig } from './base.config';
+`
+
+  return {
+    path: `packages/configs/site.config.ts`,
     content,
   }
 }

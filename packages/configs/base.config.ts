@@ -17,6 +17,18 @@ export interface ProjectConfig {
   };
   logo: string;
   favicon: string;
+  /** Textos por bloque (bloque -> pares de clave/valor editados en el builder). */
+  textos: Record<string, Record<string, string>>;
+  /** URLs de imágenes del proyecto. */
+  images: {
+    logo: string;
+    favicon: string;
+    hero: string;
+    about: string;
+    offer: string;
+  };
+  /** Bloques seleccionados (incluye los obligatorios del producto). */
+  blocks: string[];
   whatsapp?: string;
   instagram?: string;
   address?: string;

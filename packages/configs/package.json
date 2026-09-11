@@ -8,6 +8,14 @@
     ".": {
       "types": "./index.ts",
       "default": "./index.ts"
+    },
+    "./base.config": {
+      "types": "./base.config.ts",
+      "default": "./base.config.ts"
+    },
+    "./site": {
+      "types": "./site.config.ts",
+      "default": "./site.config.ts"
     }
   },
   "files": [
