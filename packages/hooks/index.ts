@@ -3,7 +3,7 @@ export { API_URL, apiFetch, authHeaders } from './lib/api';
 export type { ApiEnvelope } from './lib/api';
 
 // Stores de estado global
-export { useCartStore } from './useCartStore';
+export { useCartStore, CREDIT_SURCHARGE_RATE } from './useCartStore';
 export type { DeliveryCoordinates } from './useCartStore';
 export { useAuthStore } from './useAuthStore';
 
@@ -31,3 +31,14 @@ export { useQuickOrder } from './useQuickOrder';
 
 // Utilidades de impresión
 export { generateComandaHTML, printComanda } from './utils/comanda';
+
+// Runtime del sitio (preview + ZIP)
+export { SiteConfigProvider, useSiteConfig } from './siteRuntime';
+export {
+  SiteNavProvider,
+  NextNavBridge,
+  useSitePathname,
+  useSiteRouter,
+  useSiteNavigate,
+  setSitePathname,
+} from './navigation';
