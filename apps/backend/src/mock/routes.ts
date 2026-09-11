@@ -332,14 +332,96 @@ router.delete('/api/addons/admin/:id', (req: Request, res: Response) => {
 // ORDERS
 // ═══════════════════════════════════════════════════════════════════════════
 
-/** POST /api/orders - Crear pedido */
+/** POST /api/orders - Crear pedido (calcula totales como el servicio real) */
 router.post('/api/orders', (req: Request, res: Response) => {
-  const order = getCollection('orders').create({
-    ...req.body,
-    status: 'pending',
-    createdAt: new Date().toISOString(),
-    orderNumber: Date.now(),
+  const body = req.body as {
+    customer?: { name?: string; phone?: string };
+    items?: { productId: string; quantity: number; addons?: { addonId: string; quantity: number }[] }[];
+    deliveryType?: string;
+    paymentMethod?: string;
+    couponCode?: string;
+    notes?: string;
+    delivery?: { address?: string; lat?: number; lng?: number };
+  };
+
+  const products = getCollection('products');
+  const addonsCol = getCollection('addons');
+  const coupons = getCollection('coupons');
+
+  // Resolver items (snapshot como buildOrderItems real)
+  const items = (body.items || []).map((inc) => {
+    const product = products.findById(inc.productId);
+    const resolvedAddons = (inc.addons || []).map((a) => {
+      const addon = addonsCol.findById(a.addonId);
+      return {
+        addonId: a.addonId,
+        name: String(addon?.name ?? 'Adicional'),
+        price: Number(addon?.price ?? 0),
+        quantity: a.quantity,
+      };
+    });
+    const unitPrice =
+      Number(product?.price ?? 0) +
+      resolvedAddons.reduce((s, a) => s + Number(a.price) * a.quantity, 0);
+    return {
+      productId: inc.productId,
+      title: String(product?.title ?? 'Producto'),
+      price: Number(product?.price ?? 0),
+      quantity: inc.quantity,
+      addons: resolvedAddons,
+      itemTotal: Number((unitPrice * inc.quantity).toFixed(2)),
+    };
   });
+
+  const subtotal = Number(items.reduce((s, i) => s + i.itemTotal, 0).toFixed(2));
+
+  // Cupón
+  let discount = 0;
+  let couponCode: string | undefined;
+  if (body.couponCode) {
+    const coupon = coupons.find({ code: body.couponCode, active: true })[0] as
+      | Record<string, unknown>
+      | undefined;
+    if (coupon && coupon.discountType) {
+      couponCode = coupon.code as string;
+      discount =
+        coupon.discountType === 'percentage'
+          ? Math.round((subtotal * (coupon.discountValue as number)) / 100)
+          : Math.min(coupon.discountValue as number, subtotal);
+    }
+  }
+
+  // Delivery cost (mock simplificado)
+  const deliveryType = body.deliveryType || 'pickup';
+  const deliveryCost = 0;
+
+  // Recargo crédito (15%)
+  const baseTotal = subtotal - discount + deliveryCost;
+  const surcharge = body.paymentMethod === 'credito' ? Math.round(baseTotal * 0.15) : 0;
+  const total = Number((baseTotal + surcharge).toFixed(2));
+
+  // Número de pedido secuencial simple (en memoria)
+  const datePart = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+  const prevSeq = (getCollection('orders').find().filter((o) => String(o.orderNumber).startsWith(datePart)).length) || 0;
+  const orderNumber = `${datePart}-${String(prevSeq + 1).padStart(3, '0')}`;
+
+  const order = getCollection('orders').create({
+    customer: { name: (body.customer?.name ?? '').slice(0, 120), phone: (body.customer?.phone ?? '').slice(0, 30) },
+    items,
+    deliveryType,
+    deliveryAddress: deliveryType === 'delivery' ? body.delivery?.address : undefined,
+    deliveryCost,
+    paymentMethod: body.paymentMethod ?? 'cash',
+    couponCode,
+    discount,
+    surcharge,
+    subtotal,
+    total,
+    status: 'pending',
+    notes: body.notes,
+    orderNumber,
+  });
+
   return ok(res, order);
 });
 
