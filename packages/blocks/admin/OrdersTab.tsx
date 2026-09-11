@@ -127,15 +127,20 @@ export function OrdersTab({ primaryColor = '#111' }: OrdersTabProps) {
 
                     {/* Ítems */}
                     <ul className="space-y-1">
-                      {order.items.map((item, i) => (
-                        <li key={i} className="flex justify-between text-[11px]">
-                          <span className="text-neutral-300">
-                            {item.quantity}× {item.product.title}
-                            {(item.addons?.length ?? 0) > 0 &&
-                              ` · ${item.addons.map((a) => `${a.quantity}× ${a.addon.name}`).join(', ')}`}
-                          </span>
-                        </li>
-                      ))}
+                      {order.items.map((item, i) => {
+                        const flat = item as unknown as { title?: string; addons?: { name?: string; addon?: { name?: string }; quantity: number }[] };
+                        const addonsLine = (flat.addons ?? [])
+                          .map((a) => `${a.quantity}× ${a.name ?? a.addon?.name}`)
+                          .join(', ');
+                        return (
+                          <li key={i} className="flex justify-between text-[11px]">
+                            <span className="text-neutral-300">
+                              {item.quantity}× {flat.title ?? item.product?.title}
+                              {addonsLine && ` · ${addonsLine}`}
+                            </span>
+                          </li>
+                        );
+                      })}
                     </ul>
 
                     {/* Acciones de estado */}
@@ -226,7 +231,10 @@ function StatusBadge({ status }: { status: OrderStatus }) {
 function whatsappUrl(order: Order): string {
   const lines = [
     `Hola ${order.customer.name}! Tu pedido #${order.orderNumber}:`,
-    ...order.items.map((i) => `• ${i.quantity}× ${i.product.title}`),
+    ...order.items.map((i) => {
+      const flat = i as unknown as { title?: string };
+      return `• ${i.quantity}× ${flat.title ?? i.product.title}`;
+    }),
     `Total: ${formatPrice(order.total)}`,
   ];
   return `https://wa.me/${order.customer.phone.replace(/\D/g, '')}?text=${encodeURIComponent(lines.join('\n'))}`;

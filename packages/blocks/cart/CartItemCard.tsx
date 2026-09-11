@@ -61,13 +61,13 @@ export function CartItemCard({ item }: CartItemCardProps) {
   return (
     <div
       className={cn(
-        'flex gap-3 rounded-2xl border border-black/5 bg-white p-3 transition-all duration-300',
+        'flex gap-3 rounded-2xl border border-border bg-card p-3 transition-all duration-300',
         isRemoving && 'translate-x-full opacity-0'
       )}
       aria-hidden={isRemoving}
     >
       {/* Imagen */}
-      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-neutral-100">
+      <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-muted">
         {!imageError && imageSrc ? (
           <img
             src={imageSrc}
@@ -90,7 +90,7 @@ export function CartItemCard({ item }: CartItemCardProps) {
         {(item.addons?.length ?? 0) > 0 && (
           <ul className="mt-1 space-y-0.5">
             {item.addons.map((ca) => (
-              <li key={`${ca.addon._id}-${dataSignature}`} className="text-[11px] text-neutral-500">
+              <li key={`${ca.addon._id}-${dataSignature}`} className="text-[11px] text-muted-foreground">
                 + {ca.quantity}× {ca.addon.name} ({formatPrice(ca.addon.price * ca.quantity)})
               </li>
             ))}
@@ -106,7 +106,7 @@ export function CartItemCard({ item }: CartItemCardProps) {
           <button
             onClick={handleRemove}
             aria-label={`Quitar ${item.product.title}`}
-            className="rounded-lg p-2 text-neutral-400 transition hover:bg-red-50 hover:text-red-600"
+            className="rounded-lg p-2 text-muted-foreground transition hover:bg-red-500/10 hover:text-red-500"
           >
             <Trash2 size={16} />
           </button>
