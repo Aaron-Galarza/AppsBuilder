@@ -10,8 +10,8 @@
   --color-muted: #1a1a1a;
   --color-muted-foreground: #a0a0a0;
   --color-border: rgba(255, 255, 255, 0.1);
-  --font-sans: var(--font-body), sans-serif;
-  --font-heading: var(--font-heading), sans-serif;
+  --font-sans: INJECT_FONT_BODY, sans-serif;
+  --font-heading: INJECT_FONT_HEADING, sans-serif;
 }
 
 body {

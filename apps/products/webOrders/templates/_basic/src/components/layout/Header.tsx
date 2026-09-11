@@ -2,15 +2,15 @@
 
 import { Lock, ShoppingCart } from 'lucide-react'
 import { useSyncExternalStore } from 'react'
-import { useRouter } from 'next/navigation'
-import { useCartStore } from '@saas/hooks'
+import { useCartStore, useSiteConfig, useSiteRouter } from '@saas/hooks'
 
 const emptySubscribe = () => () => {}
 
 export function Header() {
-  const router = useRouter()
+  const router = useSiteRouter()
+  const cfg = useSiteConfig()
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
-  const cartCount = useCartStore((state) => state.getTotals().itemCount)
+  const cartCount = useCartStore((state) => state.items.reduce((n, i) => n + i.quantity, 0))
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur-lg">
@@ -22,8 +22,8 @@ export function Header() {
           aria-label="Volver al menú"
         >
           <img
-            src="INJECT_LOGO_URL"
-            alt="INJECT_TENANT_NAME"
+            src={cfg.logo}
+            alt={cfg.name}
             width={36}
             height={36}
             className="h-9 w-9 rounded-full border border-white/10 object-cover"

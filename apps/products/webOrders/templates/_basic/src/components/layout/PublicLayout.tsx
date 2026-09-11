@@ -1,11 +1,11 @@
 'use client'
 
-import { usePathname } from 'next/navigation'
 import { Header } from './Header'
 import { Footer } from './Footer'
+import { useSitePathname } from '@saas/hooks'
 
 export function PublicLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname()
+  const pathname = useSitePathname()
   const isPrivateRoute = pathname?.startsWith('/admin') || pathname === '/login'
 
   if (isPrivateRoute) return <>{children}</>

@@ -1,14 +1,13 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   BarChart3, CalendarDays, Clock, LogOut, Pencil, Plus, Power,
   ShoppingBag, Trash2, Utensils, Settings,
 } from 'lucide-react'
 import {
   useAdminConfig, useAdminCoupons, useAdminMenu, useAdminOrders,
-  useAdminOverview, useAuthStore,
+  useAdminOverview, useAuthStore, useSiteConfig, useSiteRouter,
 } from '@saas/hooks'
 import { OverviewTab, OrdersTab } from '@saas/blocks/admin'
 import { AdminCard, AdminInput, AdminProductRow, AdminSelect, AdminTextarea } from '@saas/ui'
@@ -39,7 +38,8 @@ const DAY_LABELS: Record<string, string> = {
 const ICON_OPTIONS = CATEGORY_ICON_OPTIONS.map(({ name }) => ({ value: name, label: name }))
 
 export default function AdminPage() {
-  const router = useRouter()
+  const router = useSiteRouter()
+  const cfg = useSiteConfig()
   const { isLogged, token, user, logout } = useAuthStore()
 
   const menu = useAdminMenu()
@@ -109,12 +109,12 @@ export default function AdminPage() {
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4">
           <div className="flex items-center gap-3">
             <img
-              src="INJECT_LOGO_URL"
-              alt="INJECT_TENANT_NAME"
+              src={cfg.logo}
+              alt={cfg.name}
               className="h-9 w-9 rounded-full border border-white/10 object-cover"
             />
             <div className="leading-tight">
-              <p className="text-sm font-bold">INJECT_TENANT_NAME</p>
+              <p className="text-sm font-bold">{cfg.name}</p>
               <p className="text-[10px] uppercase tracking-widest text-white/40">Panel Admin</p>
             </div>
           </div>

@@ -1,13 +1,19 @@
-import { AtSign, Clock, MapPin, MessageCircle } from 'lucide-react'
+'use client'
 
-const INFO = [
-  { Icon: Clock, title: 'Horario', value: 'INJECT_CONTACT_HOURS' },
-  { Icon: MapPin, title: 'Retiro / Dirección', value: 'INJECT_CONTACT_ADDRESS' },
-  { Icon: MessageCircle, title: 'WhatsApp', value: 'INJECT_CONTACT_PHONE' },
-  { Icon: AtSign, title: 'Instagram', value: '@INJECT_TENANT_NAME' },
-]
+import { AtSign, Clock, MapPin, MessageCircle } from 'lucide-react'
+import { useSiteConfig } from '@saas/hooks'
 
 export function Footer() {
+  const cfg = useSiteConfig()
+  const contact = cfg.textos?.['contact'] || {}
+
+  const INFO = [
+    { Icon: Clock, title: 'Horario', value: contact['hours'] ?? '' },
+    { Icon: MapPin, title: 'Retiro / Dirección', value: contact['address'] ?? '' },
+    { Icon: MessageCircle, title: 'WhatsApp', value: contact['phone'] ?? '' },
+    { Icon: AtSign, title: 'Instagram', value: cfg.instagram ? `@${cfg.instagram}` : '' },
+  ]
+
   return (
     <footer className="mt-10 border-t border-white/10 bg-background">
       <div className="mx-auto w-full max-w-2xl px-4 py-8">
@@ -27,12 +33,12 @@ export function Footer() {
 
         <div className="mt-8 flex items-center justify-center gap-2 border-t border-white/5 pt-6">
           <img
-            src="INJECT_LOGO_URL"
-            alt="INJECT_TENANT_NAME"
+            src={cfg.logo}
+            alt={cfg.name}
             className="h-6 w-6 rounded-full object-cover opacity-60"
           />
           <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
-            © {new Date().getFullYear()} INJECT_TENANT_NAME
+            © {new Date().getFullYear()} {cfg.name}
           </p>
         </div>
       </div>

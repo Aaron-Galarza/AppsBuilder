@@ -1,12 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, LogIn } from 'lucide-react'
-import { useAuthStore } from '@saas/hooks'
+import { useAuthStore, useSiteConfig, useSiteRouter } from '@saas/hooks'
 
 export default function LoginPage() {
-  const router = useRouter()
+  const router = useSiteRouter()
+  const cfg = useSiteConfig()
   const { login, isLogged, token } = useAuthStore()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -40,9 +40,9 @@ export default function LoginPage() {
     <div className="min-h-screen bg-[#0a0a0a] flex flex-col items-center justify-center px-4">
       <div className="w-full max-w-sm flex flex-col gap-6">
         <div className="flex flex-col items-center gap-3">
-          <img src="INJECT_LOGO_URL" alt="INJECT_TENANT_NAME" className="h-14 w-14 rounded-2xl object-contain" />
+          <img src={cfg.logo} alt={cfg.name} className="h-14 w-14 rounded-2xl object-contain" />
           <div className="text-center">
-            <h1 className="text-xl font-bold text-white">INJECT_TENANT_NAME</h1>
+            <h1 className="text-xl font-bold text-white">{cfg.name}</h1>
             <p className="text-xs text-white/40 mt-1">Panel de administración</p>
           </div>
         </div>

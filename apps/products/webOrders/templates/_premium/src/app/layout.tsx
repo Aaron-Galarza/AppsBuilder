@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { Inter, Poppins } from 'next/font/google'
-import '@/styles/globals.css'
-import { PublicLayout } from '@/components/layout/PublicLayout'
+import '../styles/globals.css'
+import { PublicLayout } from '../components/layout/PublicLayout'
+import { SiteNavProvider } from '@saas/hooks'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es" className={`${inter.variable} ${poppins.variable}`}>
       <body className="antialiased min-h-screen flex flex-col">
-        <PublicLayout>{children}</PublicLayout>
+        <SiteNavProvider>
+          <PublicLayout>{children}</PublicLayout>
+        </SiteNavProvider>
       </body>
     </html>
   )

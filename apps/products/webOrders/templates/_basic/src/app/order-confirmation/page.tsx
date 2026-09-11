@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useSiteRouter } from '@saas/hooks'
 import { CheckCircle, MapPin, Wallet, Bike, ShoppingBag, ArrowLeft, UtensilsCrossed, FileText } from 'lucide-react'
 import { formatPrice } from '@saas/utils'
 
@@ -21,7 +21,7 @@ interface OrderSnapshot {
 }
 
 export default function OrderConfirmationPage() {
-  const router = useRouter()
+  const router = useSiteRouter()
   const [order, setOrder] = useState<OrderSnapshot | null>(null)
   const [notFound, setNotFound] = useState(false)
 

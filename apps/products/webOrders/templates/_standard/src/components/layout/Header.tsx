@@ -1,10 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
 import { ShoppingCart, Lock } from 'lucide-react'
 import { useSyncExternalStore } from 'react'
-import { useCartStore } from '@saas/hooks'
+import { useCartStore, useSiteConfig, useSitePathname } from '@saas/hooks'
 
 const emptySubscribe = () => () => {}
 
@@ -14,16 +13,17 @@ const NAV_LINKS = [
 ]
 
 export function Header() {
-  const pathname = usePathname()
+  const cfg = useSiteConfig()
+  const pathname = useSitePathname()
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false)
-  const cartCount = useCartStore((state) => state.getTotals().itemCount)
+  const cartCount = useCartStore((state) => state.items.reduce((n, i) => n + i.quantity, 0))
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-3 sm:px-4">
         <Link href="/" className="flex items-center gap-2 shrink-0 transition-opacity hover:opacity-80">
-          <img src="INJECT_LOGO_URL" alt="INJECT_TENANT_NAME" width={32} height={32} className="h-8 w-8 rounded-full object-cover" />
-          <span className="font-heading text-lg sm:text-xl font-bold tracking-wide text-primary">INJECT_TENANT_NAME</span>
+          <img src={cfg.logo} alt={cfg.name} width={32} height={32} className="h-8 w-8 rounded-full object-cover" />
+          <span className="font-heading text-lg sm:text-xl font-bold tracking-wide text-primary">{cfg.name}</span>
         </Link>
 
         <nav className="hidden sm:flex items-center gap-1">

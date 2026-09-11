@@ -1,8 +1,8 @@
 'use client'
 
-import { MiniHero } from '@/components/sections/MiniHero'
-import { MenuSection } from '@/components/sections/MenuSection'
-import { StatusBar } from '@/components/sections/StatusBar'
+import { MiniHero } from '../components/sections/MiniHero'
+import { MenuSection } from '../components/sections/MenuSection'
+import { StatusBar } from '../components/sections/StatusBar'
 
 export default function HomePage() {
   return (

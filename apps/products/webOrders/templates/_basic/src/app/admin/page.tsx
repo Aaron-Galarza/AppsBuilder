@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   Banknote, Landmark, LogOut, PackageCheck, Pencil, Plus,
   Power, Printer, RefreshCw, Star, Trash2, Wallet,
@@ -9,6 +8,7 @@ import {
 import type { Order, OrderStatus } from '@saas/types'
 import {
   useAdminConfig, useAdminCoupons, useAdminMenu, useAdminOrders, useAdminOverview, useAuthStore,
+  useSiteConfig, useSiteRouter,
 } from '@saas/hooks'
 import type { AdminRange, OverviewRange } from '@saas/hooks'
 import { AdminCard, AdminInput, AdminProductRow, AdminSelect, AdminTextarea, Badge } from '@saas/ui'
@@ -39,7 +39,8 @@ const statusColor: Record<OrderStatus, string> = Object.fromEntries(
 ) as Record<OrderStatus, string>
 
 export default function AdminPage() {
-  const router = useRouter()
+  const router = useSiteRouter()
+  const cfg = useSiteConfig()
   const { isLogged, token, user, logout } = useAuthStore()
 
   const overview = useAdminOverview()
@@ -94,12 +95,12 @@ export default function AdminPage() {
         <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4">
           <div className="flex items-center gap-3">
             <img
-              src="INJECT_LOGO_URL"
-              alt="INJECT_TENANT_NAME"
+              src={cfg.logo}
+              alt={cfg.name}
               className="h-9 w-9 rounded-full border border-white/10 object-cover"
             />
             <div className="leading-tight">
-              <p className="text-sm font-bold">INJECT_TENANT_NAME</p>
+              <p className="text-sm font-bold">{cfg.name}</p>
               <p className="text-[10px] uppercase tracking-widest text-white/40">Torre de control</p>
             </div>
           </div>
@@ -226,7 +227,7 @@ export default function AdminPage() {
                     <span className="text-sm font-black">{formatPrice(o.total)}</span>
                     {statusBadge(o.status)}
                     <button
-                      onClick={() => orders.printComanda(o, 'INJECT_TENANT_NAME')}
+                      onClick={() => orders.printComanda(o, cfg.name)}
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10"
                       title="Imprimir comanda"
                     >

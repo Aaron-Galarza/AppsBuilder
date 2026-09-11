@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   LogOut,
   LayoutDashboard,
@@ -40,6 +39,8 @@ import {
   useAdminMenu,
   useQuickOrder,
   useMenu,
+  useSiteRouter,
+  useSiteConfig,
 } from '@saas/hooks'
 import { formatPrice, formatTime, ORDER_STATUSES, PAYMENT_METHODS } from '@saas/utils'
 import type { Order, OrderStatus, Product } from '@saas/types'
@@ -66,7 +67,8 @@ const TABS: { id: AdminTab; label: string; icon: React.ReactNode }[] = [
 ]
 
 export default function AdminPage() {
-  const router = useRouter()
+  const router = useSiteRouter()
+  const cfg = useSiteConfig()
   const { logout, isLogged, token, user } = useAuthStore()
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard')
 
@@ -96,7 +98,7 @@ export default function AdminPage() {
         <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
           <div className="flex items-center gap-3">
             <button onClick={() => router.push('/')} className="flex items-center gap-2 transition-opacity hover:opacity-80">
-              <img src="INJECT_LOGO_URL" alt="INJECT_TENANT_NAME" className="h-7 w-7 rounded object-cover" />
+              <img src={cfg.logo} alt={cfg.name} className="h-7 w-7 rounded object-cover" />
               <span className="font-heading text-sm font-bold tracking-wide text-primary">Admin Panel</span>
             </button>
           </div>
