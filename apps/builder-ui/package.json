@@ -9,8 +9,11 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@saas/blocks": "workspace:*",
     "@saas/configs": "workspace:*",
+    "@saas/hooks": "workspace:*",
     "@saas/types": "workspace:*",
+    "@saas/ui": "workspace:*",
     "@saas/utils": "workspace:*",
     "clsx": "^2.1.1",
     "cloudinary": "^2.5.1",

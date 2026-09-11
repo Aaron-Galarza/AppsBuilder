@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/router'
+import { Eye } from 'lucide-react'
 import { StepIndicator } from '../../components/StepIndicator'
 import { TemplateSelector } from '../../components/TemplateSelector'
 import { BloqueCheckbox } from '../../components/BloqueCheckbox'
@@ -12,6 +13,7 @@ import { ImageUploader } from '../../components/ImageUploader'
 import { PreviewPanel } from '../../components/PreviewPanel'
 import { DownloadButton } from '../../components/DownloadButton'
 import { DemoToggle } from '../../components/DemoToggle'
+import { PreviewOverlay } from '../../components/preview/PreviewOverlay'
 import { useBuilderStore } from '../../stores/builderStore'
 import { useProductBlocks } from '../../hooks/useProductBlocks'
 import { useFormValidation } from '../../hooks/useFormValidation'
@@ -28,6 +30,7 @@ export default function BuilderStep() {
   const [activeTextBlock, setActiveTextBlock] = useState<string | null>(
     store.selectedBlocks[0] || null
   )
+  const [previewOpen, setPreviewOpen] = useState(false)
 
   const handleNext = () => {
     if (isValid && step < 7) {
@@ -333,6 +336,20 @@ export default function BuilderStep() {
           </button>
         </div>
       )}
+
+      <button
+        type="button"
+        onClick={() => setPreviewOpen((prev) => !prev)}
+        className={`btn btn-fill fixed bottom-5 right-5 z-[70] ${previewOpen ? 'opacity-70' : ''}`}
+      >
+        <Eye size={13} />
+        {previewOpen ? 'Cerrar preview' : 'Ver Preview'}
+      </button>
+
+      <PreviewOverlay
+        open={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+      />
     </div>
   )
 }

@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@source "../../packages/blocks";
+@source "../../packages/ui";
+@source "../../products";
 
 @theme {
   --color-background: #0e0e0e;
@@ -7,6 +10,8 @@
   --color-muted: #1c1c1c;
   --color-muted-foreground: #888888;
   --color-primary: #d0d0d0;
+  --color-secondary: #1a1a1a;
+  --color-accent: #4caf50;
   --color-border: #252525;
   --color-border2: #303030;
   --color-border3: #3a3a3a;
@@ -17,6 +22,8 @@
   --color-warnbg: #1c1600;
   --color-errbg: #1f0808;
 
+  --font-sans: 'Courier New', Courier, monospace;
+  --font-heading: 'Inter', sans-serif;
   --font-mono: 'Courier New', Courier, monospace;
 
   --radius-xs: 2px;

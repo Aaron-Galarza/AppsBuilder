@@ -15,7 +15,14 @@
     "incremental": true,
     "plugins": [{ "name": "next" }],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["./*"],
+      "@saas/configs/site": ["../../packages/configs/site.config.ts"],
+      "@saas/configs/base.config": ["../../packages/configs/base.config.ts"],
+      "@saas/*": ["../../packages/*"],
+      "react": ["./node_modules/@types/react/index.d.ts"],
+      "lucide-react": ["./node_modules/lucide-react/dist/lucide-react.d.ts"],
+      "next/link": ["./node_modules/next/link.d.ts"],
+      "next/navigation": ["./node_modules/next/navigation.d.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
