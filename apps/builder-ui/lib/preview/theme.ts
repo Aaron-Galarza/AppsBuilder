@@ -25,6 +25,10 @@ const FONT_LINKS: Record<string, string> = {
 /**
  * Tema del site generado, espejo de lo que inyecta el injector en
  * `globals.css` de cada plantilla. Se aplica como CSS vars en un wrapper.
+ *
+ * Se incluyen los `--radius-*` default de Tailwind v4 (que el ZIP genera al
+ * no redefinirlos): el builder redefine esos tokens a 3px/4px en su propio
+ * `@theme`, y sin estos el site preview heredaría los radios del builder.
  */
 export function buildPreviewTheme(state: BuilderState): PreviewTheme {
   const heading = FONT_FAMILIES[state.config.fonts.heading] ?? FONT_FAMILIES.Inter
@@ -42,6 +46,14 @@ export function buildPreviewTheme(state: BuilderState): PreviewTheme {
     '--color-border': 'rgba(255, 255, 255, 0.1)',
     '--font-heading': heading,
     '--font-sans': body,
+    '--radius-xs': '.125rem',
+    '--radius-sm': '.25rem',
+    '--radius-md': '.375rem',
+    '--radius-lg': '.5rem',
+    '--radius-xl': '.75rem',
+    '--radius-2xl': '1rem',
+    '--radius-3xl': '1.5rem',
+    '--radius-full': 'calc(infinity * 1px)',
     fontFamily: body,
     background: 'var(--color-background)',
     color: 'var(--color-foreground)',
