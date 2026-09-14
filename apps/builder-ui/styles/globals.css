@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@source "../../packages/blocks";
-@source "../../packages/ui";
+@source "../../../packages/blocks";
+@source "../../../packages/ui";
 @source "../../products";
 
 @theme {
