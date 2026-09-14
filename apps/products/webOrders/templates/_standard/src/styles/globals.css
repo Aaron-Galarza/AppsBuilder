@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@source "../../../../../../../packages";
 
 @theme {
   --color-primary: INJECT_PRIMARY_COLOR;
