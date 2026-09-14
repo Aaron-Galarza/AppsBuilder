@@ -52,6 +52,7 @@ function PathnameSync() {
   const pathname = usePathname();
   const router = useRouter();
   const path = useNavStore((s) => s.path);
+  const storePathname = useNavStore((s) => s.pathname);
 
   useEffect(() => {
     if (pathname && pathname !== useNavStore.getState().pathname) {
@@ -60,11 +61,11 @@ function PathnameSync() {
   }, [pathname, path]);
 
   useEffect(() => {
-    const storePathname = useNavStore.getState().pathname;
-    if (storePathname && storePathname !== pathname) {
-      void router.push(storePathname);
+    const next = useNavStore.getState().pathname;
+    if (next && next !== pathname) {
+      void router.push(next);
     }
-  }, [pathname, router]);
+  }, [storePathname, pathname, router]);
 
   return null;
 }
