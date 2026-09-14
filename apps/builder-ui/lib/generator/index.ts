@@ -5,7 +5,6 @@ import { injectConfig, generateSiteConfig, renameEnvFiles } from './injector'
 import { createZip } from './zipCreator'
 import { uploadAllImages } from '@/lib/cloudinary'
 import { DEMO_IMAGES } from '@/lib/demo/demoContent'
-import simulateDB from '@/lib/demo/simulateDB.json'
 import type { BuilderState } from '@/stores/builderStore'
 
 export type { FileEntry, GeneratorContext, GeneratorConfig }
@@ -22,23 +21,6 @@ export async function generateRepo(state: BuilderState): Promise<Buffer> {
 
   const useDemoData = state.useDemoData === true
 
-  let demoFiles = cleanedFiles
-  if (useDemoData && state.product === 'webOrders') {
-    let wroteDemoData = false
-    demoFiles = cleanedFiles.map((file) => {
-      if (file.path !== 'apps/backend/src/scripts/data.json') return file
-      wroteDemoData = true
-      return { ...file, content: Buffer.from(JSON.stringify(simulateDB, null, 2), 'utf-8') }
-    })
-
-    if (!wroteDemoData) {
-      demoFiles.push({
-        path: 'apps/backend/src/scripts/data.json',
-        content: Buffer.from(JSON.stringify(simulateDB, null, 2), 'utf-8'),
-      })
-    }
-  }
-
   const imageUrls = await uploadAllImages(state)
   if (useDemoData) {
     for (const [key, url] of Object.entries(DEMO_IMAGES)) {
@@ -54,7 +36,7 @@ export async function generateRepo(state: BuilderState): Promise<Buffer> {
     selectedBlocks: state.selectedBlocks,
   }
 
-  const injectedFiles = injectConfig(demoFiles, injectorState, imageUrls)
+  const injectedFiles = injectConfig(cleanedFiles, injectorState, imageUrls)
   const renamedFiles = renameEnvFiles(injectedFiles)
 
   const siteConfig = generateSiteConfig(injectorState, imageUrls)
