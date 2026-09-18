@@ -19,7 +19,7 @@ Completar el repo AppsBuilder según las checklist (backend y frontend) que el u
 - **Modularizar todo lo que se pueda en bloques y componentes reutilizables.** Es la idea central de AppsBuilder: si una pieza se puede reutilizar en cualquier lado, va a `packages/blocks/` (o `packages/ui/` si es atómica) con variantes por props, no a una copia por plantilla.
 - **Una estética, variantes por props + lock por plantilla.** Las plantillas comparten los mismos bloques; la diferencia entre basic/standard/premium es composición de secciones y props (`variant`, `columns`, `level`). El bloqueo "bloque presente o no" ya lo provee `cleaner.ts` (`BLOCK_COMPONENTS` + `ALWAYS_INCLUDE`) y `cfg.blocks` en runtime.
 - **NO duplicar chrome por plantilla.** Header, Footer, StatusBar, Login, Cart/Checkout wrappers y Admin deben vivir en bloques compartidos; un cambio se hace 1 vez en `packages/blocks`, se pushea y los clientes sincronizan.
-- **Admin pendiente de unificar:** mover KitchenTab y StatsTab (hoy inline solo en `_premium`) a `packages/blocks/admin` y exponer un `AdminApp` con prop `level` (`basic`/`standard`/`premium`).
+- **Admin (avance):** `DashboardTab`, `StatsTab`, `KitchenTab` y `POSTab` ya viven en `packages/blocks/admin`; `AdminApp` con prop `level` cubre `standard` y `premium` (la página admin de cada template es un wrapper con login guard). **Pendiente:** migrar `_basic` (página inline sin tabs) a `level="basic"`.
 
 ## Contexto clave del proyecto
 

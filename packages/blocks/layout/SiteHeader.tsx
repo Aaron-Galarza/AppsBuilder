@@ -1,9 +1,8 @@
 'use client';
 
-import Link from 'next/link';
 import { Lock, ShoppingCart } from 'lucide-react';
 import { useSyncExternalStore } from 'react';
-import { useCartStore, useSiteConfig, useSitePathname } from '@saas/hooks';
+import { useCartStore, useSiteConfig, useSitePathname, useSiteRouter } from '@saas/hooks';
 import { cn } from '@saas/ui';
 
 export interface SiteHeaderProps {
@@ -22,6 +21,7 @@ const NAV_LINKS = [
 export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
   const cfg = useSiteConfig();
   const pathname = useSitePathname();
+  const router = useSiteRouter();
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
   const cartCount = useCartStore((state) => state.items.reduce((n, i) => n + i.quantity, 0));
   const compact = variant === 'compact';
@@ -35,9 +35,10 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
         )}
       >
         {compact ? (
-          <Link
-            href="/"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full transition-opacity hover:opacity-80"
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full transition-opacity hover:opacity-80"
             aria-label="Volver al menú"
           >
             <img
@@ -47,37 +48,43 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
               height={36}
               className="h-9 w-9 rounded-full border border-white/10 object-cover"
             />
-          </Link>
+          </button>
         ) : (
-          <Link href="/" className="flex shrink-0 items-center gap-2 transition-opacity hover:opacity-80">
+          <button
+            type="button"
+            onClick={() => router.push('/')}
+            className="flex shrink-0 cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
+          >
             <img src={cfg.logo} alt={cfg.name} width={32} height={32} className="h-8 w-8 rounded-full object-cover" />
             <span className="font-heading text-lg font-bold tracking-wide text-primary sm:text-xl">{cfg.name}</span>
-          </Link>
+          </button>
         )}
 
         {!compact && (
           <nav className="hidden items-center gap-1 sm:flex">
             {NAV_LINKS.map(({ href, label }) => (
-              <Link
+              <button
                 key={href}
-                href={href}
-                className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
+                type="button"
+                onClick={() => router.push(href)}
+                className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
                   pathname === href
                     ? 'bg-primary/15 text-primary'
                     : 'text-white/60 hover:bg-white/5 hover:text-white'
                 }`}
               >
                 {label}
-              </Link>
+              </button>
             ))}
           </nav>
         )}
 
         <div className="flex items-center gap-2">
-          <Link
-            href="/cart"
+          <button
+            type="button"
+            onClick={() => router.push('/cart')}
             className={cn(
-              'relative flex items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95',
+              'relative flex cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95',
               compact ? 'h-10 w-10' : 'p-2'
             )}
             aria-label="Abrir carrito"
@@ -88,17 +95,18 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
                 {cartCount}
               </span>
             )}
-          </Link>
-          <Link
-            href="/login"
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push('/login')}
             className={cn(
-              'flex items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all hover:bg-white/10 hover:text-white',
+              'flex cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all hover:bg-white/10 hover:text-white',
               compact ? 'h-10 w-10 text-white/80' : 'p-2 text-white/50'
             )}
             aria-label="Iniciar sesión"
           >
             <Lock size={18} strokeWidth={2} />
-          </Link>
+          </button>
         </div>
       </div>
     </header>
