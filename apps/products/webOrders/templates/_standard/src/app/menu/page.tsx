@@ -1,6 +1,6 @@
 'use client'
 
-import { MenuGrid } from '@saas/blocks/menu'
+import { MenuBrowser } from '@saas/blocks/menu'
 import { useSiteConfig } from '@saas/hooks'
 
 export default function MenuPage() {
@@ -15,7 +15,7 @@ export default function MenuPage() {
       </header>
 
       {/* BLOCK: menu */}
-      <MenuGrid columns={3} variant="vertical" />
+      <MenuBrowser variant="grid" columns={3} placeholder="Buscar en el menú..." />
     </main>
   )
 }

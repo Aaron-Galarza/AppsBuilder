@@ -8,6 +8,8 @@ export { MenuCarousel } from './MenuCarousel';
 export type { MenuCarouselProps } from './MenuCarousel';
 export { MenuList } from './MenuList';
 export type { MenuListProps } from './MenuList';
+export { MenuBrowser } from './MenuBrowser';
+export type { MenuBrowserProps } from './MenuBrowser';
 export { CategoryFilter } from './CategoryFilter';
 export type { CategoryFilterProps } from './CategoryFilter';
 export { SearchBar } from './SearchBar';

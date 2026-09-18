@@ -1,7 +1,7 @@
 'use client'
 
+import { MenuBrowser } from '@saas/blocks/menu'
 import { MiniHero } from '../components/sections/MiniHero'
-import { MenuSection } from '../components/sections/MenuSection'
 import { StatusBar } from '../components/sections/StatusBar'
 
 export default function HomePage() {
@@ -16,7 +16,7 @@ export default function HomePage() {
           <StatusBar />
 
           {/* BLOCK: menu — Búsqueda + categorías + listado + adicionales */}
-          <MenuSection />
+          <MenuBrowser variant="list" placeholder="Buscar productos..." />
         </div>
       </div>
     </main>
