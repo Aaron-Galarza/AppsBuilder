@@ -233,7 +233,7 @@ function whatsappUrl(order: Order): string {
     `Hola ${order.customer.name}! Tu pedido #${order.orderNumber}:`,
     ...order.items.map((i) => {
       const flat = i as unknown as { title?: string };
-      return `• ${i.quantity}× ${flat.title ?? i.product.title}`;
+      return `• ${i.quantity}× ${i.product?.title ?? flat.title ?? 'Producto'}`;
     }),
     `Total: ${formatPrice(order.total)}`,
   ];
