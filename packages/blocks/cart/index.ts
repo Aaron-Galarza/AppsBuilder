@@ -6,3 +6,5 @@ export { CartItemExtrasPanel } from './CartItemExtrasPanel';
 export type { CartItemExtrasPanelProps } from './CartItemExtrasPanel';
 export { CartEmpty } from './CartEmpty';
 export type { CartEmptyProps } from './CartEmpty';
+export { CartPage } from './CartPage';
+export type { CartPageProps } from './CartPage';
