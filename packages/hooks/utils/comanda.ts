@@ -1,5 +1,16 @@
-import { Order } from '@saas/types';
+import { Order, OrderItem } from '@saas/types';
 import { formatDate, formatPrice, formatTime } from '@saas/utils';
+
+/** Los pedidos se persisten con items planos; el carrito usa items anidados. Soportar ambas formas. */
+function itemTitle(item: OrderItem): string {
+  const flat = item as OrderItem & { title?: string };
+  return flat.title ?? item.product?.title ?? 'Producto';
+}
+
+function addonName(a: OrderItem['addons'][number]): string {
+  const flat = a as { name?: string };
+  return flat.name ?? a.addon?.name ?? 'Adicional';
+}
 
 /**
  * Genera el HTML de la comanda para impresora térmica (80mm).
@@ -22,17 +33,17 @@ export function generateComandaHTML(order: Order, storeName = 'PEDIDO'): string 
   const items = order.items
     .map((item) => {
       const addons =
-        item.addons.length > 0
-          ? `<ul style="list-style:none;padding-left:15px;margin:5px 0">${item.addons
+        (item.addons ?? []).length > 0
+          ? `<ul style="list-style:none;padding-left:15px;margin:5px 0">${(item.addons ?? [])
               .map(
                 (a) =>
-                  `<li style="margin:0;font-size:.9em">&#8627; ${a.addon.name}${
+                  `<li style="margin:0;font-size:.9em">&#8627; ${addonName(a)}${
                     a.quantity > 1 ? ` x${a.quantity}` : ''
                   }</li>`
               )
               .join('')}</ul>`
           : '';
-      return `<p style="margin:0;font-weight:bold">- ${item.product.title} x${item.quantity} — ${formatPrice(
+      return `<p style="margin:0;font-weight:bold">- ${itemTitle(item)} x${item.quantity} — ${formatPrice(
         item.itemTotal
       )}</p>${addons}`;
     })
