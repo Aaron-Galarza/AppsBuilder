@@ -22,3 +22,4 @@ export { POSTab } from './POSTab';
 export type { POSTabProps } from './POSTab';
 export { AdminApp } from './AdminApp';
 export type { AdminAppLevel, AdminTabId } from './AdminApp';
+export { BasicSections } from './BasicSections';

@@ -25,6 +25,7 @@ import {
   useSiteRouter,
 } from '@saas/hooks';
 import { cn } from '@saas/ui';
+import { BasicSections } from './BasicSections';
 import { ConfigTab } from './ConfigTab';
 import { CouponsTab } from './CouponsTab';
 import { DashboardTab } from './DashboardTab';
@@ -36,8 +37,8 @@ import { OverviewTab } from './OverviewTab';
 import { POSTab } from './POSTab';
 import { StatsTab } from './StatsTab';
 
-/** Niveles de plantilla soportados por el admin compartido (basic aún no migra) */
-export type AdminAppLevel = 'standard' | 'premium';
+/** Niveles de plantilla soportados por el admin compartido */
+export type AdminAppLevel = 'basic' | 'standard' | 'premium';
 
 export type AdminTabId =
   | 'overview'
@@ -53,6 +54,7 @@ export type AdminTabId =
 type TabDef = { id: AdminTabId; label: string; Icon: LucideIcon };
 
 const TABS: Record<AdminAppLevel, TabDef[]> = {
+  basic: [],
   standard: [
     { id: 'overview', label: 'Overview', Icon: BarChart3 },
     { id: 'orders', label: 'Pedidos', Icon: ShoppingBag },
@@ -79,7 +81,7 @@ export function AdminApp({ level }: { level: AdminAppLevel }) {
   const cfg = useSiteConfig();
   const { isLogged, token, user, logout } = useAuthStore();
   const tabs = TABS[level];
-  const [activeTab, setActiveTab] = useState<AdminTabId>(level === 'standard' ? 'overview' : 'dashboard');
+  const [activeTab, setActiveTab] = useState<AdminTabId>(level === 'premium' ? 'dashboard' : 'overview');
 
   // Deep-link por hash (#menu, #orders, ...)
   useEffect(() => {
@@ -112,42 +114,46 @@ export function AdminApp({ level }: { level: AdminAppLevel }) {
 
   return (
     <div className={cn('min-h-screen text-white', isDarkBg ? 'bg-[#0F0F0F]' : 'bg-[#0a0a0a]')}>
-      {level === 'standard' ? (
-        <StandardHeader userName={user?.name ?? ''} userEmail={user?.email ?? ''} onLogout={handleLogout} onHome={() => router.push('/')} cfgName={cfg.name} cfgLogo={cfg.logo} />
-      ) : (
+      {level === 'premium' ? (
         <PremiumHeader initials={initials(user)} onLogout={handleLogout} onHome={() => router.push('/')} cfgName={cfg.name} cfgLogo={cfg.logo} />
+      ) : (
+        <StandardHeader subtitle={level === 'basic' ? 'Torre de control' : 'Panel Admin'} userName={user?.name ?? ''} userEmail={user?.email ?? ''} onLogout={handleLogout} onHome={() => router.push('/')} cfgName={cfg.name} cfgLogo={cfg.logo} />
       )}
 
-      {/* Tab nav superior horizontal */}
-      <div
-        className={cn(
-          'sticky z-30 overflow-x-auto border-b border-white/5 backdrop-blur-lg',
-          level === 'standard' ? 'top-16 bg-[#0a0a0a]/90 py-1' : 'top-14 bg-[#0F0F0F]/95 py-2'
-        )}
-      >
-        <div className={`mx-auto flex w-full max-w-7xl gap-1 px-4`}>
-          {tabs.map((tab) => {
-            const Icon = tab.Icon;
-            const isActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => switchTab(tab.id)}
-                className={cn(
-                  'flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-all',
-                  isActive ? 'bg-primary text-black' : 'text-white/50 hover:bg-white/5 hover:text-white'
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {tab.label}
-              </button>
-            );
-          })}
+      {/* Tab nav superior horizontal (basic no tiene tabs: página apilada única) */}
+      {tabs.length > 0 && (
+        <div
+          className={cn(
+            'sticky z-30 overflow-x-auto border-b border-white/5 backdrop-blur-lg',
+            level === 'standard' ? 'top-16 bg-[#0a0a0a]/90 py-1' : 'top-14 bg-[#0F0F0F]/95 py-2'
+          )}
+        >
+          <div className="mx-auto flex w-full max-w-7xl gap-1 px-4">
+            {tabs.map((tab) => {
+              const Icon = tab.Icon;
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => switchTab(tab.id)}
+                  className={cn(
+                    'flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-all',
+                    isActive ? 'bg-primary text-black' : 'text-white/50 hover:bg-white/5 hover:text-white'
+                  )}
+                >
+                  <Icon className="h-4 w-4" />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-6">
-        {level === 'standard' ? (
+        {level === 'basic' ? (
+          <BasicSections />
+        ) : level === 'standard' ? (
           <StandardContent activeTab={activeTab} />
         ) : (
           <PremiumContent activeTab={activeTab} onGoTo={switchTab} />
@@ -160,6 +166,7 @@ export function AdminApp({ level }: { level: AdminAppLevel }) {
 /* ------------------------------ Cockpit (header) ------------------------------ */
 
 function StandardHeader({
+  subtitle = 'Panel Admin',
   userName,
   userEmail,
   onLogout,
@@ -167,6 +174,7 @@ function StandardHeader({
   cfgName,
   cfgLogo,
 }: {
+  subtitle?: string;
   userName: string;
   userEmail: string;
   onLogout: () => void;
@@ -184,7 +192,7 @@ function StandardHeader({
             <img src={cfgLogo} alt={cfgName} className="h-9 w-9 rounded-full border border-white/10 object-cover" />
             <div className="leading-tight">
               <p className="text-sm font-bold">{cfgName}</p>
-              <p className="text-[10px] uppercase tracking-widest text-white/40">Panel Admin</p>
+              <p className="text-[10px] uppercase tracking-widest text-white/40">{subtitle}</p>
             </div>
           </button>
         </div>
