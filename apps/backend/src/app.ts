@@ -2,7 +2,6 @@ import express, { Application } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import { getEnv } from './config/env';
-import { rateLimiter } from './middlewares/rateLimit';
 import { requestLogger } from './middlewares/logger';
 import { errorHandler } from './middlewares/error';
 import mainRouter from './routes';
@@ -43,7 +42,6 @@ export function createApp(): Application {
 
   app.use(express.json({ limit: '1mb' }));
   app.use(requestLogger);
-  app.use(rateLimiter);
 
   app.get('/', (_req, res) => {
     res.json({ success: true, data: { message: 'API funcionando', version: '1.0.0', mock: isMockActive() } });

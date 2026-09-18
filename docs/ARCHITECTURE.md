@@ -2491,7 +2491,6 @@ apps/backend/
 │   │   ├── auth.middleware.ts          ← JWT verify
 │   │   ├── error.middleware.ts         ← Global error handler
 │   │   ├── logger.middleware.ts
-│   │   ├── rateLimiter.middleware.ts
 │   │   └── validate.middleware.ts      ← Zod validation
 │   │
 │   ├── utils/

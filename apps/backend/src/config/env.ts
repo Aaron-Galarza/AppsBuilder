@@ -20,8 +20,6 @@ export interface Env {
     apiSecret: string;
     enabled: boolean;
   };
-  rateLimitWindowMs: number;
-  rateLimitMax: number;
   geocodingBudgetMonthly: number;
 }
 
@@ -67,8 +65,6 @@ export function loadEnv(): Env {
       apiSecret,
       enabled: Boolean(cloudName && apiKey && apiSecret),
     },
-    rateLimitWindowMs: num('RATE_LIMIT_WINDOW_MS', 60_000),
-    rateLimitMax: num('RATE_LIMIT_MAX', 120),
     geocodingBudgetMonthly: num('GEOCODING_BUDGET_MONTHLY', 8000),
   };
 }
