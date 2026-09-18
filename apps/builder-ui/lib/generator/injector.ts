@@ -208,40 +208,6 @@ export function injectConfig(
   })
 }
 
-export function generateClientConfig(
-  state: InjectorState,
-  imageUrls: Record<string, string>
-): FileEntry {
-  const slug = state.config.slug || 'project'
-  const cfg = state.config
-
-  const content = `import type { ProjectConfig } from './base.config';
-
-export const clientConfig: ProjectConfig = {
-  name: '${cfg.name}',
-  slug: '${slug}',
-  colors: {
-    primary: '${cfg.colors.primary}',
-    secondary: '${cfg.colors.secondary}',
-    accent: '${cfg.colors.accent}',
-  },
-  fonts: {
-    heading: '${cfg.fonts.heading}',
-    body: '${cfg.fonts.body}',
-  },
-  logo: '${imageUrls['logo'] || ''}',
-  favicon: '${imageUrls['favicon'] || ''}',
-};
-
-export type { ProjectConfig } from './base.config';
-`
-
-  return {
-    path: `packages/configs/${slug}.config.ts`,
-    content,
-  }
-}
-
 /**
  * Genera el archivo site.config.ts con la configuración completa del proyecto
  * (incluye textos, images, blocks) — usado por @saas/configs/site en el ZIP.
