@@ -12,6 +12,9 @@ export * from './admin';
 // Layout / chrome público
 export * from './layout';
 
+// Autenticación del panel
+export * from './auth';
+
 // Bloques de contenido compartidos
 export * from './about';
 export * from './cta';

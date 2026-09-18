@@ -23,6 +23,7 @@
     "./checkout": "./checkout/index.ts",
     "./admin": "./admin/index.ts",
     "./layout": "./layout/index.ts",
+    "./auth": "./auth/index.ts",
     "./featured": "./featured/index.ts",
     "./features": "./features/index.ts",
     "./pricing": "./pricing/index.ts",
