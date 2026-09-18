@@ -1,8 +1,8 @@
 'use client'
 
 import { MenuBrowser } from '@saas/blocks/menu'
+import { StoreStatus } from '@saas/blocks/layout'
 import { MiniHero } from '../components/sections/MiniHero'
-import { StatusBar } from '../components/sections/StatusBar'
 
 export default function HomePage() {
   return (
@@ -12,8 +12,8 @@ export default function HomePage() {
 
       <div className="w-full">
         <div className="mx-auto flex w-full max-w-2xl flex-col gap-4 px-4 pt-4">
-          {/* BLOCK: menu — Estado del local */}
-          <StatusBar />
+          {/* BLOCK: layout — Estado del local */}
+          <StoreStatus variant="pill" />
 
           {/* BLOCK: menu — Búsqueda + categorías + listado + adicionales */}
           <MenuBrowser variant="list" placeholder="Buscar productos..." />

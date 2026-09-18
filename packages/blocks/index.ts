@@ -9,6 +9,9 @@ export * from './checkout';
 // Panel admin
 export * from './admin';
 
+// Layout / chrome público
+export * from './layout';
+
 // Bloques de contenido compartidos
 export * from './about';
 export * from './cta';

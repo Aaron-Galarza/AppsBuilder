@@ -4,7 +4,8 @@ const ALWAYS_INCLUDE: Record<string, string[]> = {
   // menu/cart/checkout/admin: páginas esenciales siempre presentes.
   // hero/about: importados inline en el home de los templates (nunca deben faltar,
   // si no, el page.tsx siempre-conservado rompe por import colgante).
-  webOrders: ['menu', 'cart', 'checkout', 'admin', 'hero', 'about'],
+  // layout/auth: chrome del sitio (header/footer/status/login) reutilizado por todas las páginas.
+  webOrders: ['menu', 'cart', 'checkout', 'admin', 'hero', 'about', 'layout', 'auth'],
   landingPages: [],
 }
 
@@ -30,6 +31,8 @@ function extractBlockFromPath(path: string): string | null {
 
 const BLOCK_COMPONENTS: Record<string, string[]> = {
   hero: ['HeroSimple', 'HeroWithCarousel', 'HeroWithVideo'],
+  layout: ['PublicLayout', 'SiteHeader', 'SiteFooter', 'StoreStatus'],
+  auth: ['LoginPage'],
   menu: ['MenuBrowser', 'MenuGrid', 'CategoryFilter', 'MenuCarousel', 'MenuList', 'SearchBar', 'FeaturedBanner', 'StoreClosed', 'AddonsModal', 'ProductCard'],
   about: ['AboutSimple', 'AboutWithStory'],
   cta: ['CTASimple', 'CTAWithCountdown'],

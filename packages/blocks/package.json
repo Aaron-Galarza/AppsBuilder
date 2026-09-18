@@ -22,6 +22,7 @@
     "./cart": "./cart/index.ts",
     "./checkout": "./checkout/index.ts",
     "./admin": "./admin/index.ts",
+    "./layout": "./layout/index.ts",
     "./featured": "./featured/index.ts",
     "./features": "./features/index.ts",
     "./pricing": "./pricing/index.ts",

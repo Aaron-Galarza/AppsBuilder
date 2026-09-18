@@ -1,6 +1,6 @@
 'use client'
 
-import { StatusBar } from '../components/sections/StatusBar'
+import { StoreStatus } from '@saas/blocks/layout'
 import { HeroWithCarousel } from '@saas/blocks/hero'
 import { AboutWithStory } from '@saas/blocks/about'
 import { MapPin, MessageCircle, Clock } from 'lucide-react'
@@ -20,7 +20,7 @@ export default function HomePage() {
 
   return (
     <main className="flex min-h-screen flex-col">
-      <StatusBar />
+      <StoreStatus variant="bar" />
 
       {cfg.blocks?.includes('hero') && (
         <>
