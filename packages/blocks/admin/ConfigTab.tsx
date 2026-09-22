@@ -30,6 +30,12 @@ const DAY_LABELS: Record<string, string> = {
   sunday: 'Domingo',
 };
 
+/** Normaliza un horario a HH:mm (acepta opcionalmente segundos); '' si es inválido o vacío */
+function normalizeHHmm(t?: string): string {
+  const m = /^(\d{2}:\d{2})(?::\d{2})?$/.exec((t ?? '').trim());
+  return m ? m[1] : '';
+}
+
 /** Configuración del negocio: pánico, horarios, banner, lluvia y rangos de envío */
 export function ConfigTab({ primaryColor = '#111' }: ConfigTabProps) {
   const {
@@ -53,7 +59,14 @@ export function ConfigTab({ primaryColor = '#111' }: ConfigTabProps) {
   );
 
   const setDay = (next: DaySchedule) => {
-    const days = config.schedule.days.map((d) => (d.day === next.day ? next : d));
+    const openTime = normalizeHHmm(next.openTime);
+    const closeTime = normalizeHHmm(next.closeTime);
+    // Si el input quedó vacío/inválido, no enviar: el valor controlado
+    // vuelve al último guardado en el backend.
+    if (!openTime || !closeTime) return;
+    const days = config.schedule.days.map((d) =>
+      d.day === next.day ? { ...next, openTime, closeTime } : d
+    );
     void updateSchedule({ ...config.schedule, days });
   };
 
