@@ -1,12 +1,15 @@
 'use client'
 
 import { MenuBrowser } from '@saas/blocks/menu'
-import { StoreStatus } from '@saas/blocks/layout'
+import { StoreStatus, PromoBanner } from '@saas/blocks/layout'
 import { MiniHero } from '../components/sections/MiniHero'
 
 export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col pb-10">
+      {/* BLOCK: layout — Banner promocional (config) */}
+      <PromoBanner />
+
       {/* BLOCK: hero — Hero compacto */}
       <MiniHero />
 

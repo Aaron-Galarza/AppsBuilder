@@ -1,6 +1,6 @@
 'use client'
 
-import { StoreStatus } from '@saas/blocks/layout'
+import { StoreStatus, PromoBanner } from '@saas/blocks/layout'
 import { HeroWithCarousel } from '@saas/blocks/hero'
 import { AboutWithStory } from '@saas/blocks/about'
 import { MapPin, MessageCircle, Clock } from 'lucide-react'
@@ -20,6 +20,8 @@ export default function HomePage() {
 
   return (
     <main className="flex min-h-screen flex-col">
+      <PromoBanner />
+
       <StoreStatus variant="bar" />
 
       {cfg.blocks?.includes('hero') && (
@@ -47,11 +49,6 @@ export default function HomePage() {
             title={about['title'] ?? ''}
             story={about['text'] ?? ''}
             primaryColor="var(--color-primary)"
-            stats={[
-              { value: '100%', label: 'Calidad' },
-              { value: '24/7', label: 'Soporte' },
-              { value: '5★', label: 'Valoración' },
-            ]}
           />
         </>
       )}

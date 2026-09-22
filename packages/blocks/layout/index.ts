@@ -6,3 +6,5 @@ export { SiteFooter } from './SiteFooter';
 export type { SiteFooterProps } from './SiteFooter';
 export { StoreStatus } from './StoreStatus';
 export type { StoreStatusProps } from './StoreStatus';
+export { PromoBanner } from './PromoBanner';
+export type { PromoBannerProps } from './PromoBanner';

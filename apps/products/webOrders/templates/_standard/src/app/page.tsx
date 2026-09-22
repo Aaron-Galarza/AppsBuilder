@@ -1,6 +1,7 @@
 'use client'
 
 import { HeroSimple } from '@saas/blocks/hero'
+import { PromoBanner } from '@saas/blocks/layout'
 import { useStoreStatus, useSiteConfig } from '@saas/hooks'
 import { Clock, MapPin, MessageCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -16,6 +17,8 @@ export default function HomePage() {
 
   return (
     <main className="flex min-h-screen flex-col">
+      <PromoBanner />
+
       {cfg.blocks?.includes('hero') && (
         <>
           {/* BLOCK: hero */}
