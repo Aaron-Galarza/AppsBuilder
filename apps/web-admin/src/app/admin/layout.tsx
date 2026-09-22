@@ -1,37 +1,52 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Loader2, LogOut } from 'lucide-react'
-import { useAuthStore } from '@/stores/auth.store'
-
-const AUTH_STORAGE_KEY = 'appsbuilder-admin-auth'
+import { useAuthStore, authHeaders, API_URL } from '@saas/hooks'
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const isLogged = useAuthStore((s) => s.isLogged)
   const logout = useAuthStore((s) => s.logout)
   const router = useRouter()
-  const [isAuthorized, setIsAuthorized] = useState(false)
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(AUTH_STORAGE_KEY)
-      const token = raw ? JSON.parse(raw)?.state?.token : null
-      if (token) {
-        setIsAuthorized(true)
-      } else {
-        router.replace('/login')
-      }
-    } catch {
+    if (!isLogged) {
       router.replace('/login')
+      return
     }
-  }, [router])
+
+    // Sesión persistida puede tener un token viejo/vencido (p.ej. de otra app
+    // que usa el mismo storage saas-auth-storage). Valida contra el backend:
+    // si responde 401, limpiá sesión y volvé a login.
+    let cancelled = false
+    const check = async () => {
+      try {
+        const res = await fetch(`${API_URL}/api/orders/admin?range=hoy`, {
+          headers: authHeaders(useAuthStore.getState().token),
+          cache: 'no-store',
+        })
+        if (cancelled) return
+        if (res.status === 401) {
+          logout()
+          router.replace('/login')
+        }
+      } catch {
+        // Sin red: no expulsar al usuario por un fallo de conexión
+      }
+    }
+    void check()
+    return () => {
+      cancelled = true
+    }
+  }, [isLogged, logout, router])
 
   const handleLogout = () => {
     logout()
     router.replace('/login')
   }
 
-  if (!isAuthorized) {
+  if (!isLogged) {
     return (
       <div className="h-screen bg-background flex flex-col items-center justify-center gap-3">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />

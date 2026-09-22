@@ -2,20 +2,19 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import api from '@/services/api'
-import { useAuthStore } from '@/stores/auth.store'
+import { useAuthStore } from '@saas/hooks'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const { login, isAuthenticated } = useAuthStore()
+  const { login, isLogged } = useAuthStore()
   const router = useRouter()
 
   useEffect(() => {
-    if (isAuthenticated) router.replace('/admin')
-  }, [isAuthenticated, router])
+    if (isLogged) router.replace('/admin')
+  }, [isLogged, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -23,21 +22,10 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const res = await api.post<{ data: { token: string; user?: unknown } }>('/users/login', {
-        email,
-        password,
-      })
-      const token = res.data?.token
-
-      if (!token || typeof token !== 'string') {
-        throw new Error('No se encontró un token válido en la respuesta')
-      }
-
-      login(token)
+      await login(email.trim(), password)
       setTimeout(() => { router.push('/admin') }, 150)
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Credenciales inválidas'
-      if (message === 'No autorizado') return
       setError(message)
     } finally {
       setLoading(false)
