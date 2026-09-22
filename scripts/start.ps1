@@ -67,15 +67,14 @@ if ($needsInstall) {
   Write-Host '[ok] dependencias ya instaladas' -ForegroundColor Green
 }
 
-# 3) MongoDB: si no responde, arrancar backend directo contra el mock (sin 5 reintentos)
+# 3) MongoDB: si no responde, el backend igual arranca y reporta db:'down'
+#    (auto-seed: al conectar una base VACÍA la siembra sola; ver apps/backend/src/scripts/seed.ts)
 $mongoUp = Test-PortListen 27017
 if (-not $mongoUp) {
-  Write-Host '[~] MongoDB no responde en 27017 -> backend usará mock store (data.json) sin espera' -ForegroundColor Yellow
-  $env:MONGODB_MAX_RETRIES = '1'
-  $env:MONGODB_SELECTION_TIMEOUT_MS = '800'
+  Write-Host '[~] MongoDB local no responde en 27017 (si usás Atlas ignorá esto -> el backend usa MONGODB_URI del .env)' -ForegroundColor Yellow
 }
 
-# 4) Levantar servicios faltantes en paralelo
+# 4) Levantar servicios faltantes en background (cada uno con su propio log)
 $services = @(
   @{ Name = 'backend';  Port = 4000; Filter = '@saas/backend' },
   @{ Name = 'form';     Port = 3001; Filter = 'appsbuilder-ui' },
@@ -94,15 +93,30 @@ foreach ($svc in $services) {
 if ($missing.Count -gt 0) {
   Write-Host "[~] Levantando: $((($missing | ForEach-Object { $_.Name }) -join ', '))..." -ForegroundColor Yellow
 
-  $filters = $missing | ForEach-Object { "--filter=$($_.Filter)" }
+  $logDir = Join-Path $Root 'logs'
+  New-Item -ItemType Directory -Path $logDir -Force | Out-Null
 
-  # Invocar pnpm dev en primer plano (se cierra con Ctrl+C)
-  Write-Host '[~] Ejecutando pnpm dev (Ctrl+C para detener)' -ForegroundColor Yellow
-  & pnpm -r --parallel @filters run dev
-} else {
-  Write-Host '[ok] Todo arriba' -ForegroundColor Green
+  $pnpmCmd = (Get-Command pnpm.cmd -ErrorAction SilentlyContinue).Source
 
-  # Si todo ya estaba corriendo, abrir el navegador
-  Write-Host "[ok] Abriendo http://localhost:3001 ..." -ForegroundColor Green
-  Start-Process 'http://localhost:3001'
+  foreach ($svc in $missing) {
+    $stdout = Join-Path $logDir "$($svc.Name).log"
+    $stderr = Join-Path $logDir "$($svc.Name).err.log"
+    Write-Host "[~] $($svc.Name) -> pnpm --filter $($svc.Filter) run dev (log: logs\$($svc.Name).log)" -ForegroundColor Yellow
+    Start-Process -FilePath $pnpmCmd -ArgumentList '--filter', $svc.Filter, 'run', 'dev' `
+      -WorkingDirectory $Root -RedirectStandardOutput $stdout `
+      -RedirectStandardError $stderr -WindowStyle Hidden
+  }
+
+  foreach ($svc in $missing) {
+    $url = 'http://localhost:' + $svc.Port
+    Write-Host "[~] Esperando $($svc.Name) ($url)..." -ForegroundColor Yellow
+    if (Wait-Http $url 150) {
+      Write-Host "[ok] $($svc.Name) arriba en $url" -ForegroundColor Green
+    } else {
+      Write-Host "[ERROR] $($svc.Name) no respondió a tiempo. Revisá logs\$($svc.Name).log / logs\$($svc.Name).err.log" -ForegroundColor Red
+    }
+  }
 }
+
+Write-Host '[ok] Todo arriba. Para frenar: powershell -File scripts\stop.ps1' -ForegroundColor Green
+Start-Process 'http://localhost:3001'
