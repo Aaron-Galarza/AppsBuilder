@@ -2,11 +2,10 @@ import express, { Application } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import { getEnv } from './config/env';
+import { isDBReady } from './config/db';
 import { requestLogger } from './middlewares/logger';
 import { errorHandler } from './middlewares/error';
 import mainRouter from './routes';
-import mockRouter from './mock/routes';
-import { isMockActive } from './mock/store';
 
 export function createApp(): Application {
   const env = getEnv();
@@ -44,14 +43,8 @@ export function createApp(): Application {
   app.use(requestLogger);
 
   app.get('/', (_req, res) => {
-    res.json({ success: true, data: { message: 'API funcionando', version: '1.0.0', mock: isMockActive() } });
+    res.json({ success: true, data: { message: 'API funcionando', version: '1.0.0', db: isDBReady() ? 'up' : 'down' } });
   });
-
-  // Si MongoDB no está disponible, usar mock routes ANTES de las rutas reales
-  if (isMockActive()) {
-    console.log('[app] MongoDB no disponible - montando mock routes con data.json');
-    app.use(mockRouter);
-  }
 
   app.use('/api', mainRouter);
 

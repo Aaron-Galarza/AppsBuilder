@@ -19,8 +19,10 @@ pnpm start
 - Admin (web-admin): `http://localhost:3002`
 - Backend: `http://localhost:4000`
 
-Si MongoDB no responde en `27017`, el backend arranca directo contra el mock store
-(`data.json`) sin esperar los reintentos.
+El backend necesita MongoDB. Configura la URI en `apps/backend/.env` (`MONGODB_URI`, por defecto `mongodb://localhost:27017/saas-orders`).
+
+- Si MongoDB no responde, el backend arranca igual y `/health` reporta `db: 'down'` (los endpoints API devuelven 503).
+- Si la base existe pero está **vacía**, al conectar se siembra automáticamente (productos, categorías, addons, cupones, horarios, galería, admin y pedidos de prueba). También puedes sembrar a mano: `pnpm --filter @saas/backend seed`.
 
 ## Instalación
 

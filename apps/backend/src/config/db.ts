@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import { getEnv } from './env';
-import { activateMock } from '../mock/store';
 
 const MAX_RETRIES = Number(process.env.MONGODB_MAX_RETRIES ?? 5);
 const RETRY_DELAY_MS = Number(process.env.MONGODB_RETRY_DELAY_MS ?? 3000);
@@ -8,8 +7,9 @@ const SELECTION_TIMEOUT_MS = Number(process.env.MONGODB_SELECTION_TIMEOUT_MS ?? 
 
 /**
  * Conexión a MongoDB con reintentos.
- * NO es fatal: el server arranca igual para servir /api/health y
- * endpoints que no dependen de DB; los handlers devuelven 503 si no hay DB.
+ * Sin DB el server arranca igual (sirve /api/health y devuelve 503 en los
+ * handlers que dependen de datos); NO hay fallback mock: los datos solo
+ * se consultan a la instancia real de MongoDB.
  */
 export async function connectDB(): Promise<boolean> {
   const { mongoUri } = getEnv();
@@ -30,8 +30,6 @@ export async function connectDB(): Promise<boolean> {
   }
 
   console.error('[db] No se pudo conectar a MongoDB. El server sigue arriba sin DB.');
-  console.error('[db] Activando mock store con datos de data.json...');
-  activateMock();
   return false;
 }
 
