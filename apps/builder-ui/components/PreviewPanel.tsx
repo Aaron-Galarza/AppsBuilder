@@ -4,7 +4,7 @@ import { useBuilderStore } from '../stores/builderStore'
 import { BLOCK_LABELS } from '../lib/constants'
 
 export function PreviewPanel() {
-  const { useDemoData, product, template, selectedBlocks, config, textos } = useBuilderStore()
+  const { product, template, selectedBlocks, config, textos } = useBuilderStore()
 
   return (
     <div className="panel p-4 flex flex-col gap-3">
@@ -68,12 +68,6 @@ export function PreviewPanel() {
             <span className="k">Textos</span>
             <span className={`v ${Object.keys(textos).length > 0 ? 'lv-o' : 'text-[#555]'}`}>
               {Object.keys(textos).length > 0 ? 'OK' : '—'}
-            </span>
-          </span>
-          <span className="kv border-none py-0">
-            <span className="k">Datos demo</span>
-            <span className={`v ${useDemoData ? 'lv-o' : 'text-[#555]'}`}>
-              {useDemoData ? 'ACTIVO' : '—'}
             </span>
           </span>
         </div>

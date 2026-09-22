@@ -42,6 +42,54 @@ export const BLOCK_DESCRIPTIONS: Record<string, string> = {
 
 export const FONTS = ['Inter', 'Poppins', 'Playfair Display', 'Montserrat'] as const
 
+export const DEFAULT_TEXTOS: Record<string, Record<string, string>> = {
+  hero: {
+    title: 'Bienvenido a Tu Negocio',
+    subtitle: 'Las mejores recetas, hechas con pasión y ingredientes de primera calidad.',
+    ctaText: 'Ver menú',
+  },
+  menu: {
+    title: 'Nuestro Menú',
+    description: 'Elegí tus favoritos y pedí en minutos.',
+  },
+  about: {
+    title: 'Nuestra Historia',
+    text: 'Somos un emprendimiento familiar que nació con la pasión por cocinar. Cada plato se prepara con dedicación y los mejores ingredientes para que vuelvas siempre.',
+  },
+  cta: {
+    title: '¿Listo para probar?',
+    subtitle: 'Hacé tu pedido ahora y te lo llevamos a la puerta de tu casa.',
+    buttonText: 'Haz tu pedido aquí',
+  },
+  contact: {
+    title: 'Contacto',
+    address: 'Av. Corrientes 1234, Ciudad',
+    phone: '+54 11 5555-1234',
+    hours: 'Lun a Dom, 18:00 a 00:00',
+  },
+  gallery: {
+    title: 'Nuestra Galería',
+  },
+  testimonials: {
+    title: 'Lo que dicen nuestros clientes',
+    subtitle: 'Opiniones reales de nuestros clientes',
+  },
+  offer: {
+    title: 'Ofertas Especiales',
+    subtitle: 'No te pierdas nuestras promos',
+    bannerTitle: '2x1 todos los martes',
+    bannerDescription: 'Válido solo para delivery',
+    discountText: '20% OFF',
+    buttonText: 'Ordenar ahora',
+  },
+  newsletter: {
+    title: 'Suscribite a nuestro newsletter',
+    subtitle: 'Recibí ofertas exclusivas',
+    placeholder: 'Tu email',
+    buttonText: 'Suscribirme',
+  },
+}
+
 export const BLOCK_FIELDS: Record<string, { key: string; label: string; placeholder: string }[]> = {
   hero: [
     { key: 'title', label: 'Título', placeholder: 'Bienvenido a...' },

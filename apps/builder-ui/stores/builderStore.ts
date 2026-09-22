@@ -1,6 +1,5 @@
 ﻿import { create } from 'zustand'
-import { MANDATORY_BLOCKS, PRODUCT_BLOCKS } from '../lib/constants'
-import { DEMO_PROJECT, DEMO_TEXTOS } from '../lib/demo/demoContent'
+import { DEFAULT_TEXTOS } from '../lib/constants'
 
 export interface BuilderState {
   product: 'webOrders' | 'landingPages' | null
@@ -16,7 +15,6 @@ export interface BuilderState {
   }
   textos: Record<string, Record<string, string>>
   imagenes: Record<string, File | null>
-  useDemoData: boolean
 
   setProduct: (p: BuilderState['product']) => void
   setTemplate: (t: BuilderState['template']) => void
@@ -24,8 +22,6 @@ export interface BuilderState {
   setConfig: (c: Partial<BuilderState['config']>) => void
   setTextos: (t: BuilderState['textos']) => void
   setImagenes: (i: BuilderState['imagenes']) => void
-  setUseDemoData: (on: boolean) => void
-  applyDemo: () => void
   reset: () => void
 }
 
@@ -43,15 +39,21 @@ const initialState = {
   },
   textos: {} as Record<string, Record<string, string>>,
   imagenes: {} as Record<string, File | null>,
-  useDemoData: false,
 }
 
-export const useBuilderStore = create<BuilderState>((set, get) => ({
+export const useBuilderStore = create<BuilderState>((set) => ({
   ...initialState,
 
   setProduct: (product) => set({ product, template: null, selectedBlocks: [] }),
 
-  setTemplate: (template) => set({ template, selectedBlocks: [] }),
+  setTemplate: (template) =>
+    set((state) => {
+      const textos = { ...DEFAULT_TEXTOS }
+      for (const [block, fields] of Object.entries(state.textos)) {
+        textos[block] = { ...(textos[block] || {}), ...fields }
+      }
+      return { template, selectedBlocks: [], textos }
+    }),
 
   setSelectedBlocks: (selectedBlocks) => set({ selectedBlocks }),
 
@@ -62,34 +64,6 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   setTextos: (textos) => set({ textos }),
 
   setImagenes: (imagenes) => set({ imagenes }),
-
-  setUseDemoData: (useDemoData) => set({ useDemoData }),
-
-  applyDemo: () => {
-    const { product, template } = get()
-    const demoProduct: BuilderState['product'] = product ?? 'webOrders'
-    const demoTemplate: BuilderState['template'] = template ?? 'standard'
-    const blocks =
-      [...(PRODUCT_BLOCKS[demoProduct]?.[demoTemplate] ?? MANDATORY_BLOCKS[demoProduct] ?? [])]
-
-    const textos: Record<string, Record<string, string>> = {}
-    for (const block of blocks) {
-      if (DEMO_TEXTOS[block]) textos[block] = { ...DEMO_TEXTOS[block] }
-    }
-
-    set({
-      useDemoData: true,
-      product: demoProduct,
-      template: demoTemplate,
-      selectedBlocks: blocks,
-      textos,
-      config: {
-        ...get().config,
-        name: get().config.name || DEMO_PROJECT.name,
-        slug: get().config.slug || DEMO_PROJECT.slug,
-      },
-    })
-  },
 
   reset: () => set(initialState),
 }))

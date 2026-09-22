@@ -3,7 +3,6 @@
 import { useEffect, useMemo, useRef } from 'react'
 import type { CSSProperties } from 'react'
 import type { BuilderState } from '../../stores/builderStore'
-import { DEMO_IMAGES } from '../demo/demoContent'
 
 export type PreviewTheme = Record<string, string> & CSSProperties
 
@@ -97,7 +96,7 @@ export function usePreviewObjectUrls(
 
 /**
  * Resolución de imágenes igual que generateRepo/injector:
- * archivo subido > imagen demo (si useDemoData) > vacío.
+ * archivo subido > vacío.
  */
 export function resolvePreviewSrc(
   key: string,
@@ -106,6 +105,5 @@ export function resolvePreviewSrc(
 ): string {
   const uploaded = objectUrls[key]
   if (uploaded) return uploaded
-  if (state.useDemoData && DEMO_IMAGES[key]) return DEMO_IMAGES[key]
   return ''
 }

@@ -60,7 +60,6 @@ function LandingSitePreview({ state }: { state: BuilderState }) {
         about: resolvePreviewSrc('about', state, objectUrls),
         offer: resolvePreviewSrc('offer', state, objectUrls),
       },
-      hasDemo: state.useDemoData,
     }),
     [state, objectUrls]
   )

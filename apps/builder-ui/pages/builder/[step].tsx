@@ -12,7 +12,6 @@ import { TextEditor } from '../../components/TextEditor'
 import { ImageUploader } from '../../components/ImageUploader'
 import { PreviewPanel } from '../../components/PreviewPanel'
 import { DownloadButton } from '../../components/DownloadButton'
-import { DemoToggle } from '../../components/DemoToggle'
 import { PreviewOverlay } from '../../components/preview/PreviewOverlay'
 import { useBuilderStore } from '../../stores/builderStore'
 import { useProductBlocks } from '../../hooks/useProductBlocks'
@@ -76,7 +75,6 @@ export default function BuilderStep() {
         <button onClick={handleCancel} className="btn btn-err" title="Cancelar y perder cambios">
           Cancelar
         </button>
-        <DemoToggle />
         <span className="text-[10px] tracking-widest text-muted-foreground uppercase">
           Paso {step} / 7
         </span>
@@ -266,11 +264,6 @@ export default function BuilderStep() {
               </div>
 
               <div className="panel p-4 flex flex-col">
-                {store.useDemoData && (
-                  <div className="mb-3">
-                    <span className="pill pill-ok">Demo</span>
-                  </div>
-                )}
                 <div className="kv">
                   <span className="k">Producto</span>
                   <span className="v">{store.product || '—'}</span>
@@ -298,10 +291,6 @@ export default function BuilderStep() {
                 <div className="kv">
                   <span className="k">Logo</span>
                   <span className="v">{store.config.logo ? 'Subido' : 'Opcional'}</span>
-                </div>
-                <div className="kv">
-                  <span className="k">Datos demo (DB simulada)</span>
-                  <span className="v">{store.useDemoData ? 'Sí' : 'No'}</span>
                 </div>
               </div>
 
