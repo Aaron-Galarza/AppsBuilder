@@ -1,72 +1,48 @@
 # WebOrders — Templates
 
-Templates para proyectos de menú digital con sistema de pedidos (delivery y retiro).
+Producto "menú digital con pedidos" del generador de AppsBuilder: delivery y retiro, carrito, checkout,
+orden de confirmación, login y panel admin.
+
+> Los templates son **aplicaciones Next.js finas que importan bloques de `@saas/blocks`**. No hay secciones
+> duplicadas por plantilla: la diferencia entre `_basic` / `_standard` / `_premium` es qué bloques compone
+> el `page.tsx` (gated por `cfg.blocks`) y el `level` del `AdminApp`. Un ZIP generado solo incluye los bloques
+> seleccionados (ver `cleaner.ts` en `apps/builder-ui/lib/generator`).
 
 ## Estructura
 
 ```
 webOrders/templates/
-├── _basic/       (18 archivos) — Menú + Carrito + Checkout + Confirmación
-├── _standard/    (26 archivos) — _basic + Admin (6 tabs) + Hero + About + CTA
-└── _premium/     (30 archivos) — _standard + Galería + Testimonios + Oferta + Newsletter
+├── _basic/       — home compacta (MenuBrowser + MiniHero + StoreStatus + PromoBanner)
+├── _standard/    — home con Hero + About + CTA + PromoBanner; menú en /menu
+└── _premium/     — _standard + Bloques de marketing (galería, testimonios, ofertas, newsletter)
 ```
 
-## Templates
+Cada template (plantilla `package.json`): Next.js ^16, React ^19, Tailwind 4, Zustand; deps locales
+`src/components/layout/PublicLayout.tsx`, `src/components/sections/MiniHero.tsx` (solo basic),
+`src/styles/globals.css` y `tailwind.config.ts` con placeholders `INJECT_*` que el generador reemplaza.
 
-### _basic (18 archivos)
-- `src/app/page.tsx` — Menú con CategoryFilter + MenuGrid
-- `src/app/cart/page.tsx` — Carrito de compras
-- `src/app/checkout/page.tsx` — Formulario de checkout completo
-- `src/app/order-confirmation/page.tsx` — Confirmación de pedido
-- `src/components/layout/Header.tsx` — Header con logo + carrito
-- `src/components/layout/Footer.tsx` — Footer con info del local
-- `src/components/layout/PublicLayout.tsx` — Layout público
+## Rutas (cada template)
 
-### _standard (26 archivos)
-- Todo lo de _basic +
-- `src/app/admin/page.tsx` — Panel admin con 6 tabs (overview, orders, menu, coupons, gallery, config)
-- `src/app/login/page.tsx` — Login de administrador
-- `src/components/sections/HeroSection.tsx` — Sección hero
-- `src/components/sections/MenuSection.tsx` — Sección menú
-- `src/components/sections/AboutSection.tsx` — Sección "Sobre nosotros"
-- `src/components/sections/CTASection.tsx` — Call to action
+| Ruta | Contenido |
+|---|---|
+| `/` (home) | `cfg.blocks` decide las secciones (hero/about/cta/…); siempre `PromoBanner` + `StoreStatus` |
+| `/menu` | menú completo (standard/premium; en basic el menú vive en la home) |
+| `/cart` | carrito (`useCartStore` + bloques `@saas/blocks/cart`) |
+| `/checkout` | `CheckoutForm` + delivery + cupón + resumen (`@saas/blocks/checkout`) |
+| `/order-confirmation` | confirmación post-pedido |
+| `/login` | `LoginPage` (`@saas/blocks/auth`) |
+| `/admin` | `AdminApp level="basic|standard|premium"` (`@saas/blocks/admin`) |
 
-### _premium (30 archivos)
-- Todo lo de _standard +
-- `src/components/sections/GallerySection.tsx` — Galería de fotos
-- `src/components/sections/TestimonialsSection.tsx` — Testimonios
-- `src/components/sections/OfferSection.tsx` — Banner de ofertas
-- `src/components/sections/NewsletterSection.tsx` — Formulario newsletter
-
-## Configuración de colores
-
-Los colores se inyectan vía CSS variables en `globals.css` y `tailwind.config.ts`:
-
-```css
-@theme {
-  --color-primary: INJECT_PRIMARY_COLOR;
-  --color-secondary: INJECT_SECONDARY_COLOR;
-  --color-accent: INJECT_ACCENT_COLOR;
-}
-```
-
-## Dependencias
-
-- `@saas/blocks` — Bloques UI (Hero, Menu, Cart, Checkout, Admin, etc)
-- `@saas/hooks` — Hooks (useMenu, useCart, useAuth, etc)
-- `@saas/types` — Tipos TypeScript
-- `@saas/ui` — Componentes base
-- `@saas/utils` — Utilidades (formatPrice, etc)
-- `next` ^16.3.2
-- `react` 19.2.4
-- `zustand` ^5.0.14
+El ZIP de `webOrders` incluye además `apps/backend` y `apps/web-admin` copiados del master (ver ARCHITECTURE §6).
 
 ## Deploy
 
-Los templates se generan como ZIP vía AppsBuilder. Una vez descargado:
+El template se genera como ZIP vía AppsBuilder. Una vez descargado:
 
 ```bash
-cd {proyecto}-weborder
+cd <slug>-web          # apps/products/webOrders/templates/<t>
 pnpm install
 pnpm dev
 ```
+
+Web/admin → Vercel; backend → Render. Ver `docs/GETTING_STARTED.md` (post-descarga) del repo master.

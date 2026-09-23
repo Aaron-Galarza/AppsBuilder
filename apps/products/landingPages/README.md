@@ -1,77 +1,43 @@
 # LandingPages — Templates
 
-Templates para landing pages institucionales y de captación de clientes.
+Producto "landing page institucional" del generador de AppsBuilder: single-page con secciones estáticas,
+CTA por WhatsApp y **sin sistema de pedidos** (no hay carrito, backend ni admin en el ZIP).
+
+> Los templates son aplicaciones Next.js finas que componen `@saas/blocks` directamente en `src/app/page.tsx`.
+> `_basic` / `_standard` / `_premium` difieren solo en qué bloques se incluyen (gated por `cfg.blocks`).
 
 ## Estructura
 
 ```
 landingPages/templates/
-├── _basic/       (16 archivos) — Hero + CTA + Contacto
-├── _standard/    (20 archivos) — _basic + Admin (3 tabs) + About + Menu Preview
-└── _premium/     (24 archivos) — _standard + Galería + Testimonios + Oferta + Newsletter
+├── _basic/       — Hero + CTA + Contact
+├── _standard/    — _basic + About + Features/Pricing
+└── _premium/     — _standard + Gallery + Testimonials + Offer + Newsletter
 ```
 
-## Templates
+Cada template: Next.js ^16, React ^19, Tailwind 4; `src/components/layout/PublicLayout.tsx` (Header/Footer),
+`src/styles/globals.css` y `tailwind.config.ts` con placeholders `INJECT_*`.
 
-### _basic (16 archivos)
-- `src/app/page.tsx` — Hero + CTA + Contacto
-- `src/components/layout/Header.tsx` — Header con logo + WhatsApp CTA
-- `src/components/layout/Footer.tsx` — Footer con info
-- `src/components/layout/PublicLayout.tsx` — Layout público
-- `src/components/sections/HeroSection.tsx` — Sección hero
-- `src/components/sections/CTASection.tsx` — Call to action (WhatsApp)
-- `src/components/sections/ContactSection.tsx` — Info de contacto
+## Rutas
 
-### _standard (20 archivos)
-- Todo lo de _basic +
-- `src/app/admin/page.tsx` — Panel admin con 3 tabs (overview, menu, config)
-- `src/app/login/page.tsx` — Login de administrador
-- `src/components/sections/AboutSection.tsx` — Sección "Sobre nosotros"
-- `src/components/sections/MenuPreviewSection.tsx` — Preview del menú
+| Ruta | Contenido |
+|---|---|
+| `/` | single-page: secciones según `cfg.blocks` (hero → about → gallery → testimonials → offer → cta → contact → newsletter) |
 
-### _premium (24 archivos)
-- Todo lo de _standard +
-- `src/components/sections/GallerySection.tsx` — Galería de fotos
-- `src/components/sections/TestimonialsSection.tsx` — Testimonios
-- `src/components/sections/OfferSection.tsx` — Banner de ofertas
-- `src/components/sections/NewsletterSection.tsx` — Formulario newsletter
+Los textos/imágenes vienen de `clientConfig` (`useSiteConfig`) o de `INJECT_*` resueltos por el generador.
 
 ## Diferencias con webOrders
 
-- **Sin carrito/checkout** — Las landing pages no tienen sistema de pedidos
-- **CTA por WhatsApp** — En vez de botón de carrito, usan enlace a WhatsApp
-- **Admin simplificado** — Menos tabs (sin orders, coupons)
-- **Hero prominente** — Sección hero con CTA de WhatsApp
-
-## Configuración de colores
-
-Los colores se inyectan vía CSS variables en `globals.css` y `tailwind.config.ts`:
-
-```css
-@theme {
-  --color-primary: INJECT_PRIMARY_COLOR;
-  --color-secondary: INJECT_SECONDARY_COLOR;
-  --color-accent: INJECT_ACCENT_COLOR;
-}
-```
-
-## Dependencias
-
-- `@saas/blocks` — Bloques UI (Hero, About, CTA, Contact, Gallery, etc)
-- `@saas/hooks` — Hooks (useMenu, useAuth, etc)
-- `@saas/types` — Tipos TypeScript
-- `@saas/ui` — Componentes base
-- `@saas/utils` — Utilidades
-- `next` ^16.3.2
-- `react` 19.2.4
-- `zustand` ^5.0.14
+- **Sin carrito/checkout/confirmación** — no hay sistema de pedidos.
+- **CTA por WhatsApp** — botones de acción que arman `https://wa.me/<teléfono>`.
+- **Sin backend ni admin** — el ZIP contiene solo `packages/*` + el template (`PRODUCT_APPS.landingPages = []`).
 
 ## Deploy
 
-Los templates se generan como ZIP vía AppsBuilder. Una vez descargado:
-
 ```bash
-cd {proyecto}-weborder
+cd <slug>-landing     # apps/products/landingPages/templates/<t>
 pnpm install
 pnpm dev
 ```
+
+→ Vercel. Ver `docs/GETTING_STARTED.md` (post-descarga) del repo master.
