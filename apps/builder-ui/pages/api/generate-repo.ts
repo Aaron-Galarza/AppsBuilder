@@ -1,6 +1,16 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 import { generateRepo } from '@/lib/generator'
+import { appendWizardEvent } from '@/lib/wizardEvents'
+
+const STAGE_LABELS: Record<string, string> = {
+  readMasterFiles: 'Leyendo archivos del master',
+  cleanUnusedBlocks: 'Limpiando bloques no seleccionados',
+  uploadAllImages: 'Subiendo imágenes a Cloudinary',
+  injectConfig: 'Inyectando configuración y textos',
+  createZip: 'Empaquetando ZIP',
+  done: 'ZIP generado',
+}
 
 const BuilderStateSchema = z.object({
   product: z.enum(['webOrders', 'landingPages']),
@@ -84,13 +94,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       imagenes: imagenesFiles,
     }
 
-    const zip = await generateRepo(state as any)
+    const zip = await generateRepo(state as any, (p) => {
+      appendWizardEvent({
+        source: 'zip',
+        msg: STAGE_LABELS[p.stage] ?? p.stage,
+        data: { stage: p.stage, pct: p.pct },
+      })
+    })
 
     res.setHeader('Content-Type', 'application/zip')
     res.setHeader('Content-Disposition', `attachment; filename="${slug}.zip"`)
     res.send(zip)
   } catch (error) {
     console.error('Error generando repo:', error)
+    appendWizardEvent({ source: 'zip', msg: 'Error generando el ZIP: ' + (error instanceof Error ? error.message : 'desconocido') })
     res.status(500).json({ error: 'Error generando el repositorio' })
   }
 }

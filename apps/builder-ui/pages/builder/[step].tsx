@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { Eye } from 'lucide-react'
 import { StepIndicator } from '../../components/StepIndicator'
@@ -16,6 +16,8 @@ import { PreviewOverlay } from '../../components/preview/PreviewOverlay'
 import { useBuilderStore } from '../../stores/builderStore'
 import { useProductBlocks } from '../../hooks/useProductBlocks'
 import { useFormValidation } from '../../hooks/useFormValidation'
+import { emitWizard } from '../../lib/telemetry'
+import { BLOCK_LABELS } from '../../lib/constants'
 
 const STEP_LABELS = ['Producto', 'Plantilla', 'Bloques', 'Config', 'Textos', 'Imágenes', 'Descargar']
 
@@ -30,6 +32,17 @@ export default function BuilderStep() {
     store.selectedBlocks[0] || null
   )
   const [previewOpen, setPreviewOpen] = useState(false)
+
+  useEffect(() => {
+    emitWizard(`Paso ${step}/7 — ${STEP_LABELS[step - 1] ?? '?'}`, { step })
+  }, [step])
+
+  const togglePreview = useCallback(() => {
+    setPreviewOpen((prev) => {
+      emitWizard(prev ? 'Preview cerrado' : 'Preview abierto')
+      return !prev
+    })
+  }, [])
 
   const handleNext = () => {
     if (isValid && step < 7) {
@@ -53,12 +66,16 @@ export default function BuilderStep() {
   }
 
   const toggleBlock = useCallback((block: string) => {
-    const current = store.selectedBlocks
-    if (current.includes(block)) {
-      store.setSelectedBlocks(current.filter((b) => b !== block))
+    let next: string[]
+    if (store.selectedBlocks.includes(block)) {
+      next = store.selectedBlocks.filter((b) => b !== block)
     } else {
-      store.setSelectedBlocks([...current, block])
+      next = [...store.selectedBlocks, block]
     }
+    store.setSelectedBlocks(next)
+    emitWizard(next.length ? 'Bloques: ' + next.map((b) => BLOCK_LABELS[b] || b).join(', ') : 'Sin bloques', {
+      blocks: next,
+    })
   }, [store])
 
   const handleTextChange = useCallback((block: string, key: string, value: string) => {
@@ -328,7 +345,7 @@ export default function BuilderStep() {
 
       <button
         type="button"
-        onClick={() => setPreviewOpen((prev) => !prev)}
+        onClick={togglePreview}
         className={`btn btn-fill fixed bottom-5 right-5 z-[70] ${previewOpen ? 'opacity-70' : ''}`}
       >
         <Eye size={13} />

@@ -2,6 +2,7 @@
 
 import { useBuilderStore } from '../stores/builderStore'
 import { PRODUCT_BLOCKS, BLOCK_LABELS } from '../lib/constants'
+import { emitWizard } from '../lib/telemetry'
 
 const templateMeta = {
   basic: {
@@ -44,7 +45,10 @@ export function TemplateSelector() {
           return (
             <button
               key={t}
-              onClick={() => setTemplate(t)}
+              onClick={() => {
+                setTemplate(t)
+                emitWizard('Plantilla: ' + meta.title, { id: t })
+              }}
               className={`panel text-left p-4 cursor-pointer transition-all ${
                 isSelected ? 'border-foreground' : 'hover:border-border2'
               }`}

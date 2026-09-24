@@ -2,6 +2,7 @@
 
 import { ShoppingBag, FileText } from 'lucide-react'
 import { useBuilderStore } from '../stores/builderStore'
+import { emitWizard } from '../lib/telemetry'
 
 const products = [
   {
@@ -38,7 +39,10 @@ export function ProductSelector() {
           return (
             <button
               key={p.id}
-              onClick={() => setProduct(p.id)}
+              onClick={() => {
+                setProduct(p.id)
+                emitWizard('Producto: ' + p.title, { id: p.id })
+              }}
               className={`panel text-left p-4 cursor-pointer transition-all ${
                 isSelected ? 'border-foreground' : 'hover:border-border2'
               }`}

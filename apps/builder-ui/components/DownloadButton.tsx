@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Download, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { useBuilderStore } from '../stores/builderStore'
 import { generateRepo, downloadBlob } from '../lib/api'
+import { emitWizard } from '../lib/telemetry'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
@@ -18,17 +19,21 @@ export function DownloadButton() {
     setErrorMsg('')
     setProgress(0)
 
+    const slug = store.config.slug || store.config.name.toLowerCase().replace(/\s+/g, '-')
+    emitWizard('Generando ZIP: ' + slug, { slug })
+
     try {
       const blob = await generateRepo(store, (pct) => setProgress(pct))
 
-      const slug = store.config.slug || store.config.name.toLowerCase().replace(/\s+/g, '-')
       downloadBlob(blob, `${slug}.zip`)
 
       setStatus('success')
+      emitWizard('ZIP descargado: ' + slug + '.zip', { slug })
       setTimeout(() => setStatus('idle'), 3000)
     } catch (err: unknown) {
       setStatus('error')
       setErrorMsg(err instanceof Error ? err.message : 'Error desconocido')
+      emitWizard('Error al generar ZIP: ' + (err instanceof Error ? err.message : 'desconocido'))
     }
   }
 

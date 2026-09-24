@@ -1,15 +1,21 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { StepIndicator } from '../../components/StepIndicator'
 import { ProductSelector } from '../../components/ProductSelector'
 import { useFormValidation } from '../../hooks/useFormValidation'
+import { emitWizard } from '../../lib/telemetry'
 
 const STEP_LABELS = ['Producto', 'Plantilla', 'Bloques', 'Config', 'Textos', 'Imágenes', 'Descargar']
 
 export default function BuilderIndex() {
   const router = useRouter()
   const { isValid } = useFormValidation(1)
+
+  useEffect(() => {
+    emitWizard('Paso 1/7 — Producto', { step: 1 })
+  }, [])
 
   const handleNext = () => {
     if (isValid) {
