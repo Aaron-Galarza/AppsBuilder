@@ -51,6 +51,8 @@ function injectTextos(
   result = result.replace(/INJECT_ABOUT_TEXT/g, safeStr(about['text']))
   result = result.replace(/INJECT_ABOUT_DESCRIPTION/g, safeStr(about['text']))
 
+  result = result.replace(/INJECT_TENANT_DESCRIPTION/g, safeStr(about['text']) || safeStr(hero['subtitle']))
+
   const cta = state.textos['cta'] || {}
   result = result.replace(/INJECT_CTA_TITLE/g, safeStr(cta['title']))
   result = result.replace(/INJECT_CTA_SUBTITLE/g, safeStr(cta['subtitle']))
@@ -65,6 +67,7 @@ function injectTextos(
   result = result.replace(/INJECT_CONTACT_ADDRESS/g, safeStr(contact['address']))
   result = result.replace(/INJECT_CONTACT_PHONE/g, safeStr(contact['phone']))
   result = result.replace(/INJECT_CONTACT_HOURS/g, safeStr(contact['hours']))
+  result = result.replace(/INJECT_WHATSAPP_NUMBER/g, safeStr(contact['phone']).replace(/\D/g, ''))
 
   const gallery = state.textos['gallery'] || {}
   result = result.replace(/INJECT_GALLERY_TITLE/g, safeStr(gallery['title']))

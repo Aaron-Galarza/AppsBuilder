@@ -10,35 +10,35 @@
 import type { ProjectConfig } from './base.config';
 
 export const clientConfig: ProjectConfig = {
-  name: 'Pizzaya',
-  slug: 'pizzaya',
+  name: '',
+  slug: '',
   colors: {
-    primary: '#D4A843',
-    secondary: '#1A1A1A',
-    accent: '#4CAF50',
+    primary: '#0D9488',
+    secondary: '#111827',
+    accent: '#F59E0B',
   },
   fonts: {
     heading: 'Poppins',
     body: 'Inter',
   },
-  logo: 'https://res.cloudinary.com/xxx/image/upload/logos/pizzaya-logo.png',
-  favicon: 'https://res.cloudinary.com/xxx/image/upload/logos/pizzaya-favicon.ico',
+  logo: '',
+  favicon: '',
   textos: {
-    hero: { title: 'Bienvenidos', subtitle: 'Las mejores pizzas', ctaText: 'Ver menú' },
-    contact: { address: 'Av. Corrientes 1234', phone: '+54 11 5555-1234', hours: 'Lun-Dom 18:00 a 00:00' },
+    hero: { title: '', subtitle: '', ctaText: '' },
+    contact: { address: '', phone: '', hours: '' },
   },
   images: {
-    logo: 'https://res.cloudinary.com/xxx/image/upload/logos/pizzaya-logo.png',
-    favicon: 'https://res.cloudinary.com/xxx/image/upload/logos/pizzaya-favicon.ico',
+    logo: '',
+    favicon: '',
     hero: '',
     about: '',
     offer: '',
   },
   blocks: ['menu', 'cart', 'checkout', 'admin', 'hero', 'about'],
-  whatsapp: '5491155551234',
-  instagram: 'pizzaya_oficial',
-  address: 'Av. Corrientes 1234, CABA',
-  mapboxToken: 'pk.eyJ1xxxx',
+  whatsapp: '',
+  instagram: '',
+  address: '',
+  mapboxToken: '',
 };
 
 export type { ProjectConfig } from './base.config';

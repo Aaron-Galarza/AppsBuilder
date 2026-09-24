@@ -6,12 +6,12 @@
 import type { ProjectConfig } from './base.config';
 
 export const clientConfig: ProjectConfig = {
-  name: 'Pizzaya',
-  slug: 'pizzaya',
+  name: '',
+  slug: '',
   colors: {
-    primary: '#D4A843',
-    secondary: '#1A1A1A',
-    accent: '#4CAF50',
+    primary: '#0D9488',
+    secondary: '#111827',
+    accent: '#F59E0B',
   },
   fonts: {
     heading: 'Poppins',

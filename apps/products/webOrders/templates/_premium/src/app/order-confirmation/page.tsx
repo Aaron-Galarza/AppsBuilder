@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useSiteRouter } from '@saas/hooks'
 import { CheckCircle, MapPin, Wallet, Bike, ShoppingBag, ArrowLeft, UtensilsCrossed, FileText } from 'lucide-react'
-import { formatPrice } from '@saas/utils'
+import { formatPrice, CREDIT_SURCHARGE_RATE } from '@saas/utils'
 
 interface OrderSnapshot {
   orderNumber?: number
@@ -138,7 +138,7 @@ export default function OrderConfirmationPage() {
           <div className="border-t border-white/5 pt-3 flex flex-col gap-1.5 mt-1">
             <div className="flex justify-between text-xs text-white/40"><span>Subtotal</span><span>{formatPrice(order.subtotal)}</span></div>
             {order.discount > 0 && <div className="flex justify-between text-xs text-green-400"><span>Descuento</span><span>-{formatPrice(order.discount)}</span></div>}
-            {order.surcharge > 0 && <div className="flex justify-between text-xs text-orange-400"><span>Recargo Crédito (15%)</span><span>+{formatPrice(order.surcharge)}</span></div>}
+            {order.surcharge > 0 && <div className="flex justify-between text-xs text-orange-400"><span>Recargo Crédito ({Math.round(CREDIT_SURCHARGE_RATE * 100)}%)</span><span>+{formatPrice(order.surcharge)}</span></div>}
             <div className="flex justify-between text-base font-bold text-white mt-1 border-t border-white/5 pt-2"><span>Total</span><span className="text-primary text-lg">{formatPrice(order.total)}</span></div>
           </div>
         </div>
