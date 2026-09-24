@@ -55,8 +55,10 @@ AppsBuilder/
 ├─ AGENTS.md                   # reglas de trabajo (leer siempre)
 ├─ README.md
 ├─ scripts/
-│  ├─ start.ps1                # levanta backend, web-admin, builder-ui con logs en logs/<name>.log
-│  └─ stop.ps1                 # mata los 3 por puerto
+│  ├─ appsbuilder.ps1           # comando único: prerequisitos + install si falta + levanta servicios + monitoreo en vivo
+│  ├─ install-command.ps1       # agrega la raíz al PATH del usuario -> comando global `appsbuilder`
+│  ├─ start.ps1                 # wrapper -> appsbuilder.ps1
+│  └─ stop.ps1                  # mata los 3 por puerto
 ├─ docs/
 │  ├─ ARCHITECTURE.md          # (este archivo)
 │  └─ GETTING_STARTED.md       # arranque, wizard, seed
@@ -99,12 +101,16 @@ Next.js 15 **Pages Router**, React 18, Tailwind 4, Zustand, React Hook Form + Zo
   (`PreviewPanel` en dashboard + `PreviewOverlay` flotante). El menu/status/checkout del preview llaman a la API real (4000).
 - API: `POST /api/generate-repo` recibe `{product, template, selectedBlocks, config, textos, imagenes, configImages}`
   y devuelve el ZIP (ver §5).
+- Telemetría de la sesión: la UI emite eventos (`lib/telemetry.ts` → `emitWizard`) a `POST /api/events`
+  (`lib/wizardEvents.ts` los anexa a `logs/wizard.ndjson`); el pipeline de generación emite su progreso desde
+  `apps/builder-ui/pages/api/generate-repo.ts`. Esa cola alimenta el monitoreo en vivo de `scripts/appsbuilder.ps1`.
 - Cloudinary: `lib/cloudinary.ts` (`uploadAllImages`) sube las imágenes locales y devuelve URLs; requiere
   `NEXT_PUBLIC_CLOUDINARY_*` en `apps/builder-ui/.env.local`.
 
 ## 5. Pipeline de generación (`apps/builder-ui/lib/generator/`)
 
-Orden en `index.ts` → `generateRepo(state)`:
+Orden en `index.ts` → `generateRepo(state, onProgress?)`, que reporta cada etapa
+(`readMasterFiles → cleanUnusedBlocks → uploadAllImages → injectConfig → createZip → done`) con porcentaje:
 
 1. **`readMasterFiles`** (`fileProcessor.ts`): copia del master (recursivo, local) siempre
    `packages/{ui,utils,types,hooks,configs,blocks}`; para `webOrders` además `apps/backend` + `apps/web-admin`;

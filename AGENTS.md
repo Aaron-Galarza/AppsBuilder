@@ -45,7 +45,11 @@ arquitectura definida en ARCHITECTURE.md y los patrones reales de CheepersTBH y 
 - Backend **sin mock**: MongoDB real, auto-seed si la base está vacía; `SEED_REFRESH_DEMO=1` re-rola los pedidos
   demo; credenciales demo `admin@local.dev` / `admin123`.
 - Jerarquía de imports permitida: Plantilla → Bloques → Componentes; Bloque → Componentes/Bloques; Componente → Componentes.
-- Servicios con `scripts/start.ps1` / `stop.ps1` (logs en `logs/`). No reinventar eso.
+- Servicios con `scripts/appsbuilder.ps1` (comando único: prerequisitos + install si falta + arranque + monitoreo en
+  vivo del wizard; wrapper `scripts/start.ps1` y comando global `appsbuilder` tras `scripts/install-command.ps1`) y
+  `scripts/stop.ps1` (logs en `logs/`). No reinventar eso. Ojo: los `.ps1` deben guardarse en UTF-8 con BOM
+  (PowerShell 5.1 los lee como ANSI si no), y lanzar los servicios con `cmd /c ... < NUL` (si no, `tsx watch` frena
+  con `EBADF` por stdin roto).
 
 ## Operativa
 

@@ -18,11 +18,21 @@ pnpm install
 ## Arrancar todo (recomendado)
 
 ```bash
-pnpm start        # → powershell scripts/start.ps1
+pnpm start          # → powershell scripts/appsbuilder.ps1
 ```
 
-Detecta prerequisitos, instala si falta, verifica MongoDB y levanta **solo los servicios que no estén corriendo**,
-cada uno con su log en `logs/<name>.log`, y abre el navegador en el form:
+O el comando dedicado `appsbuilder` (instala + verifica + arranca + monitorea en vivo):
+
+```bash
+# 1) Una sola vez: exponer el comando global agregando la raíz del repo al PATH del usuario
+powershell -ExecutionPolicy Bypass -File scripts/install-command.ps1
+# 2) Ya disponible desde cualquier terminal (PowerShell, cmd o Git Bash/MINGW):
+appsbuilder
+```
+
+El comando detecta prerequisitos, instala dependencias si falta algo, verifica MongoDB y levanta **solo los
+servicios que no estén corriendo**, cada uno con su log en `logs/<name>.log`, abre el navegador en el form y
+**queda monitoreando en vivo** (hasta que presiones `q`, sin matar los servicios):
 
 | Servicio | Puerto | URL | Log |
 |---|---|---|---|
@@ -33,6 +43,19 @@ cada uno con su log en `logs/<name>.log`, y abre el navegador en el form:
 
 Arranque manual por servicio: `cd apps/<x> && pnpm dev` (builds a sus puertos fijos). Si `pnpm start` no levanta algo,
 revisá el log correspondiente.
+
+### Monitoreo en vivo (durante el arranque normal)
+
+Mientras el comando queda corriendo, la consola muestra en tiempo real:
+
+- **`[wizard]`** — paso actual (`Paso 3/7 — Bloques`), selecciones (producto, plantilla, bloques habilitados),
+  aperturas/cierres del preview y errores de la UI.
+- **`[api]`** — cada consulta real que hace el preview (y las apps) al backend :4000 (`GET /api/menu → 200 (12ms)`).
+- **`[zip]`** — progreso de generación del ZIP con **barra de porcentaje** (lee archivos del master → limpia bloques →
+  sube imágenes → inyecta config → empaqueta).
+
+Apretá `q` para volver al prompt sin detener servicios (los eventos se escriben en `logs/wizard.ndjson`; las consultas
+en `logs/backend.log`).
 
 ## Detener
 
