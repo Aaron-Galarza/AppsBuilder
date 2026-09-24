@@ -23,6 +23,21 @@ export function mergeConfig(
   base: ProjectConfig,
   override: PartialDeep<ProjectConfig>
 ): ProjectConfig {
+  const mergedTextos: Record<string, Record<string, string>> = {};
+  for (const [block, fields] of Object.entries(base.textos)) {
+    mergedTextos[block] = { ...fields };
+  }
+  for (const block of Object.keys(override.textos ?? {})) {
+    const baseFields = mergedTextos[block] ?? {};
+    const overrideFields = override.textos![block] ?? {};
+    const mergedFields: Record<string, string> = {};
+    for (const key of new Set([...Object.keys(baseFields), ...Object.keys(overrideFields)])) {
+      const value = overrideFields[key] ?? baseFields[key];
+      if (value !== undefined) mergedFields[key] = value;
+    }
+    mergedTextos[block] = mergedFields;
+  }
+
   return {
     ...base,
     ...override,
@@ -34,7 +49,12 @@ export function mergeConfig(
       ...base.fonts,
       ...(override.fonts ?? {}),
     },
-  };
+    images: {
+      ...base.images,
+      ...(override.images ?? {}),
+    },
+    textos: mergedTextos,
+  } as ProjectConfig;
 }
 
 const SLUG_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
