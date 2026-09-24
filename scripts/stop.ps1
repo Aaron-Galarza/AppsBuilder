@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
   Detiene los servicios de AppsBuilder que estén escuchando en 4000/3001/3002.
 .EXAMPLE

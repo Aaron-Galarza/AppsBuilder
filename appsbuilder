@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# AppsBuilder — arranque + monitoreo (wrapper para Git Bash / MINGW).
+# Requiere que la raíz del repo esté en el PATH (p. ej. tras correr scripts/install-command.ps1).
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec powershell.exe -NoProfile -ExecutionPolicy Bypass -File "$SCRIPT_DIR/scripts/appsbuilder.ps1"
