@@ -48,7 +48,7 @@ export default function OrderConfirmationPage() {
     return (
       <main className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
         <p className="text-white/40 text-sm mb-4">No encontramos información de tu pedido.</p>
-        <button onClick={() => router.push('/')} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-white/10 text-white/50 hover:text-white text-sm font-semibold transition-all">
+        <button onClick={() => router.push('/')} className="flex items-center gap-2 px-4 py-2 rounded-xl border border-border text-muted-foreground hover:text-foreground text-sm font-semibold transition-all">
           <ArrowLeft className="w-4 h-4" /> Volver al menú
         </button>
       </main>
@@ -74,11 +74,11 @@ export default function OrderConfirmationPage() {
             <CheckCircle className="w-8 h-8 text-primary" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-white">¡Tu pedido está confirmado!</h1>
-            <p className="text-white/50 text-sm mt-1">
-              Gracias, <span className="text-white font-semibold">{order.customerName}</span>
+            <h1 className="text-2xl font-bold text-foreground">¡Tu pedido está confirmado!</h1>
+            <p className="text-muted-foreground text-sm mt-1">
+              Gracias, <span className="text-foreground font-semibold">{order.customerName}</span>
             </p>
-            {num && <p className="mt-2 text-xs text-white/30 font-mono">Pedido <span className="text-primary font-bold">{num}</span></p>}
+            {num && <p className="mt-2 text-xs text-muted-foreground font-mono">Pedido <span className="text-primary font-bold">{num}</span></p>}
           </div>
         </div>
 
@@ -143,7 +143,7 @@ export default function OrderConfirmationPage() {
           </div>
         </div>
 
-        <button onClick={() => router.push('/')} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-white/10 text-white/50 hover:text-white hover:border-white/25 text-sm font-semibold transition-all active:scale-95">
+        <button onClick={() => router.push('/')} className="flex items-center justify-center gap-2 w-full py-3 rounded-xl border border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground text-sm font-semibold transition-all active:scale-95">
           <ArrowLeft className="w-4 h-4" /> Volver al menú
         </button>
       </div>

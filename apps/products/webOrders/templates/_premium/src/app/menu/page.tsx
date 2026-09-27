@@ -9,9 +9,10 @@ export default function MenuPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6">
-      <h1 className="mb-6 text-center font-heading text-2xl font-bold tracking-wide text-white sm:text-3xl">
+      <h1 className="mb-2 text-center font-heading text-2xl font-bold tracking-wide text-white sm:text-3xl">
         {menuTextos['title'] ?? ''}
       </h1>
+      <p className="mb-6 text-center text-sm text-muted-foreground">{menuTextos['description'] ?? ''}</p>
 
       {/* BLOCK: menu */}
       <MenuBrowser variant="grid" columns={4} placeholder="Buscar en el menú..." />

@@ -47,21 +47,21 @@ export default function CheckoutPage() {
       <div className="flex items-center gap-3">
         <Link
           href="/cart"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/5 text-white/90 transition-colors hover:bg-white/10"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted text-foreground transition-colors hover:bg-muted/80"
         >
           <ArrowLeft size={18} />
         </Link>
-        <h1 className="font-heading text-lg font-bold tracking-wide text-white">FINALIZAR PEDIDO</h1>
+        <h1 className="font-heading text-lg font-bold tracking-wide text-foreground">FINALIZAR PEDIDO</h1>
       </div>
 
       <section>
-        <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-white/50">Método de entrega</h2>
+        <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-muted-foreground">Método de entrega</h2>
         <DeliveryTypeSelector />
       </section>
 
       {deliveryType === 'delivery' && (
         <section>
-          <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-white/50">Dirección de entrega</h2>
+          <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-muted-foreground">Dirección de entrega</h2>
           <AddressAutocomplete
             value={addressValue}
             onChange={handleAddressChange}
@@ -72,18 +72,18 @@ export default function CheckoutPage() {
       )}
 
       <section>
-        <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-white/50">Tus datos</h2>
+        <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-muted-foreground">Tus datos</h2>
         <CheckoutForm name={name} phone={phone} notes={notes} onNameChange={setName} onPhoneChange={setPhone} onNotesChange={setNotes} />
       </section>
 
       <section>
-        <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-white/50">Método de pago</h2>
+        <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-muted-foreground">Método de pago</h2>
         <div className="flex gap-2">
           {(['cash', 'debito', 'credito', 'transferencia'] as const).map((method) => (
             <button
               key={method}
               onClick={() => setPaymentMethod(method)}
-              className={`flex-1 rounded-xl px-2 py-2.5 text-sm font-bold capitalize transition-all ${paymentMethod === method ? 'bg-primary text-black' : 'bg-muted border border-white/10 text-white/60 hover:text-white'}`}
+              className={`flex-1 rounded-xl px-2 py-2.5 text-sm font-bold capitalize transition-all ${paymentMethod === method ? 'bg-primary text-black' : 'bg-muted border border-border text-muted-foreground hover:text-foreground'}`}
             >
               {method === 'cash' ? 'Efectivo' : method}
             </button>
@@ -92,12 +92,12 @@ export default function CheckoutPage() {
       </section>
 
       <section>
-        <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-white/50">Cupón (opcional)</h2>
+        <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-muted-foreground">Cupón (opcional)</h2>
         <CouponSection couponCode={couponCode} couponLoading={couponLoading} couponError={couponError} appliedCoupon={coupon} onInput={handleCouponInput} onApply={validateCoupon} />
       </section>
 
       <section>
-        <h2 className="mb-3 flex items-center gap-2 px-1 text-sm font-bold uppercase tracking-wider text-white/50">
+        <h2 className="mb-3 flex items-center gap-2 px-1 text-sm font-bold uppercase tracking-wider text-muted-foreground">
           <Receipt size={16} /> Resumen de pago
         </h2>
         <SummarySection
@@ -119,7 +119,7 @@ export default function CheckoutPage() {
         <button
           onClick={handleConfirmOrder}
           disabled={isConfirmDisabled}
-          className={`flex w-full items-center justify-center gap-2 rounded-xl py-4 text-lg font-extrabold transition-all duration-300 ${isConfirmDisabled ? 'cursor-not-allowed bg-zinc-800 text-white/30' : 'bg-primary text-black hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'}`}
+          className={`flex w-full items-center justify-center gap-2 rounded-xl py-4 text-lg font-extrabold transition-all duration-300 ${isConfirmDisabled ? 'cursor-not-allowed bg-muted text-muted-foreground' : 'bg-primary text-black hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'}`}
         >
           {submitting ? 'Enviando pedido...' : 'Confirmar Pedido'}
           {!isConfirmDisabled && <CheckCircle2 size={20} />}

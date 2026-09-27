@@ -69,7 +69,7 @@ export function AddonsModal({ product, isOpen, onClose, onConfirm }: AddonsModal
         {/* Adicionales disponibles */}
         {availableAddons.length > 0 && (
           <div className="flex flex-col gap-2">
-            <h4 className="text-xs font-bold uppercase tracking-wide text-neutral-500">
+            <h4 className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
               Agrega extras
             </h4>
             {availableAddons.map((addon) => {
@@ -79,13 +79,13 @@ export function AddonsModal({ product, isOpen, onClose, onConfirm }: AddonsModal
                   key={addon._id}
                   className={
                     qty > 0
-                      ? 'flex items-center justify-between rounded-xl border border-black/10 bg-neutral-50 px-3 py-2.5'
-                      : 'flex items-center justify-between rounded-xl border border-dashed border-black/10 px-3 py-2.5'
+                      ? 'flex items-center justify-between rounded-xl border border-border bg-muted px-3 py-2.5'
+                      : 'flex items-center justify-between rounded-xl border border-dashed border-border px-3 py-2.5'
                   }
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{addon.name}</p>
-                    <p className="text-xs text-neutral-500">{formatPrice(addon.price)}</p>
+                    <p className="truncate text-sm font-medium text-foreground">{addon.name}</p>
+                    <p className="text-xs text-muted-foreground">{formatPrice(addon.price)}</p>
                   </div>
 
                   {qty > 0 ? (
@@ -98,7 +98,7 @@ export function AddonsModal({ product, isOpen, onClose, onConfirm }: AddonsModal
                     <button
                       onClick={() => handleAdd(addon._id)}
                       aria-label={`Agregar ${addon.name}`}
-                      className="rounded-full bg-neutral-900 px-3 py-1.5 text-xs font-semibold text-white transition active:scale-95"
+                      className="rounded-full px-3.5 py-1.5 text-xs font-bold text-black transition active:scale-95"
                       style={{ backgroundColor: 'var(--color-primary, #111)' }}
                     >
                       + Agregar
@@ -111,7 +111,7 @@ export function AddonsModal({ product, isOpen, onClose, onConfirm }: AddonsModal
         )}
 
         {/* Cantidad + confirmar */}
-        <div className="flex items-center gap-3 border-t border-black/5 pt-4">
+        <div className="flex items-center gap-3 border-t border-border pt-4">
           <Stepper value={quantity} onIncrease={() => setQuantity((q) => q + 1)} onDecrease={() => setQuantity((q) => Math.max(1, q - 1))} minValue={1} size="lg" />
           <Button onClick={handleConfirm} size="lg" className="flex-1">
             Agregar · {formatPrice(totalPrice)}

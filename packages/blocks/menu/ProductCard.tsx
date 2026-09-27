@@ -53,8 +53,8 @@ export function ProductCard({
   /* ------------------------- VERTICAL ------------------------- */
   if (variant === 'vertical') {
     return (
-      <article className="flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition hover:shadow-md">
-        <div className="aspect-[4/3] w-full overflow-hidden bg-neutral-100">
+      <article className="flex flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition hover:border-primary/40 hover:shadow-md">
+        <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
           {!imageError && imageSrc ? (
             <img
               src={imageSrc}
@@ -75,7 +75,7 @@ export function ProductCard({
         </div>
 
         <div className="flex flex-1 flex-col gap-1 p-3">
-          <h3 className="line-clamp-2 text-sm font-bold leading-snug">{product.title}</h3>
+          <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground">{product.title}</h3>
           <p className="text-base font-extrabold" style={{ color: 'var(--color-primary, #111)' }}>
             {formatPrice(product.price)}
           </p>
@@ -95,12 +95,12 @@ export function ProductCard({
 
   /* ------------------------ HORIZONTAL ------------------------ */
   return (
-    <article className="flex items-center gap-4 rounded-2xl border border-black/5 bg-white px-4 py-3.5 transition-all hover:border-black/15 hover:shadow-sm">
+    <article className="group flex items-center gap-4 rounded-2xl border border-border bg-card px-4 py-3.5 transition-all hover:border-primary/40 hover:shadow-md">
       {/* Texto a la izquierda */}
       <div className="min-w-0 flex-1">
-        <h3 className="truncate text-sm font-semibold leading-snug">{product.title}</h3>
+        <h3 className="truncate text-sm font-semibold leading-snug text-foreground">{product.title}</h3>
         {product.description && (
-          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-neutral-500">
+          <p className="mt-0.5 line-clamp-2 text-xs leading-relaxed text-muted-foreground">
             {product.description}
           </p>
         )}
@@ -115,7 +115,7 @@ export function ProductCard({
 
       {/* Imagen 88x88 + botón flotante */}
       <div className="relative shrink-0">
-        <div className="h-[88px] w-[88px] overflow-hidden rounded-xl bg-neutral-200">
+        <div className="h-[88px] w-[88px] overflow-hidden rounded-xl bg-muted">
           {!imageError && imageSrc ? (
             <img
               src={imageSrc}
@@ -142,8 +142,8 @@ export function ProductCard({
           className={cn(
             'absolute -bottom-2 -right-2 flex h-9 w-9 items-center justify-center rounded-full shadow-lg transition-all active:scale-90',
             isButtonDisabled
-              ? 'cursor-not-allowed bg-neutral-300 text-white/70'
-              : 'scale-100 bg-neutral-900 text-white hover:scale-110'
+              ? 'cursor-not-allowed bg-muted text-muted-foreground'
+              : 'scale-100 bg-primary text-black hover:scale-110'
           )}
         >
           <Plus className="h-4 w-4" />

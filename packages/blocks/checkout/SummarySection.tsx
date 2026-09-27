@@ -44,7 +44,7 @@ export function SummarySection({
               <span className="min-w-0 flex-1 truncate text-neutral-600">
                 {item.quantity}× {item.product.title}
                 {(item.addons?.length ?? 0) > 0 && (
-                  <span className="text-neutral-400"> (+extras)</span>
+                  <span className="text-muted-foreground"> (+extras)</span>
                 )}
               </span>
               <span className="shrink-0 font-medium">
@@ -64,7 +64,7 @@ export function SummarySection({
       )}
       {deliveryType === 'delivery' &&
         (isDeliveryLoading ? (
-          <span className="self-end text-[11px] text-neutral-400">Calculando envío...</span>
+          <span className="self-end text-[11px] text-muted-foreground">Calculando envío...</span>
         ) : (
           <Row
             label="Envío"

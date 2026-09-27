@@ -30,19 +30,19 @@ export function DeliveryTypeSelector({ primaryColor = '#111' }: DeliveryTypeSele
             aria-checked={active}
             onClick={() => setDeliveryType(value)}
             className={cn(
-              'relative flex flex-col items-center gap-1.5 rounded-2xl border-2 px-4 py-4 transition-all active:scale-[0.98]',
-              active ? 'border-transparent' : 'border-black/10 bg-white hover:border-black/25'
+              'relative flex flex-col items-center gap-1.5 rounded-2xl border-2 px-4 py-4 text-foreground transition-all active:scale-[0.98]',
+              active ? 'border-transparent' : 'border-border bg-card hover:border-foreground/30'
             )}
-            style={active ? { backgroundColor: primaryColor, color: '#fff' } : undefined}
+            style={active ? { backgroundColor: primaryColor, color: '#000' } : undefined}
           >
-            <Icon size={22} className={active ? '' : 'text-neutral-400'} />
-            <span className={cn('text-xs font-bold', !active && 'text-neutral-600')}>{label}</span>
+            <Icon size={22} className={active ? '' : 'text-muted-foreground'} />
+            <span className={cn('text-xs font-bold', !active && 'text-foreground')}>{label}</span>
 
             {/* Dot activo */}
             <span
               className={cn(
                 'absolute right-2 top-2 h-2.5 w-2.5 rounded-full transition',
-                active ? 'bg-white' : 'bg-transparent'
+                active ? 'bg-black' : 'bg-transparent'
               )}
             />
           </button>

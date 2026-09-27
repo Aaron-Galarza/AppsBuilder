@@ -69,7 +69,7 @@ export function CheckoutForm({
           <span
             className={cn(
               'self-end text-[11px]',
-              notes.length >= NOTES_MAX ? 'font-bold text-red-500' : 'text-neutral-400'
+              notes.length >= NOTES_MAX ? 'font-bold text-red-500' : 'text-muted-foreground'
             )}
           >
             {notes.length}/{NOTES_MAX}

@@ -33,7 +33,7 @@ export function GalleryGrid({ images, columns = 3 }: GalleryGridProps) {
           <button
             key={`${img.url}-${i}`}
             onClick={() => setLightbox(img)}
-            className="group relative aspect-square overflow-hidden rounded-xl bg-neutral-100"
+            className="group relative aspect-square overflow-hidden rounded-xl bg-muted"
             aria-label={img.alt ?? `Imagen ${i + 1}`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

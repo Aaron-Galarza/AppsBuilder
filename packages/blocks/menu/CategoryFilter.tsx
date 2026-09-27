@@ -46,13 +46,13 @@ export function CategoryFilter({
   };
 
   return (
-    <div className="sticky top-0 z-30 border-b border-black/5 bg-white/95 backdrop-blur md:static md:z-auto">
+    <div className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur md:static md:z-auto">
       <div className="relative flex items-center px-2 py-2">
         {showLeftArrow && (
           <button
             onClick={() => scrollBy(-1)}
             aria-label="Categorías anteriores"
-            className="absolute left-0 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md"
+            className="absolute left-0 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card shadow-md"
           >
             <ChevronLeft size={16} />
           </button>
@@ -69,8 +69,8 @@ export function CategoryFilter({
             className={cn(
               'flex shrink-0 items-center gap-1 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition md:text-sm',
               selectedCategory === null
-                ? 'border-transparent text-white'
-                : 'border-black/10 text-neutral-600 hover:border-black/25'
+                ? 'border-transparent text-black'
+                : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground'
             )}
             style={selectedCategory === null ? { backgroundColor: primaryColor } : undefined}
           >
@@ -90,8 +90,8 @@ export function CategoryFilter({
                 className={cn(
                   'flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition md:text-sm',
                   active
-                    ? 'border-transparent text-white'
-                    : 'border-black/10 text-neutral-600 hover:border-black/25'
+                    ? 'border-transparent text-black'
+                    : 'border-border text-muted-foreground hover:border-foreground/30 hover:text-foreground'
                 )}
                 style={active ? { backgroundColor: primaryColor } : undefined}
               >
@@ -106,7 +106,7 @@ export function CategoryFilter({
           <button
             onClick={() => scrollBy(1)}
             aria-label="Más categorías"
-            className="absolute right-0 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white shadow-md"
+            className="absolute right-0 z-10 flex h-8 w-8 items-center justify-center rounded-full border border-border bg-card shadow-md"
           >
             <ChevronRight size={16} />
           </button>

@@ -27,7 +27,7 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
   const compact = variant === 'compact';
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 backdrop-blur-lg">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur-lg">
       <div
         className={cn(
           'mx-auto flex h-16 w-full items-center justify-between gap-2',
@@ -46,7 +46,7 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
               alt={cfg.name}
               width={36}
               height={36}
-              className="h-9 w-9 rounded-full border border-white/10 object-cover"
+              className="h-9 w-9 rounded-full border border-border object-cover"
             />
           </button>
         ) : (
@@ -70,7 +70,7 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
                 className={`cursor-pointer rounded-lg px-3 py-1.5 text-sm font-medium transition-all ${
                   pathname === href
                     ? 'bg-primary/15 text-primary'
-                    : 'text-white/60 hover:bg-white/5 hover:text-white'
+                    : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
               >
                 {label}
@@ -84,7 +84,7 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
             type="button"
             onClick={() => router.push('/cart')}
             className={cn(
-              'relative flex cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white transition-all hover:bg-white/10 active:scale-95',
+              'relative flex cursor-pointer items-center justify-center rounded-lg border border-border bg-muted text-foreground transition-all hover:bg-muted/80 active:scale-95',
               compact ? 'h-10 w-10' : 'p-2'
             )}
             aria-label="Abrir carrito"
@@ -100,8 +100,8 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
             type="button"
             onClick={() => router.push('/login')}
             className={cn(
-              'flex cursor-pointer items-center justify-center rounded-lg border border-white/10 bg-white/5 transition-all hover:bg-white/10 hover:text-white',
-              compact ? 'h-10 w-10 text-white/80' : 'p-2 text-white/50'
+              'flex cursor-pointer items-center justify-center rounded-lg border border-border bg-muted transition-all hover:bg-muted/80 hover:text-foreground',
+              compact ? 'h-10 w-10 text-muted-foreground' : 'p-2 text-muted-foreground'
             )}
             aria-label="Iniciar sesión"
           >

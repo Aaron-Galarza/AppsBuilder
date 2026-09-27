@@ -37,7 +37,7 @@ export function StoreStatus({ variant = 'pill' }: StoreStatusProps) {
   }
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4 py-2.5">
+    <div className="flex items-center justify-between rounded-xl border border-border bg-muted px-4 py-2.5">
       <span className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-emerald-400">
         <span className="relative flex h-2.5 w-2.5">
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-500 opacity-75" />

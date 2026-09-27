@@ -15,8 +15,8 @@ export function CartItemExtrasPanel({ cartItemId, addons }: CartItemExtrasPanelP
   const updateItemAddon = useCartStore((s) => s.updateItemAddon);
 
   return (
-    <div className="mt-2 border-t border-dashed border-black/10 pt-2">
-      <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-neutral-400">
+    <div className="mt-2 border-t border-dashed border-border pt-2">
+      <p className="mb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
         Sumar extra
       </p>
       <div className="flex flex-wrap gap-1.5">
@@ -24,7 +24,7 @@ export function CartItemExtrasPanel({ cartItemId, addons }: CartItemExtrasPanelP
           <button
             key={ca.addon._id}
             onClick={() => updateItemAddon(cartItemId, ca.addon as Addon, +1)}
-            className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] font-medium text-neutral-700 transition hover:bg-neutral-200 active:scale-95"
+            className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-[11px] font-medium text-foreground transition hover:bg-muted/80 active:scale-95"
           >
             <Plus size={11} />
             {ca.addon.name} · {formatPrice(ca.addon.price)}

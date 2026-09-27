@@ -11,7 +11,7 @@ export default function MenuPage() {
     <main className="mx-auto w-full max-w-6xl px-4 py-8">
       <header className="mb-6 text-center">
         <h1 className="text-2xl font-black sm:text-3xl">{menuTextos['title'] ?? ''}</h1>
-        <p className="mt-2 text-sm text-neutral-500">{menuTextos['description'] ?? ''}</p>
+        <p className="mt-2 text-sm text-muted-foreground">{menuTextos['description'] ?? ''}</p>
       </header>
 
       {/* BLOCK: menu */}

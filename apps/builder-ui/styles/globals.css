@@ -77,6 +77,27 @@
   }
 }
 
+/* Utilities de identidad (espejo de las definidas en las plantillas) */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+@utility hairline {
+  border-top: 1px solid var(--color-border);
+}
+
+@utility scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer components {
   .lbl {
     display: block;

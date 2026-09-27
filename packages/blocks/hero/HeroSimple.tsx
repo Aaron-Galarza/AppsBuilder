@@ -44,7 +44,7 @@ export function HeroSimple({
       <div className="relative z-10 flex flex-col items-center px-4 py-16 text-center text-white">
         {/* Logo circular */}
         <div
-          className="mb-6 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 bg-white shadow-xl"
+          className="mb-6 flex h-24 w-24 items-center justify-center overflow-hidden rounded-full border-4 bg-muted shadow-xl"
           style={{ borderColor: primaryColor }}
         >
           <span className="text-3xl font-black" style={{ color: primaryColor }} aria-hidden="true">
@@ -75,7 +75,7 @@ export function HeroSimple({
 
         <a
           href={ctaHref}
-          className="mt-8 inline-block min-w-[220px] rounded-md px-6 py-3 text-base font-semibold text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+          className="mt-8 inline-block min-w-[220px] rounded-full px-7 py-3 text-center text-base font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95"
           style={{ backgroundColor: primaryColor }}
         >
           {ctaText}

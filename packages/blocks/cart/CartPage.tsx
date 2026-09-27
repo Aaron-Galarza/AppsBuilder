@@ -24,7 +24,7 @@ export function CartPage({ variant = 'default' }: CartPageProps) {
           <button
             type="button"
             onClick={() => router.push('/')}
-            className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-white/60 transition-colors hover:text-white"
+            className="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground"
           >
             <ArrowLeft size={16} /> Volver al menú
           </button>
@@ -51,10 +51,10 @@ export function CartPage({ variant = 'default' }: CartPageProps) {
               </div>
             </section>
 
-            <section className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-card p-4">
+            <section className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-card p-4">
               <div className="flex flex-col pl-1">
-                <span className="text-xs font-semibold uppercase tracking-wider text-white/50">Total Final</span>
-                <span className="text-2xl font-black leading-none text-white">{formatPrice(totals.total)}</span>
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Final</span>
+                <span className="text-2xl font-black leading-none text-foreground">{formatPrice(totals.total)}</span>
               </div>
               <button
                 type="button"
@@ -77,7 +77,7 @@ export function CartPage({ variant = 'default' }: CartPageProps) {
           <button
             type="button"
             onClick={() => router.push('/')}
-            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/70 transition-colors hover:text-primary"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-border bg-muted text-muted-foreground transition-colors hover:text-primary"
           >
             <ArrowLeft className="h-5 w-5" />
           </button>
@@ -89,17 +89,17 @@ export function CartPage({ variant = 'default' }: CartPageProps) {
 
   return (
     <div className="flex min-h-screen flex-col bg-background font-sans">
-      <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-background/95 shadow-sm backdrop-blur-xl">
+      <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 shadow-sm backdrop-blur-xl">
         <div className="mx-auto flex max-w-2xl items-center justify-between px-3 py-3.5 sm:px-4">
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => router.push('/')}
-              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-white/5 text-white/90 transition-colors hover:bg-white/10"
+              className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-muted text-foreground transition-colors hover:bg-muted/80"
             >
               <ArrowLeft className="h-5 w-5" />
             </button>
-            <h1 className="mt-1 font-heading text-2xl tracking-wide text-white">TU PEDIDO</h1>
+            <h1 className="mt-1 font-heading text-2xl tracking-wide text-foreground">TU PEDIDO</h1>
           </div>
           <div className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/20 px-3 py-1.5">
             <ShoppingBag className="h-3.5 w-3.5 text-primary" />
@@ -113,7 +113,7 @@ export function CartPage({ variant = 'default' }: CartPageProps) {
       <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-3 pb-8 pt-5 sm:gap-6 sm:px-4">
         <section>
           <div className="mb-3 flex items-center justify-between px-1">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-white/50">Productos seleccionados</h2>
+            <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Productos seleccionados</h2>
             <button
               type="button"
               onClick={clearCart}
@@ -130,11 +130,11 @@ export function CartPage({ variant = 'default' }: CartPageProps) {
           </div>
         </section>
 
-        <section className="mt-2 rounded-2xl border border-white/10 bg-card p-4 shadow-md">
+        <section className="mt-2 rounded-2xl border border-border bg-card p-4 shadow-md">
           <div className="flex items-center justify-between gap-4">
             <div className="flex flex-col pl-1">
-              <span className="text-xs font-semibold uppercase tracking-wider text-white/50">Total Final</span>
-              <span className="text-2xl font-black leading-none text-white">
+              <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Total Final</span>
+              <span className="text-2xl font-black leading-none text-foreground">
                 ${totals.total.toLocaleString('es-AR')}
               </span>
             </div>

@@ -28,14 +28,9 @@ export function AboutWithStory({ title, story, imageSrc, stats = [], primaryColo
           />
         )}
         <div className="flex-1">
-          <p
-            className="text-xs font-bold uppercase tracking-widest"
-            style={{ color: primaryColor }}
-          >
-            Nuestra historia
-          </p>
-          <h2 className="mt-2 text-2xl font-black sm:text-3xl">{title}</h2>
-          <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-neutral-500">{story}</p>
+          <p className="eyebrow">Nuestra historia</p>
+          <h2 className="mt-2 font-heading text-2xl font-bold sm:text-3xl">{title}</h2>
+          <p className="mt-4 whitespace-pre-line text-sm leading-relaxed text-muted-foreground">{story}</p>
         </div>
       </div>
 
@@ -46,7 +41,7 @@ export function AboutWithStory({ title, story, imageSrc, stats = [], primaryColo
               <p className="text-2xl font-black sm:text-3xl" style={{ color: primaryColor }}>
                 {stat.value}
               </p>
-              <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-neutral-500">
+              <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 {stat.label}
               </p>
             </div>

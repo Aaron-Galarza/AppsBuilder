@@ -116,24 +116,24 @@ export function MenuBrowser({
       {variant === 'grid' && <div id="product-list-top" />}
 
       {variant === 'list' && error && products.length === 0 ? (
-        <div className="rounded-2xl border border-white/10 bg-card p-6 text-center">
-          <p className="text-sm text-white/60">{error}</p>
+        <div className="rounded-2xl border border-border bg-card p-6 text-center">
+          <p className="text-sm text-muted-foreground">{error}</p>
         </div>
       ) : filteredProducts.length === 0 ? (
         variant === 'list' ? (
-          <div className="rounded-2xl border border-white/10 bg-card p-8 text-center">
-            <p className="text-sm font-semibold text-white/70">{emptyText}</p>
+          <div className="rounded-2xl border border-border bg-card p-8 text-center">
+            <p className="text-sm font-semibold text-muted-foreground">{emptyText}</p>
           </div>
         ) : (
-          <p className="py-16 text-center text-sm text-neutral-500">{emptyText}</p>
+          <p className="py-16 text-center text-sm text-muted-foreground">{emptyText}</p>
         )
       ) : variant === 'list' ? (
         <div id="product-list-top" className="flex scroll-mt-24 flex-col gap-8">
           {groups.map((group) => (
             <section key={group.name}>
               <div className="mb-3 flex items-baseline gap-2 px-1">
-                <h2 className="text-sm font-black uppercase tracking-widest text-white">{group.name}</h2>
-                <span className="text-xs font-semibold text-white/40">{group.products.length}</span>
+                <h2 className="text-sm font-black uppercase tracking-widest text-foreground">{group.name}</h2>
+                <span className="text-xs font-semibold text-muted-foreground">{group.products.length}</span>
               </div>
               <div className="flex flex-col gap-3">
                 {group.products.map((product) => (
@@ -153,7 +153,7 @@ export function MenuBrowser({
         <>
           {groups.map((group) => (
             <section key={group.name} className="mb-8">
-              <h2 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400">
+              <h2 className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-muted-foreground">
                 <span
                   className="h-1.5 w-1.5 rounded-full"
                   style={{ backgroundColor: 'var(--color-primary, #111)' }}

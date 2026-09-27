@@ -68,7 +68,7 @@ export function AddressAutocomplete({ value, onChange, onClear, placeholder = 'T
       <div className="relative">
         <MapPin
           size={16}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           aria-hidden="true"
         />
         <Input
@@ -84,7 +84,7 @@ export function AddressAutocomplete({ value, onChange, onClear, placeholder = 'T
           <button
             onClick={() => handleInputChange('')}
             aria-label="Limpiar dirección"
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 transition hover:text-neutral-700"
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition hover:text-foreground"
           >
             <X size={16} />
           </button>
@@ -93,8 +93,8 @@ export function AddressAutocomplete({ value, onChange, onClear, placeholder = 'T
 
       {/* Dropdown */}
       {isOpen && (
-        <div className="absolute z-40 mt-1 w-full overflow-hidden rounded-xl border border-black/10 bg-white shadow-lg">
-          {loading && <p className="px-3 py-2.5 text-xs text-neutral-500">Buscando...</p>}
+        <div className="absolute z-40 mt-1 w-full overflow-hidden rounded-xl border border-border bg-card shadow-lg">
+          {loading && <p className="px-3 py-2.5 text-xs text-muted-foreground">Buscando...</p>}
           {!loading && error && <p className="px-3 py-2.5 text-xs text-red-500">{error}</p>}
           {!loading && !error && results.length === 0 && (
             <button
@@ -106,7 +106,7 @@ export function AddressAutocomplete({ value, onChange, onClear, placeholder = 'T
                 };
                 handleSelect(fallback);
               }}
-              className="block w-full px-3 py-2.5 text-left text-xs font-medium transition hover:bg-neutral-50"
+              className="block w-full px-3 py-2.5 text-left text-xs font-medium text-foreground transition hover:bg-muted"
             >
               Usar esta dirección: "{inputValue.trim()}"
             </button>
@@ -115,7 +115,7 @@ export function AddressAutocomplete({ value, onChange, onClear, placeholder = 'T
             <button
               key={`${r.lat}-${r.lng}-${i}`}
               onClick={() => handleSelect(r)}
-              className="block w-full px-3 py-2.5 text-left text-xs leading-snug transition hover:bg-neutral-50"
+              className="block w-full px-3 py-2.5 text-left text-xs leading-snug text-foreground transition hover:bg-muted"
             >
               {r.placeName ?? r.address}
             </button>
@@ -127,7 +127,7 @@ export function AddressAutocomplete({ value, onChange, onClear, placeholder = 'T
               setIsOpen(false);
               setIsMapOpen(true);
             }}
-            className="flex w-full items-center gap-2 border-t border-black/5 px-3 py-2.5 text-xs font-semibold text-blue-600 transition hover:bg-blue-50"
+            className="flex w-full items-center gap-2 border-t border-border px-3 py-2.5 text-xs font-semibold text-primary transition hover:bg-muted"
           >
             <MapPin size={14} />
             Elegir en el mapa

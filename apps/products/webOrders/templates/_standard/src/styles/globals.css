@@ -1,23 +1,72 @@
 @import "tailwindcss";
 @source "../../../../../../../packages";
 
+/* =========================================================================
+   STANDARD — Identidad "Moderno": dark neutro frío, geométrico, sobrio.
+   Hero con imagen + secciones clásicas sobre fondo azulado; menú en grilla.
+   Las 3 plantillas comparten los mismos bloques; la identidad vive en
+   estos tokens + composición de la home.
+   ========================================================================= */
+
 @theme {
   --color-primary: INJECT_PRIMARY_COLOR;
   --color-secondary: INJECT_SECONDARY_COLOR;
   --color-accent: INJECT_ACCENT_COLOR;
-  --color-background: #0a0a0a;
-  --color-foreground: #ffffff;
-  --color-card: #161616;
-  --color-muted: #1a1a1a;
-  --color-muted-foreground: #a0a0a0;
-  --color-border: rgba(255, 255, 255, 0.1);
+
+  /* Superficies neutras frías */
+  --color-background: #0c0e11;
+  --color-foreground: #eef1f4;
+  --color-card: #15181d;
+  --color-muted: #1c2026;
+  --color-muted-foreground: #9aa3ad;
+  --color-border: rgba(238, 241, 244, 0.1);
+  --color-ring: rgba(148, 163, 184, 0.5);
+
+  /* Radio medio: pills geométricas, ni duro ni exagerado */
+  --radius-xs: 0.25rem;
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 1.75rem;
+  --radius-full: 9999px;
+
   --font-sans: INJECT_FONT_BODY, sans-serif;
   --font-heading: INJECT_FONT_HEADING, sans-serif;
+
+  --tracking-eyebrow: 0.18em;
 }
 
-body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+@layer base {
+  body {
+    background: var(--color-background);
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--color-primary) 40%, transparent);
+    color: var(--color-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-ring);
+    outline-offset: 2px;
+  }
+}
+
+/* Etiqueta "eyebrow" moderna: pequeña, neutra, sobria */
+@utility eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+@utility hairline {
+  border-top: 1px solid var(--color-border);
 }
 
 @utility scrollbar-none {
@@ -25,5 +74,16 @@ body {
   scrollbar-width: none;
   &::-webkit-scrollbar {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

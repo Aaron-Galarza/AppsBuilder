@@ -22,24 +22,24 @@ export function SiteFooter({ variant = 'default' }: SiteFooterProps) {
     ];
 
     return (
-      <footer className="mt-10 border-t border-white/10 bg-background">
+      <footer className="mt-10 border-t border-border bg-background">
         <div className="mx-auto w-full max-w-2xl px-4 py-8">
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {INFO.map(({ Icon, title, value }) => (
               <div
                 key={title}
-                className="flex flex-col items-center gap-1.5 rounded-2xl border border-white/10 bg-white/5 p-4 text-center"
+                className="flex flex-col items-center gap-1.5 rounded-2xl border border-border bg-muted p-4 text-center"
               >
                 <Icon className="text-primary" size={18} strokeWidth={2} />
-                <h3 className="text-xs font-bold uppercase tracking-wide text-white">{title}</h3>
-                <p className="text-[11px] leading-snug text-white/50">{value}</p>
+                <h3 className="text-xs font-bold uppercase tracking-wide text-foreground">{title}</h3>
+                <p className="text-[11px] leading-snug text-muted-foreground">{value}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-8 flex items-center justify-center gap-2 border-t border-white/5 pt-6">
+          <div className="mt-8 flex items-center justify-center gap-2 border-t border-border pt-6">
             <img src={cfg.logo} alt={cfg.name} className="h-6 w-6 rounded-full object-cover opacity-60" />
-            <p className="text-[10px] font-semibold uppercase tracking-wider text-white/40">
+            <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               © {new Date().getFullYear()} {cfg.name}
             </p>
           </div>
@@ -55,27 +55,27 @@ export function SiteFooter({ variant = 'default' }: SiteFooterProps) {
         <div className="container mx-auto px-4 py-12">
           <div className="mb-10 grid grid-cols-1 gap-8 sm:grid-cols-3">
             <div>
-              <h3 className="mb-3 text-sm font-bold text-white">{cfg.name}</h3>
+              <h3 className="mb-3 text-sm font-bold text-foreground">{cfg.name}</h3>
               <div className="flex flex-col gap-2">
                 <div className="flex items-start gap-2">
                   <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   <div>
                     <p className="text-xs text-muted-foreground">Teléfono</p>
-                    <p className="text-xs font-semibold text-white">{contact['phone'] ?? ''}</p>
+                    <p className="text-xs font-semibold text-foreground">{contact['phone'] ?? ''}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   <div>
                     <p className="text-xs text-muted-foreground">Dirección</p>
-                    <p className="text-xs font-semibold text-white">{contact['address'] ?? ''}</p>
+                    <p className="text-xs font-semibold text-foreground">{contact['address'] ?? ''}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-2">
                   <Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                   <div>
                     <p className="text-xs text-muted-foreground">Horarios</p>
-                    <p className="text-xs font-semibold text-white">{contact['hours'] ?? ''}</p>
+                    <p className="text-xs font-semibold text-foreground">{contact['hours'] ?? ''}</p>
                   </div>
                 </div>
               </div>
@@ -84,7 +84,7 @@ export function SiteFooter({ variant = 'default' }: SiteFooterProps) {
             <div className="flex items-center justify-center">
               <div className="text-center">
                 <img src={cfg.logo} alt={cfg.name} className="mx-auto mb-2 h-10 w-10 rounded-full object-cover opacity-60" />
-                <p className="text-[10px] font-extrabold uppercase tracking-wider text-white">
+                <p className="text-[10px] font-extrabold uppercase tracking-wider text-foreground">
                   &copy; {new Date().getFullYear()} {cfg.name}
                 </p>
                 <p className="text-[9px] font-medium text-muted-foreground">Todos los derechos reservados</p>
@@ -92,7 +92,7 @@ export function SiteFooter({ variant = 'default' }: SiteFooterProps) {
             </div>
 
             <div className="text-right">
-              <h3 className="mb-3 text-sm font-bold text-white">Acerca de la Plataforma</h3>
+              <h3 className="mb-3 text-sm font-bold text-foreground">Acerca de la Plataforma</h3>
               <p className="text-xs leading-relaxed text-muted-foreground">
                 Plataforma de pedidos online desarrollada para optimizar la experiencia de compra de nuestros clientes.
               </p>
