@@ -110,6 +110,38 @@ foreach ($svc in $services) {
   }
 }
 
+function Stop-AppServices {
+  Write-Host '[~] Deteniendo servicios de AppsBuilder...' -ForegroundColor Yellow
+  $stopped = 0
+
+  # 1) Por patrón de línea de comandos: mata node.exe de cada servicio (incluye
+  #    tsx/next/pnpm). Si matás solo al padre pnpm/cmd, el hijo node queda huérfano.
+  foreach ($svc in $services) {
+    Get-CimInstance Win32_Process -Filter "Name='node.exe'" -ErrorAction SilentlyContinue |
+      Where-Object { $_.CommandLine -and $_.CommandLine -match $svc.Pattern } |
+      ForEach-Object {
+        Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
+        $stopped++
+      }
+  }
+
+  # 2) Fallback por puerto en listening
+  foreach ($p in 4000, 3001, 3002) {
+    Get-NetTCPConnection -LocalPort $p -State Listen -ErrorAction SilentlyContinue |
+      ForEach-Object {
+        Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
+        $stopped++
+      }
+  }
+
+  Start-Sleep -Milliseconds 500
+  if ($stopped -gt 0) {
+    Write-Host "[ok] Servicios de AppsBuilder detenidos ($stopped procesos)." -ForegroundColor Green
+  } else {
+    Write-Host '[~] No había servicios corriendo para detener.' -ForegroundColor Yellow
+  }
+}
+
 if ($missing.Count -gt 0) {
   Write-Host "[~] Levantando: $((($missing | ForEach-Object { $_.Name }) -join ', '))..." -ForegroundColor Yellow
 
@@ -143,7 +175,7 @@ Write-Host '[ok] Todo arriba. Abriendo el form...' -ForegroundColor Green
 Start-Process 'http://localhost:3001'
 
 # 5) Monitoreo en vivo: eventos del wizard (logs/wizard.ndjson) + consultas al backend (logs/backend.log)
-#    Queda corriendo hasta que presiones 'q' (o Ctrl+C). No mata los servicios.
+#    Queda corriendo hasta que presiones 'q' o Ctrl+C (detiene los servicios).
 $wizardLog = Join-Path $Root 'logs\wizard.ndjson'
 $backendLog = Join-Path $Root 'logs\backend.log'
 
@@ -188,10 +220,15 @@ function Write-MonitorLine([string]$prefix, [string]$text, [ConsoleColor]$color)
 
 Write-Host ''
 Write-Host '=== Monitoreo en vivo (paso/selecciones/descargas + consultas API) ===' -ForegroundColor White
-Write-Host "  presioná 'q' para volver al prompt (los servicios quedan corriendo; frenalos con pnpm stop)" -ForegroundColor DarkGray
+Write-Host "  presioná 'q' o Ctrl+C para detener los servicios" -ForegroundColor DarkGray
 
 $script:barW = 0
 try {
+  # Ctrl+C se interpreta como tecla para salir y matar los servicios (no aborta
+  # el script sin limpiar). Sin esto, Ctrl+C derriba la consola y deja huérfanas
+  # las cadenas cmd/pnpm/tsx.
+  try { [Console]::TreatControlCAsInput = $true } catch { }
+
   while ($true) {
     # a) Eventos del wizard
     $wizLines = Get-NewLines $state['wizard']
@@ -227,11 +264,16 @@ try {
       }
     }
 
-    # c) Tecla 'q' para salir del monitoreo
+    # c) Tecla 'q' o Ctrl+C para salir del monitoreo (y detener los servicios)
     try {
       if ([Console]::KeyAvailable) {
         $key = [Console]::ReadKey($true)
         if ($key.Key -eq 'Q' -or $key.Key -eq 'q') { break }
+        # Ctrl+C con TreatControlCAsInput=$true llega como key 'C' + modificador Control
+        if ($key.Key -eq 'C' -and ($key.Modifiers -band [ConsoleModifiers]::Control)) {
+          $script:ctrlC = $true
+          break
+        }
       }
     } catch { }
 
@@ -240,6 +282,9 @@ try {
 } finally {
   if ($script:barActive) { Write-Host '' }
   Write-Host '' -ForegroundColor DarkGray
-  Write-Host '[~] Monitoreo finalizado. Los servicios siguen corriendo (:4000 :3001 :3002).' -ForegroundColor Yellow
-  Write-Host "    Para frenarlos: powershell -File scripts\stop.ps1" -ForegroundColor Yellow
+  if ($script:ctrlC) {
+    Write-Host '[~] Ctrl+C detectado. Deteniendo todo...' -ForegroundColor Yellow
+  }
+  Stop-AppServices
+  Write-Host "    Para volver a levantar: appsbuilder (o powershell -File scripts\start.ps1)" -ForegroundColor DarkGray
 }
