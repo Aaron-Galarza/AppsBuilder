@@ -26,6 +26,8 @@ export interface ProjectConfig {
     hero: string;
     about: string;
     offer: string;
+    /** Imágenes de la galería (multifoto, subidas en el paso 6). */
+    gallery?: string[];
   };
   /** Bloques seleccionados (incluye los obligatorios del producto). */
   blocks: string[];

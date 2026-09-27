@@ -1,5 +1,5 @@
 ﻿import { create } from 'zustand'
-import { DEFAULT_TEXTOS } from '../lib/constants'
+import { DEFAULT_TEXTOS, PRODUCT_BLOCKS, MANDATORY_BLOCKS } from '../lib/constants'
 
 export interface BuilderState {
   product: 'webOrders' | 'landingPages' | null
@@ -14,7 +14,8 @@ export interface BuilderState {
     favicon: File | null
   }
   textos: Record<string, Record<string, string>>
-  imagenes: Record<string, File | null>
+  /** Imágenes por bloque; 'gallery' admite varias (File[]). */
+  imagenes: Record<string, File | File[] | null>
 
   setProduct: (p: BuilderState['product']) => void
   setTemplate: (t: BuilderState['template']) => void
@@ -38,7 +39,7 @@ const initialState = {
     favicon: null as File | null,
   },
   textos: {} as Record<string, Record<string, string>>,
-  imagenes: {} as Record<string, File | null>,
+  imagenes: {} as Record<string, File | File[] | null>,
 }
 
 export const useBuilderStore = create<BuilderState>((set) => ({
@@ -52,7 +53,16 @@ export const useBuilderStore = create<BuilderState>((set) => ({
       for (const [block, fields] of Object.entries(state.textos)) {
         textos[block] = { ...(textos[block] || {}), ...fields }
       }
-      return { template, selectedBlocks: [], textos }
+      // Al elegir plantilla, pre-seleccionamos todos los bloques disponibles de la misma
+      // (los obligatorios como 'menu' quedan bloqueados en la UI; el resto es deseleccionable).
+      const product = state.product
+      let available: string[] = []
+      let mandatory: string[] = []
+      if (product && template) {
+        available = [...(PRODUCT_BLOCKS[product]?.[template] ?? [])]
+        mandatory = [...(MANDATORY_BLOCKS[product] ?? [])]
+      }
+      return { template, selectedBlocks: [...new Set([...mandatory, ...available])], textos }
     }),
 
   setSelectedBlocks: (selectedBlocks) => set({ selectedBlocks }),

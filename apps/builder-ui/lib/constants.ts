@@ -2,7 +2,9 @@ export const PRODUCT_BLOCKS = {
   webOrders: {
     basic: ['menu'],
     standard: ['hero', 'menu', 'about', 'cta', 'contact'],
-    premium: ['hero', 'menu', 'about', 'cta', 'contact', 'gallery', 'testimonials', 'offer', 'newsletter'],
+    // Galería y Ofertas son funcionales (se renderizan en la home premium);
+    // testimonials/newsletter son bloques de landingPages y no entran en webOrders.
+    premium: ['hero', 'menu', 'about', 'cta', 'contact', 'gallery', 'offer'],
   },
   landingPages: {
     basic: ['hero', 'cta', 'contact'],

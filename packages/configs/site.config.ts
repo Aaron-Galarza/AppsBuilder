@@ -26,6 +26,7 @@ export const clientConfig: ProjectConfig = {
     hero: '',
     about: '',
     offer: '',
+    gallery: [],
   },
   blocks: [],
   whatsapp: '',

@@ -33,6 +33,7 @@ export const clientConfig: ProjectConfig = {
     hero: '',
     about: '',
     offer: '',
+    gallery: [],
   },
   blocks: ['menu', 'cart', 'checkout', 'admin', 'hero', 'about'],
   whatsapp: '',

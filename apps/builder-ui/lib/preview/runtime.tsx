@@ -10,7 +10,6 @@ import {
   setSitePathname,
   useSitePathname,
 } from '@saas/hooks'
-import { getEffectiveBlocks } from '../generator/cleaner'
 import { useBuilderStore } from '../../stores/builderStore'
 import {
   buildPreviewTheme,
@@ -131,7 +130,7 @@ export interface WebOrdersPreviewProps {
  */
 export function WebOrdersPreview({ scrollRef }: WebOrdersPreviewProps) {
   const state = useBuilderStore()
-  const objectUrls = usePreviewObjectUrls(state.imagenes)
+  const { single: objectUrls, gallery } = usePreviewObjectUrls(state.imagenes, state.config)
   const pathname = useSitePathname()
   const template = state.template as TemplateName | null
   const templates = template ? TEMPLATES[template] : undefined
@@ -163,15 +162,17 @@ export function WebOrdersPreview({ scrollRef }: WebOrdersPreviewProps) {
       logo,
       favicon,
       textos: state.textos,
-      images: { logo, favicon, hero, about, offer },
-      blocks: [...getEffectiveBlocks(state.selectedBlocks, state.product)],
+      images: { logo, favicon, hero, about, offer, gallery },
+      // Solo los bloques que el usuario seleccionó: los templates deciden
+      // qué secciones renderizar con cfg.blocks.includes(...).
+      blocks: [...state.selectedBlocks],
       whatsapp: '',
       instagram: '',
       address: '',
       mapboxToken: '',
       apiUrl: '',
     }
-  }, [state, objectUrls])
+  }, [state, objectUrls, gallery])
 
   if (!state.product || !template || !templates || !config) {
     return (

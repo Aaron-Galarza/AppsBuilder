@@ -114,28 +114,66 @@ export async function uploadAboutImage(file: File, slug: string): Promise<string
   })
 }
 
+export async function uploadOfferImage(file: File, slug: string): Promise<string> {
+  return uploadImage(file, {
+    folder: `appsbuilder/${slug}`,
+    publicId: 'offer',
+    width: 1600,
+    height: 800,
+    fit: 'cover',
+    quality: 80,
+  })
+}
+
+export async function uploadGalleryImages(files: File[], slug: string): Promise<string[]> {
+  const urls: string[] = []
+  for (let i = 0; i < files.length; i++) {
+    try {
+      const url = await uploadImage(files[i], {
+        folder: `appsbuilder/${slug}`,
+        publicId: `gallery-${i + 1}`,
+        width: 1200,
+        height: 900,
+        fit: 'cover',
+        quality: 80,
+      })
+      if (url) urls.push(url)
+    } catch (err) {
+      console.error(`Error subiendo imagen de galería ${i + 1}:`, err)
+    }
+  }
+  return urls
+}
+
 const UPLOAD_MAP: Record<string, (file: File, slug: string) => Promise<string>> = {
   logo: uploadLogo,
   favicon: uploadFavicon,
   hero: uploadHeroImage,
   about: uploadAboutImage,
+  offer: uploadOfferImage,
 }
 
 export async function uploadAllImages(
   state: BuilderState
-): Promise<Record<string, string>> {
+): Promise<Record<string, string | string[]>> {
   const slug = state.config.slug || 'project'
-  const urls: Record<string, string> = {}
+  const urls: Record<string, string | string[]> = {}
 
   for (const [key, uploadFn] of Object.entries(UPLOAD_MAP)) {
     const file = state.imagenes[key]
     if (file) {
+      if (Array.isArray(file)) continue
       try {
         urls[key] = await uploadFn(file, slug)
       } catch (err) {
         console.error(`Error subiendo imagen ${key}:`, err)
       }
     }
+  }
+
+  const galleryFiles = state.imagenes['gallery']
+  if (Array.isArray(galleryFiles) && galleryFiles.length > 0) {
+    urls['gallery'] = await uploadGalleryImages(galleryFiles, slug)
   }
 
   const logoFile = state.config.logo

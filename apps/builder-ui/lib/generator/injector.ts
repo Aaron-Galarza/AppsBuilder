@@ -1,5 +1,4 @@
 import type { FileEntry } from './types'
-import { getEffectiveBlocks } from './cleaner'
 
 interface InjectorState {
   product: 'webOrders' | 'landingPages' | null
@@ -22,6 +21,13 @@ function safeStr(val: string | undefined | null): string {
   return val ?? ''
 }
 
+/** Convierte un valor de imagen compartido (string o lista) a texto plano. */
+function strOr(val: string | string[] | undefined): string {
+  return typeof val === 'string' ? val : ''
+}
+
+type ImageUrls = Record<string, string | string[]>
+
 function injectTailwind(content: string, state: InjectorState): string {
   let result = content
   result = result.replace(/INJECT_PRIMARY_COLOR/g, state.config.colors.primary)
@@ -35,7 +41,7 @@ function injectTailwind(content: string, state: InjectorState): string {
 function injectTextos(
   content: string,
   state: InjectorState,
-  imageUrls: Record<string, string>
+  imageUrls: ImageUrls
 ): string {
   let result = content
 
@@ -83,7 +89,7 @@ function injectTextos(
   result = result.replace(/INJECT_OFFER_BANNER_DESCRIPTION/g, safeStr(offer['bannerDescription']))
   result = result.replace(/INJECT_OFFER_DISCOUNT_TEXT/g, safeStr(offer['discountText']))
   result = result.replace(/INJECT_OFFER_BUTTON_TEXT/g, safeStr(offer['buttonText']))
-  result = result.replace(/INJECT_OFFER_BACKGROUND_IMAGE/g, imageUrls['offer'] || '')
+  result = result.replace(/INJECT_OFFER_BACKGROUND_IMAGE/g, strOr(imageUrls['offer']))
 
   const newsletter = state.textos['newsletter'] || {}
   result = result.replace(/INJECT_NEWSLETTER_TITLE/g, safeStr(newsletter['title']))
@@ -101,10 +107,10 @@ function injectTextos(
   result = result.replace(/INJECT_TENANT_NAME/g, state.config.name)
   result = result.replace(/INJECT_MENU_SUBTITLE/g, safeStr(menu['description']))
 
-  result = result.replace(/INJECT_LOGO_URL/g, imageUrls['logo'] || '')
-  result = result.replace(/INJECT_FAVICON_URL/g, imageUrls['favicon'] || '')
-  result = result.replace(/INJECT_HERO_IMAGE_URL/g, imageUrls['hero'] || '')
-  result = result.replace(/INJECT_ABOUT_IMAGE_URL/g, imageUrls['about'] || '')
+  result = result.replace(/INJECT_LOGO_URL/g, strOr(imageUrls['logo']))
+  result = result.replace(/INJECT_FAVICON_URL/g, strOr(imageUrls['favicon']))
+  result = result.replace(/INJECT_HERO_IMAGE_URL/g, strOr(imageUrls['hero']))
+  result = result.replace(/INJECT_ABOUT_IMAGE_URL/g, strOr(imageUrls['about']))
 
   result = result.replace(/INJECT_PRIMARY_COLOR/g, state.config.colors.primary)
   result = result.replace(/INJECT_SECONDARY_COLOR/g, state.config.colors.secondary)
@@ -177,7 +183,7 @@ function getInjectionType(filePath: string): 'tailwind' | 'textos' | 'packageJso
 export function injectConfig(
   files: FileEntry[],
   state: InjectorState,
-  imageUrls: Record<string, string>
+  imageUrls: ImageUrls
 ): FileEntry[] {
   return files.map((file) => {
     if (!isTextFile(file.path)) return file
@@ -217,12 +223,15 @@ export function injectConfig(
  */
 export function generateSiteConfig(
   state: InjectorState,
-  imageUrls: Record<string, string>,
+  imageUrls: ImageUrls,
 ): FileEntry {
   const slug = state.config.slug || 'project'
   const cfg = state.config
   const textosStr = JSON.stringify(state.textos, null, 2)
-  const blocksStr = JSON.stringify([...getEffectiveBlocks(state.selectedBlocks, state.product ?? 'webOrders')])
+  // Solo los bloques que el usuario seleccionó: las plantillas condicionan
+  // qué secciones renderizar con cfg.blocks.includes(...).
+  const blocksStr = JSON.stringify([...state.selectedBlocks])
+  const gallery = Array.isArray(imageUrls['gallery']) ? imageUrls['gallery'] : []
 
   const content = `import type { ProjectConfig } from './base.config';
 
@@ -247,6 +256,7 @@ export const clientConfig: ProjectConfig = {
     hero: ${JSON.stringify(imageUrls['hero'] || '')},
     about: ${JSON.stringify(imageUrls['about'] || '')},
     offer: ${JSON.stringify(imageUrls['offer'] || '')},
+    gallery: ${JSON.stringify(gallery)},
   },
   blocks: ${blocksStr},
   whatsapp: '',

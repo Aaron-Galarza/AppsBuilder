@@ -30,7 +30,7 @@ const BuilderStateSchema = z.object({
     }),
   }),
   textos: z.record(z.record(z.string())),
-  imagenes: z.record(z.string().nullable().optional()),
+  imagenes: z.record(z.union([z.string(), z.array(z.string()), z.null()]).optional()),
   configImages: z.object({
     logo: z.string().nullable().optional(),
     favicon: z.string().nullable().optional(),
@@ -68,10 +68,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const { imagenes, configImages, ...rest } = parsed.data
 
-    const imagenesFiles: Record<string, File | null> = {}
+    const imagenesFiles: Record<string, File | File[] | null> = {}
     if (imagenes) {
       for (const [key, val] of Object.entries(imagenes)) {
-        imagenesFiles[key] = val ? createFileFromBase64(val, key) : null
+        if (Array.isArray(val)) {
+          imagenesFiles[key] = val.map((b64, i) => createFileFromBase64(b64, `${key}-${i}`))
+        } else {
+          imagenesFiles[key] = val ? createFileFromBase64(val, key) : null
+        }
       }
     }
 

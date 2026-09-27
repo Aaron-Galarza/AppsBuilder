@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { useRouter } from 'next/router'
 import { Eye } from 'lucide-react'
 import { StepIndicator } from '../../components/StepIndicator'
@@ -10,14 +10,15 @@ import { ColorPicker } from '../../components/ColorPicker'
 import { FontSelector } from '../../components/FontSelector'
 import { TextEditor } from '../../components/TextEditor'
 import { ImageUploader } from '../../components/ImageUploader'
+import { ImageUploaderMulti } from '../../components/ImageUploaderMulti'
 import { PreviewPanel } from '../../components/PreviewPanel'
 import { DownloadButton } from '../../components/DownloadButton'
-import { PreviewOverlay } from '../../components/preview/PreviewOverlay'
 import { useBuilderStore } from '../../stores/builderStore'
 import { useProductBlocks } from '../../hooks/useProductBlocks'
 import { useFormValidation } from '../../hooks/useFormValidation'
+import { publishPreviewBridge } from '../../lib/previewWindow'
 import { emitWizard } from '../../lib/telemetry'
-import { BLOCK_LABELS } from '../../lib/constants'
+import { BLOCK_LABELS, DEFAULT_TEXTOS } from '../../lib/constants'
 
 const STEP_LABELS = ['Producto', 'Plantilla', 'Bloques', 'Config', 'Textos', 'Imágenes', 'Descargar']
 
@@ -31,17 +32,41 @@ export default function BuilderStep() {
   const [activeTextBlock, setActiveTextBlock] = useState<string | null>(
     store.selectedBlocks[0] || null
   )
-  const [previewOpen, setPreviewOpen] = useState(false)
+
+  // Slug auto-generado desde el nombre, salvo que el usuario lo edite a mano.
+  const [slugTouched, setSlugTouched] = useState(false)
+  const prevName = useRef('')
+
+  const slugFrom = useCallback((s: string) => {
+    return s
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '')
+  }, [])
+
+  const handleNameChange = useCallback((name: string) => {
+    const autoSlug = slugFrom(name)
+    const patch: Record<string, unknown> = { name }
+
+    if (!slugTouched || store.config.slug === slugFrom(prevName.current)) {
+      patch.slug = autoSlug
+    }
+
+    prevName.current = name
+    store.setConfig(patch as Partial<typeof store.config>)
+  }, [store, slugTouched, slugFrom])
 
   useEffect(() => {
     emitWizard(`Paso ${step}/7 — ${STEP_LABELS[step - 1] ?? '?'}`, { step })
   }, [step])
 
-  const togglePreview = useCallback(() => {
-    setPreviewOpen((prev) => {
-      emitWizard(prev ? 'Preview cerrado' : 'Preview abierto')
-      return !prev
-    })
+  // Publica el estado hacia la ventana de preview separada si está abierta.
+  useEffect(() => publishPreviewBridge(), [])
+
+  const openPreviewWindow = useCallback(() => {
+    emitWizard('Preview: abrir ventana separada')
+    window.open('/builder/preview', '_blank', 'width=1200,height=800,left=80,top=60')
   }, [])
 
   const handleNext = () => {
@@ -79,10 +104,11 @@ export default function BuilderStep() {
   }, [store])
 
   const handleTextChange = useCallback((block: string, key: string, value: string) => {
+    const defaults = DEFAULT_TEXTOS[block] || {}
     const current = store.textos[block] || {}
     store.setTextos({
       ...store.textos,
-      [block]: { ...current, [key]: value },
+      [block]: { ...defaults, ...current, [key]: value },
     })
   }, [store])
 
@@ -91,6 +117,15 @@ export default function BuilderStep() {
       <div className="flex items-center justify-between gap-3 px-4 py-2 border-b border-border">
         <button onClick={handleCancel} className="btn btn-err" title="Cancelar y perder cambios">
           Cancelar
+        </button>
+        <button
+          type="button"
+          onClick={openPreviewWindow}
+          className="btn btn-fill"
+          title="Abrir el preview en una ventana separada"
+        >
+          <Eye size={13} />
+          Abrir Preview
         </button>
         <span className="text-[10px] tracking-widest text-muted-foreground uppercase">
           Paso {step} / 7
@@ -135,7 +170,7 @@ export default function BuilderStep() {
                 <input
                   type="text"
                   value={store.config.name}
-                  onChange={(e) => store.setConfig({ name: e.target.value })}
+                  onChange={(e) => handleNameChange(e.target.value)}
                   placeholder="Ej: PizzaYa"
                   className="field"
                 />
@@ -146,10 +181,18 @@ export default function BuilderStep() {
                 <input
                   type="text"
                   value={store.config.slug}
-                  onChange={(e) => store.setConfig({ slug: e.target.value })}
+                  onChange={(e) => {
+                    setSlugTouched(true)
+                    store.setConfig({ slug: e.target.value })
+                  }}
                   placeholder="Ej: pizzaya"
                   className="field"
                 />
+                <span className="hint">
+                  {slugTouched
+                    ? 'Se genera automáticamente al cambiar el nombre (si no lo editas a mano)'
+                    : 'Se genera automáticamente desde el nombre'}
+                </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -247,7 +290,7 @@ export default function BuilderStep() {
               {store.selectedBlocks.includes('hero') && (
                 <ImageUploader
                   label="Imagen del Hero"
-                  value={store.imagenes['hero'] || null}
+                  value={(store.imagenes['hero'] as File) || null}
                   onChange={(f) => store.setImagenes({ ...store.imagenes, hero: f })}
                   recommended="1920x1080px, JPG o WebP"
                 />
@@ -256,18 +299,27 @@ export default function BuilderStep() {
               {store.selectedBlocks.includes('about') && (
                 <ImageUploader
                   label="Imagen del About"
-                  value={store.imagenes['about'] || null}
+                  value={(store.imagenes['about'] as File) || null}
                   onChange={(f) => store.setImagenes({ ...store.imagenes, about: f })}
                   recommended="800x600px, JPG o WebP"
                 />
               )}
 
               {store.selectedBlocks.includes('gallery') && (
+                <ImageUploaderMulti
+                  label="Imágenes de Galería"
+                  values={(store.imagenes['gallery'] as File[]) || []}
+                  onChange={(files) => store.setImagenes({ ...store.imagenes, gallery: files })}
+                  recommended="1200x800px, JPG o WebP (hasta 8)"
+                />
+              )}
+
+              {store.selectedBlocks.includes('offer') && (
                 <ImageUploader
-                  label="Imágenes de Galería (múltiples)"
-                  value={store.imagenes['gallery'] || null}
-                  onChange={(f) => store.setImagenes({ ...store.imagenes, gallery: f })}
-                  recommended="1200x800px, JPG o WebP"
+                  label="Imagen de fondo de la Oferta"
+                  value={(store.imagenes['offer'] as File) || null}
+                  onChange={(f) => store.setImagenes({ ...store.imagenes, offer: f })}
+                  recommended="1600x800px, JPG o WebP"
                 />
               )}
             </div>
@@ -342,20 +394,6 @@ export default function BuilderStep() {
           </button>
         </div>
       )}
-
-      <button
-        type="button"
-        onClick={togglePreview}
-        className={`btn btn-fill fixed bottom-5 right-5 z-[70] ${previewOpen ? 'opacity-70' : ''}`}
-      >
-        <Eye size={13} />
-        {previewOpen ? 'Cerrar preview' : 'Ver Preview'}
-      </button>
-
-      <PreviewOverlay
-        open={previewOpen}
-        onClose={() => setPreviewOpen(false)}
-      />
     </div>
   )
 }

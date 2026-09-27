@@ -48,7 +48,7 @@ export function AppPreview({ scrollRef }: AppPreviewProps = {}) {
 }
 
 function LandingSitePreview({ state }: { state: BuilderState }) {
-  const objectUrls = usePreviewObjectUrls(state.imagenes)
+  const { single: objectUrls, gallery } = usePreviewObjectUrls(state.imagenes, state.config)
 
   const ctx: PreviewContext = useMemo(
     () => ({
@@ -59,9 +59,10 @@ function LandingSitePreview({ state }: { state: BuilderState }) {
         hero: resolvePreviewSrc('hero', state, objectUrls),
         about: resolvePreviewSrc('about', state, objectUrls),
         offer: resolvePreviewSrc('offer', state, objectUrls),
+        gallery,
       },
     }),
-    [state, objectUrls]
+    [state, objectUrls, gallery]
   )
 
   usePreviewFonts(state)
@@ -241,7 +242,10 @@ function LandingSection({ block, ctx }: { block: string; ctx: PreviewContext }) 
           <h2 className="mb-8 text-center font-heading text-3xl font-bold">
             {t(ctx, 'gallery', 'title')}
           </h2>
-          <GalleryGrid images={[]} columns={3} />
+          <GalleryGrid
+            images={ctx.images.gallery.map((url) => ({ url }))}
+            columns={3}
+          />
         </section>
       )
     case 'testimonials':

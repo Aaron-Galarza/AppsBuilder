@@ -6,7 +6,7 @@ interface Validation {
 }
 
 export function useFormValidation(step: number): Validation {
-  const { product, template, selectedBlocks, config, textos } = useBuilderStore()
+  const { product, template, selectedBlocks, config } = useBuilderStore()
 
   switch (step) {
     case 1: {
@@ -40,13 +40,9 @@ export function useFormValidation(step: number): Validation {
         errors.push('No hay bloques seleccionados')
         return { isValid: false, errors }
       }
-      for (const block of selectedBlocks) {
-        const blockTextos = textos[block]
-        if (!blockTextos || Object.keys(blockTextos).length === 0) {
-          errors.push(`El bloque "${block}" no tiene textos configurados`)
-        }
-      }
-      return { isValid: errors.length === 0, errors }
+      // Los bloques vienen preseedeados con DEFAULT_TEXTOS; solo se exige
+      // que el estado exista para no dejar huecos en el flujo.
+      return { isValid: true, errors }
     }
 
     case 6:

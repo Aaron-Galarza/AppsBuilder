@@ -1,9 +1,18 @@
 import type { BuilderState } from '@/stores/builderStore'
 
+async function fileToBase64(file: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onload = () => resolve(reader.result as string)
+    reader.onerror = reject
+    reader.readAsDataURL(file)
+  })
+}
+
 export async function filesToBase64(
-  imagenes: Record<string, File | null>
-): Promise<Record<string, string | null>> {
-  const result: Record<string, string | null> = {}
+  imagenes: Record<string, File | File[] | null>
+): Promise<Record<string, string | string[] | null>> {
+  const result: Record<string, string | string[] | null> = {}
 
   for (const [key, file] of Object.entries(imagenes)) {
     if (!file) {
@@ -11,14 +20,11 @@ export async function filesToBase64(
       continue
     }
 
-    const base64 = await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = reject
-      reader.readAsDataURL(file)
-    })
-
-    result[key] = base64
+    if (Array.isArray(file)) {
+      result[key] = await Promise.all(file.map((f) => fileToBase64(f)))
+    } else {
+      result[key] = await fileToBase64(file)
+    }
   }
 
   return result
@@ -35,18 +41,8 @@ export async function generateRepo(
   onProgress?.(30)
 
   const base64Config = {
-    logo: state.config.logo ? await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = reject
-      reader.readAsDataURL(state.config.logo!)
-    }) : null,
-    favicon: state.config.favicon ? await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader()
-      reader.onload = () => resolve(reader.result as string)
-      reader.onerror = reject
-      reader.readAsDataURL(state.config.favicon!)
-    }) : null,
+    logo: state.config.logo ? await fileToBase64(state.config.logo) : null,
+    favicon: state.config.favicon ? await fileToBase64(state.config.favicon) : null,
   }
 
   const payload = {
