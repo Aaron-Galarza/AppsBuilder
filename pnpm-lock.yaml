@@ -120,9 +120,6 @@ importers:
       cloudinary:
         specifier: ^2.5.1
         version: 2.10.1
-      clsx:
-        specifier: ^2.1.1
-        version: 2.1.1
       jszip:
         specifier: ^3.10.1
         version: 3.10.1
@@ -135,15 +132,9 @@ importers:
       react:
         specifier: ^18.3.1
         version: 18.3.1
-      react-hook-form:
-        specifier: ^7.54.2
-        version: 7.86.0(react@18.3.1)
       sharp:
         specifier: ^0.33.5
         version: 0.33.5
-      tailwind-merge:
-        specifier: ^2.6.0
-        version: 2.6.1
       zod:
         specifier: ^3.24.1
         version: 3.25.76
@@ -252,9 +243,6 @@ importers:
         specifier: ^3.9.0
         version: 3.29.0
     devDependencies:
-      '@types/mapbox-gl':
-        specifier: ^3.4.0
-        version: 3.5.0
       '@types/node':
         specifier: ^20.17.0
         version: 20.19.43
@@ -1481,10 +1469,6 @@ packages:
 
   '@types/jsonwebtoken@9.0.10':
     resolution: {integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==}
-
-  '@types/mapbox-gl@3.5.0':
-    resolution: {integrity: sha512-3wVAUTC6q1UKatLP9YxFBnGJWi3neJUF9OKeyRdUf/BsYjZAP35xmZkL4zogVJbO3vdExuSVYCAkzUXjpjdhOg==}
-    deprecated: This is a stub types definition. mapbox-gl provides its own type definitions, so you do not need this installed.
 
   '@types/methods@1.1.4':
     resolution: {integrity: sha512-ymXWVrDiCxTBE3+RIrrP533E70eA+9qu7zdWoHuOmGujkYtzf4HQF96b8nwHLqhuf4ykX61IGRIB38CC6/sImQ==}
@@ -3540,12 +3524,6 @@ packages:
     peerDependencies:
       react: ^18.3.1
 
-  react-hook-form@7.86.0:
-    resolution: {integrity: sha512-4kbWJrh5jPZt1+YqVcXcGKffGcXV/XVbozknLh0Yjh0KhpoAkus21TAQhzRYqNwFkkObmnSvRlZZ3GT+ehoIrA==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      react: ^16.8.0 || ^17 || ^18 || ^19
-
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
 
@@ -5180,10 +5158,6 @@ snapshots:
     dependencies:
       '@types/ms': 2.1.0
       '@types/node': 20.19.43
-
-  '@types/mapbox-gl@3.5.0':
-    dependencies:
-      mapbox-gl: 3.29.0
 
   '@types/methods@1.1.4': {}
 
@@ -7624,10 +7598,6 @@ snapshots:
       loose-envify: 1.4.0
       react: 18.3.1
       scheduler: 0.23.2
-
-  react-hook-form@7.86.0(react@18.3.1):
-    dependencies:
-      react: 18.3.1
 
   react-is@16.13.1: {}
 

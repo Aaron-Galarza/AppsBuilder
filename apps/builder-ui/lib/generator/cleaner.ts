@@ -30,16 +30,16 @@ function extractBlockFromPath(path: string): string | null {
 }
 
 const BLOCK_COMPONENTS: Record<string, string[]> = {
-  hero: ['HeroSimple', 'HeroWithCarousel', 'HeroWithVideo'],
+  hero: ['HeroSimple', 'HeroWithCarousel'],
   layout: ['PublicLayout', 'SiteHeader', 'SiteFooter', 'StoreStatus', 'PromoBanner'],
   auth: ['LoginPage'],
-  menu: ['MenuBrowser', 'MenuGrid', 'CategoryFilter', 'MenuCarousel', 'MenuList', 'SearchBar', 'FeaturedBanner', 'StoreClosed', 'AddonsModal', 'ProductCard'],
+  menu: ['MenuBrowser', 'CategoryFilter', 'SearchBar', 'AddonsModal', 'ProductCard'],
   about: ['AboutSimple', 'AboutWithStory'],
-  cta: ['CTASimple', 'CTAWithCountdown'],
-  contact: ['ContactForm', 'ContactInfo'],
-  gallery: ['GalleryGrid', 'GalleryCarousel'],
-  testimonials: ['TestimonialsCarousel', 'TestimonialsGrid'],
-  offer: ['OfferBanner', 'CountdownOffer'],
+  cta: ['CTASimple'],
+  contact: ['ContactInfo'],
+  gallery: ['GalleryGrid'],
+  testimonials: ['TestimonialsCarousel'],
+  offer: ['OfferBanner'],
   newsletter: ['NewsletterForm'],
   features: ['FeaturesGrid', 'FeatureCard'],
   pricing: ['PricingTable', 'PricingCard'],

@@ -3,7 +3,11 @@
 import { ChevronDown } from 'lucide-react';
 import { useId } from 'react';
 import { cn } from '../lib/cn';
-import type { SelectOption } from '../components/Select';
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
 
 export interface AdminSelectProps
   extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>, 'className'> {
