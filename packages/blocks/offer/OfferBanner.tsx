@@ -18,15 +18,19 @@ export function OfferBanner({
   text,
   badgeText,
   ctaText,
-  ctaHref = '#menu',
+  ctaHref,
   primaryColor = '#111',
   imageSrc,
 }: OfferBannerProps) {
+  // Un default en la desestructuración solo corre con undefined: si la plantilla
+  // pasa '' el href queda vacío y React avisa por consola.
+  const href = ctaHref || '#menu';
+
   return (
     <section className="mx-auto w-full max-w-5xl px-6 py-6">
       {imageSrc ? (
         <a
-          href={ctaHref}
+          href={href}
           className="group relative block overflow-hidden rounded-3xl shadow-lg"
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -39,8 +43,7 @@ export function OfferBanner({
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/20" />
           <div className="absolute inset-0 flex flex-col items-start justify-center gap-3 px-8">
             <span
-              className="shrink-0 rounded-full px-3.5 py-1.5 text-sm font-black uppercase tracking-wide text-black shadow"
-              style={{ backgroundColor: primaryColor }}
+              className="shrink-0 rounded-full bg-accent px-3.5 py-1.5 text-sm font-black uppercase tracking-wide text-on-accent shadow"
             >
               {badgeText}
             </span>
@@ -60,8 +63,7 @@ export function OfferBanner({
         >
           <div className="flex items-center gap-4">
             <span
-              className="shrink-0 rounded-xl px-3.5 py-2 text-sm font-black uppercase tracking-wide text-black"
-              style={{ backgroundColor: primaryColor }}
+              className="shrink-0 rounded-xl bg-accent px-3.5 py-2 text-sm font-black uppercase tracking-wide text-on-accent"
             >
               {badgeText}
             </span>
@@ -72,7 +74,7 @@ export function OfferBanner({
           </div>
 
           <a
-            href={ctaHref}
+            href={href}
             className="text-xs font-bold underline underline-offset-4 transition hover:opacity-70"
             style={{ color: primaryColor }}
           >

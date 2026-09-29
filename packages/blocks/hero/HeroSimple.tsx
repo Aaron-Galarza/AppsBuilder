@@ -20,15 +20,18 @@ export function HeroSimple({
   imageSrc,
   primaryColor,
   ctaText,
-  ctaHref = '#menu',
+  ctaHref,
   isOpen = true,
 }: HeroSimpleProps) {
+  // Un default en la desestructuración solo corre con undefined: si la plantilla
+  // pasa '' el href queda vacío y React avisa por consola.
+  const href = ctaHref || '#menu';
   return (
     <section className="relative flex min-h-[70vh] w-full items-center justify-center overflow-hidden">
       {/* Fondo */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${imageSrc})` }}
+        style={imageSrc ? { backgroundImage: `url(${imageSrc})` } : undefined}
         role="img"
         aria-label={title}
       />
@@ -74,8 +77,8 @@ export function HeroSimple({
         </span>
 
         <a
-          href={ctaHref}
-          className="mt-8 inline-block min-w-[220px] rounded-full px-7 py-3 text-center text-base font-bold text-black shadow-lg transition-transform hover:scale-105 active:scale-95"
+          href={href}
+          className="mt-8 inline-block min-w-[220px] rounded-full px-7 py-3 text-center text-base font-bold text-on-primary shadow-lg transition-transform hover:scale-105 active:scale-95"
           style={{ backgroundColor: primaryColor }}
         >
           {ctaText}

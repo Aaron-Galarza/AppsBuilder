@@ -2,6 +2,7 @@
 
 import { AtSign, Clock, MapPin, MessageCircle, Phone } from 'lucide-react';
 import { useSiteConfig } from '@saas/hooks';
+import { SiteLogo } from './SiteLogo';
 
 export interface SiteFooterProps {
   /** compact: tarjetas de información 4 columnas (home basic). default: 3 columnas con contacto + marca + acerca (standard/premium). */
@@ -38,7 +39,7 @@ export function SiteFooter({ variant = 'default' }: SiteFooterProps) {
           </div>
 
           <div className="mt-8 flex items-center justify-center gap-2 border-t border-border pt-6">
-            <img src={cfg.logo} alt={cfg.name} className="h-6 w-6 rounded-full object-cover opacity-60" />
+            <SiteLogo src={cfg.logo} name={cfg.name} className="h-6 w-6 opacity-60" />
             <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
               © {new Date().getFullYear()} {cfg.name}
             </p>
@@ -83,7 +84,7 @@ export function SiteFooter({ variant = 'default' }: SiteFooterProps) {
 
             <div className="flex items-center justify-center">
               <div className="text-center">
-                <img src={cfg.logo} alt={cfg.name} className="mx-auto mb-2 h-10 w-10 rounded-full object-cover opacity-60" />
+                <SiteLogo src={cfg.logo} name={cfg.name} className="mx-auto mb-2 h-10 w-10 opacity-60" />
                 <p className="text-[10px] font-extrabold uppercase tracking-wider text-foreground">
                   &copy; {new Date().getFullYear()} {cfg.name}
                 </p>

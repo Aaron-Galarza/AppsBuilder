@@ -16,10 +16,15 @@ const poppins = Poppins({
   display: 'swap',
 })
 
+// Favicon opcional: si el proyecto no tiene favicon configurado, el generador
+// deja esta constante vacía. `icons: { icon: '' }` haría que Next renderice
+// <link rel="icon" href=""> en el head, que React rechaza con un error por consola.
+const faviconUrl = 'INJECT_FAVICON_URL'
+
 export const metadata: Metadata = {
   title: 'INJECT_TENANT_NAME',
   description: 'INJECT_TENANT_DESCRIPTION',
-  icons: { icon: 'INJECT_FAVICON_URL' },
+  ...(faviconUrl ? { icons: { icon: faviconUrl } } : {}),
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

@@ -80,7 +80,7 @@ export function HeroWithCarousel({ slides, autoPlayMs = 6000 }: HeroWithCarousel
         >
           <div
             className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.image})` }}
+            style={slide.image ? { backgroundImage: `url(${slide.image})` } : undefined}
           />
           <div className="absolute inset-0 bg-black/50" />
 
@@ -92,7 +92,7 @@ export function HeroWithCarousel({ slides, autoPlayMs = 6000 }: HeroWithCarousel
               {slide.text}
             </p>
             <a
-              href={slide.ctaHref ?? '#menu'}
+              href={slide.ctaHref || '#menu'}
               className="mt-8 inline-block rounded-full border-2 border-white bg-transparent px-8 py-3 font-semibold uppercase tracking-wide text-white backdrop-blur transition-colors hover:bg-white hover:text-black"
             >
               {slide.cta}
@@ -126,7 +126,7 @@ export function HeroWithCarousel({ slides, autoPlayMs = 6000 }: HeroWithCarousel
             aria-label={`Ir al slide ${index + 1}`}
             className={cn(
               'h-2.5 rounded-full transition-all',
-              index === current ? 'w-7 bg-white' : 'w-2.5 bg-white/40 hover:bg-white/70'
+              index === current ? 'w-7 bg-accent' : 'w-2.5 bg-white/40 hover:bg-white/70'
             )}
           />
         ))}

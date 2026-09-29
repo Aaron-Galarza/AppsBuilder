@@ -24,6 +24,7 @@ import {
   useSiteConfig,
   useSiteRouter,
 } from '@saas/hooks';
+import { SiteLogo } from '../layout/SiteLogo';
 import { cn } from '@saas/ui';
 import { BasicSections } from './BasicSections';
 import { ConfigTab } from './ConfigTab';
@@ -138,7 +139,7 @@ export function AdminApp({ level }: { level: AdminAppLevel }) {
                   onClick={() => switchTab(tab.id)}
                   className={cn(
                     'flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-all',
-                    isActive ? 'bg-primary text-black' : 'text-white/50 hover:bg-white/5 hover:text-white'
+                    isActive ? 'bg-primary text-on-primary' : 'text-white/50 hover:bg-white/5 hover:text-white'
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -189,7 +190,7 @@ function StandardHeader({
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4">
         <div className="flex items-center gap-3">
           <button onClick={onHome} className="flex items-center gap-3">
-            <img src={cfgLogo} alt={cfgName} className="h-9 w-9 rounded-full border border-white/10 object-cover" />
+            <SiteLogo src={cfgLogo} name={cfgName} className="h-9 w-9 border border-white/10" />
             <div className="leading-tight">
               <p className="text-sm font-bold">{cfgName}</p>
               <p className="text-[10px] uppercase tracking-widest text-white/40">{subtitle}</p>
@@ -200,7 +201,7 @@ function StandardHeader({
         <div className="flex items-center gap-3">
           <div className="hidden items-center gap-2 sm:flex">
             <span
-              className="flex h-9 w-9 items-center justify-center rounded-full text-xs font-black text-black"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-xs font-black text-on-primary"
               style={{ backgroundColor: PRIMARY }}
             >
               {initials}
@@ -239,7 +240,7 @@ function PremiumHeader({
     <header className="sticky top-0 z-40 border-b border-white/10 bg-[#0F0F0F]/95 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         <button onClick={onHome} className="flex items-center gap-2 transition-opacity hover:opacity-80">
-          <img src={cfgLogo} alt={cfgName} className="h-7 w-7 rounded object-cover" />
+          <SiteLogo src={cfgLogo} name={cfgName} className="h-7 w-7 border border-white/10" />
           <span className="font-heading text-sm font-bold tracking-wide text-primary">Admin Panel</span>
         </button>
         <div className="flex items-center gap-2">
@@ -249,7 +250,7 @@ function PremiumHeader({
           >
             Ver tienda
           </button>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-[10px] font-black text-black">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-[10px] font-black text-on-primary">
             {initials}
           </div>
           <button

@@ -4,6 +4,7 @@ import { Lock, ShoppingCart } from 'lucide-react';
 import { useSyncExternalStore } from 'react';
 import { useCartStore, useSiteConfig, useSitePathname, useSiteRouter } from '@saas/hooks';
 import { cn } from '@saas/ui';
+import { SiteLogo } from './SiteLogo';
 
 export interface SiteHeaderProps {
   /** compact: fila compacta con logo circular y acciones (home basic). branded: logo + nombre + nav (standard/premium). */
@@ -41,13 +42,7 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
             className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full transition-opacity hover:opacity-80"
             aria-label="Volver al menú"
           >
-            <img
-              src={cfg.logo}
-              alt={cfg.name}
-              width={36}
-              height={36}
-              className="h-9 w-9 rounded-full border border-border object-cover"
-            />
+            <SiteLogo src={cfg.logo} name={cfg.name} className="h-9 w-9 border border-border" />
           </button>
         ) : (
           <button
@@ -55,7 +50,7 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
             onClick={() => router.push('/')}
             className="flex shrink-0 cursor-pointer items-center gap-2 transition-opacity hover:opacity-80"
           >
-            <img src={cfg.logo} alt={cfg.name} width={32} height={32} className="h-8 w-8 rounded-full object-cover" />
+            <SiteLogo src={cfg.logo} name={cfg.name} className="h-8 w-8" />
             <span className="font-heading text-lg font-bold tracking-wide text-primary sm:text-xl">{cfg.name}</span>
           </button>
         )}
@@ -91,7 +86,7 @@ export function SiteHeader({ variant = 'branded' }: SiteHeaderProps) {
           >
             <ShoppingCart size={20} strokeWidth={2} />
             {mounted && cartCount > 0 && (
-              <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-black text-black">
+              <span className="absolute -right-1.5 -top-1.5 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-black text-on-primary">
                 {cartCount}
               </span>
             )}

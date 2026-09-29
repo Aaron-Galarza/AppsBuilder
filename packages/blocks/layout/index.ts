@@ -8,3 +8,5 @@ export { StoreStatus } from './StoreStatus';
 export type { StoreStatusProps } from './StoreStatus';
 export { PromoBanner } from './PromoBanner';
 export type { PromoBannerProps } from './PromoBanner';
+export { SiteLogo } from './SiteLogo';
+export type { SiteLogoProps } from './SiteLogo';

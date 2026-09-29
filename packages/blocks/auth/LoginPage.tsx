@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuthStore, useSiteConfig, useSiteRouter } from '@saas/hooks';
 import { Input } from '@saas/ui';
+import { SiteLogo } from '../layout/SiteLogo';
 
 export interface LoginPageProps {
   /** branded: card sobre fondo con branding del negocio (basic/premium). minimal: form estricto sin decoración (standard). */
@@ -46,7 +47,7 @@ export function LoginPage({ variant = 'branded' }: LoginPageProps) {
       <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <div className="flex w-full max-w-sm flex-col gap-6">
           <div className="flex flex-col items-center gap-3">
-            <img src={cfg.logo} alt={cfg.name} className="h-14 w-14 rounded-2xl object-contain" />
+            <SiteLogo src={cfg.logo} name={cfg.name} className="h-14 w-14 border border-border" />
             <div className="text-center">
               <h1 className="text-xl font-bold text-foreground">{cfg.name}</h1>
               <p className="mt-1 text-xs text-muted-foreground">Panel de administración</p>
@@ -103,11 +104,11 @@ export function LoginPage({ variant = 'branded' }: LoginPageProps) {
               className={`flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition-all duration-300 ${
                 disabled
                   ? 'cursor-not-allowed bg-muted text-muted-foreground'
-                  : 'bg-primary text-black hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'
+                  : 'bg-primary text-on-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'
               }`}
             >
               {loading ? (
-                <div className="h-5 w-5 animate-spin rounded-full border-2 border-black/30 border-t-black" />
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-on-primary/30 border-t-on-primary" />
               ) : (
                 <>
                   Iniciar Sesión
@@ -125,11 +126,7 @@ export function LoginPage({ variant = 'branded' }: LoginPageProps) {
     <main className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="w-full max-w-sm">
         <div className="mb-6 flex flex-col items-center gap-3 text-center">
-          <img
-            src={cfg.logo}
-            alt={cfg.name}
-            className="h-14 w-14 rounded-full border border-border object-cover"
-          />
+          <SiteLogo src={cfg.logo} name={cfg.name} className="h-14 w-14 border border-border" />
           <div>
             <h1 className="text-xl font-bold tracking-wide text-foreground">{cfg.name}</h1>
             <p className="mt-1 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
@@ -184,7 +181,7 @@ export function LoginPage({ variant = 'branded' }: LoginPageProps) {
             type="submit"
             disabled={disabled}
             className="inline-flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-extrabold transition-all disabled:cursor-not-allowed disabled:opacity-40"
-            style={{ backgroundColor: 'var(--color-primary)', color: '#000' }}
+            style={{ backgroundColor: 'var(--color-primary)', color: 'var(--color-on-primary)' }}
           >
             <LogIn size={16} /> {loading ? 'Ingresando...' : 'Iniciar Sesión'}
           </button>

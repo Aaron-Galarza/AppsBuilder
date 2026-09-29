@@ -23,10 +23,13 @@ export function PricingCard({
   description,
   features,
   ctaText = 'Elegir plan',
-  ctaHref = '#contacto',
+  ctaHref,
   highlighted = false,
   primaryColor = '#111',
 }: PricingCardProps) {
+  // Un default en la desestructuración solo corre con undefined: si la plantilla
+  // pasa '' el href queda vacío y React avisa por consola.
+  const href = ctaHref || '#contacto';
   return (
     <div
       className={cn(
@@ -66,7 +69,7 @@ export function PricingCard({
       </ul>
 
       <a
-        href={ctaHref}
+        href={href}
         className={cn(
           'mt-auto rounded-full py-2.5 text-center text-sm font-bold transition active:scale-[0.98]',
           highlighted
