@@ -77,6 +77,11 @@ Get-NetTCPConnection -LocalPort 4000 -State Listen | ForEach-Object { Stop-Proce
 ## Backend y MongoDB
 
 - Configurá la URI en `apps/backend/.env` (`MONGODB_URI`, el `.env.example` es la referencia; NO commitees `.env`).
+- **`STATUS_MODE`**: define si el local tiene horarios. `manual` (plantilla **basic**) = sin horarios, el estado lo
+  maneja solo el botón abrir/cerrar del admin. `schedule` (standard/premium) = manda el horario semanal. Si queda sin
+  definir —incluido el placeholder `INJECT_STATUS_MODE` de `.env.example`— el backend asume `schedule` y avisa por
+  consola, con lo cual en basic el botón no llega a abrir el local. Para trabajar en basic: `STATUS_MODE=manual`
+  (cambios en `.env` requieren reiniciar el backend).
 - **Auto-seed**: si la base existe pero está **vacía**, al conectar se siembra sola (productos, categorías, addons,
   cupones, horarios, galería, admin y pedidos demo).
 - **Seed manual (idempotente)**: `pnpm --filter @saas/backend seed`.

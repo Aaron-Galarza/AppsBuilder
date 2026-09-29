@@ -224,6 +224,10 @@ placeholder `INJECT_STATUS_MODE` de `.env.example` cuenta como "sin definir", as
 no rompe el backend. `syncStatusModeFromEnv()` aplica el valor al `StoreConfig` en cada arranque mientras
 `statusModeSource` sea `'env'`; si el dueño elige el modo a mano en `ConfigTab`, pasa a `'admin'` y el `.env` deja de mandar.
 
+`GET /api/config/status` no lee el campo `isOpen` del `StoreConfig`: `checkStoreStatus()` recalcula el estado en cada
+llamada a partir de `emergencyClosed`, `statusMode` y el horario (`service.ts`). Ese `isOpen` persistido es residuo del
+seed y no debe usarse para decidir nada.
+
 ### Rutas (`routes/index.ts`), todas bajo `/api`
 
 | Ruta | Uso |
@@ -253,6 +257,10 @@ products, categories, adicionales(addons), orders, delivery, coupons, analytics,
   cuentan los pedidos **entregados** (`delivered`); pendiente/confirmado/en preparación/listo están en curso y no
   impactan. Así un cambio de estado se refleja al instante. La colección `Daily` se mantiene por seed/histórico pero
   no alimenta la lectura de métricas.
+- **Invariante (`Daily`)**: como `topProducts` no se lee nunca, su `productId` **no** lleva `required`. El seed lo
+  puebla y el `bulkWrite` del driver crudo no valida, así que con `required` cualquier `daily.save()` posterior
+  revalidaba el documento entero y devolvía 400 con un `Path productId is required` por cada entrada histórica
+  (al cambiar un pedido a `delivered`). No volver a marcarlo como required.
 - **Credenciales**: `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD` (default `admin@local.dev` / `admin123`), comentadas en `.env`.
 - Pedidos demo: últimos 7 días, hoy más activo, siempre con `createdAt` pasada; contador `ordercounters` sincronizado
   para collides (los reales siguen tras los demo, ej. `20260918-005`).
