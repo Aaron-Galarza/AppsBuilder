@@ -9,6 +9,7 @@ export { useAuthStore } from './useAuthStore';
 
 // Cliente (público)
 export { useMenu } from './useMenu';
+export type { UseMenuOptions, MenuState } from './useMenu';
 export { useStoreStatus } from './useStoreStatus';
 export { useCheckout } from './useCheckout';
 export { useDelivery } from './useDelivery';
