@@ -157,7 +157,12 @@ export function WebOrdersPreview({ scrollRef }: WebOrdersPreviewProps) {
     return {
       name: state.config.name || 'Tu negocio',
       slug: state.config.slug || 'project',
-      colors: state.config.colors,
+      colors: {
+        primary: state.config.colors.primary,
+        secondary: state.config.colors.secondary,
+        accent: state.config.colors.accent,
+        surfaces: state.config.colors.surfaces ?? undefined,
+      },
       fonts: state.config.fonts,
       logo,
       favicon,

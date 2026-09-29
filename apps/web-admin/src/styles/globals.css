@@ -3,6 +3,13 @@
 
 @theme {
   --color-primary: #D4A843;
+  --color-secondary: #A5713B;
+  --color-accent: #E0A94F;
+  --color-on-primary: #0a0a0a;
+  --color-on-secondary: #ffffff;
+  --color-on-accent: #0a0a0a;
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary-foreground: var(--color-on-secondary);
   --color-background: #0a0a0a;
   --color-foreground: #ffffff;
   --color-card: #161616;

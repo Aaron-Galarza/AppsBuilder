@@ -12,6 +12,11 @@
   --color-primary: #d0d0d0;
   --color-secondary: #1a1a1a;
   --color-accent: #4caf50;
+  --color-on-primary: #0e0e0e;
+  --color-on-secondary: #d0d0d0;
+  --color-on-accent: #0e0e0e;
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary-foreground: var(--color-on-secondary);
   --color-border: #252525;
   --color-border2: #303030;
   --color-border3: #3a3a3a;
