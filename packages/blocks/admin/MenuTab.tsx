@@ -54,7 +54,7 @@ export function MenuTab({ primaryColor = '#111' }: MenuTabProps) {
             className={cn(
               'rounded-full border px-3.5 py-1.5 text-[11px] font-semibold transition',
               section === value
-                ? 'border-transparent text-white'
+                ? 'border-transparent text-on-primary'
                 : 'border-white/10 text-neutral-400 hover:text-white'
             )}
             style={section === value ? { backgroundColor: primaryColor } : undefined}
@@ -189,7 +189,7 @@ function ProductsSection({
                     className={cn(
                       'rounded-full border px-2.5 py-1 text-[10px] font-semibold transition',
                       selected
-                        ? 'border-transparent text-white'
+                        ? 'border-transparent text-on-primary'
                         : 'border-white/10 text-neutral-400 hover:text-white'
                     )}
                     style={selected ? { backgroundColor: primaryColor } : undefined}
@@ -209,7 +209,7 @@ function ProductsSection({
           <div className="flex gap-2">
             <button
               onClick={handleSave}
-              className="flex-1 rounded-md py-2.5 text-xs font-bold text-white transition active:scale-[0.98]"
+              className="flex-1 rounded-md py-2.5 text-xs font-bold text-on-primary transition active:scale-[0.98]"
               style={{ backgroundColor: primaryColor }}
             >
               Guardar
@@ -297,7 +297,7 @@ function CategoriesSection({ items, crud, primaryColor }: SectionProps<Category>
           <div className="flex gap-2">
             <button
               onClick={handleSave}
-              className="flex-1 rounded-md py-2.5 text-xs font-bold text-white transition active:scale-[0.98]"
+              className="flex-1 rounded-md py-2.5 text-xs font-bold text-on-primary transition active:scale-[0.98]"
               style={{ backgroundColor: primaryColor }}
             >
               Guardar
@@ -321,6 +321,7 @@ function CategoriesSection({ items, crud, primaryColor }: SectionProps<Category>
               setIsIconPickerOpen(false);
             }}
             options={CATEGORY_ICON_OPTIONS}
+            selected={String(form.icon ?? '')}
           />
         </AdminCard>
       )}
@@ -424,7 +425,7 @@ function AddonsSection({
                     className={cn(
                       'rounded-full border px-2.5 py-1 text-[10px] font-semibold transition',
                       selected
-                        ? 'border-transparent text-white'
+                        ? 'border-transparent text-on-primary'
                         : 'border-white/10 text-neutral-400 hover:text-white'
                     )}
                     style={selected ? { backgroundColor: primaryColor } : undefined}
@@ -439,7 +440,7 @@ function AddonsSection({
           <div className="flex gap-2">
             <button
               onClick={handleSave}
-              className="flex-1 rounded-md py-2.5 text-xs font-bold text-white transition active:scale-[0.98]"
+              className="flex-1 rounded-md py-2.5 text-xs font-bold text-on-primary transition active:scale-[0.98]"
               style={{ backgroundColor: primaryColor }}
             >
               Guardar
@@ -501,7 +502,7 @@ function NewButton({
   return (
     <button
       onClick={onClick}
-      className="inline-flex items-center justify-center gap-1.5 self-start rounded-full px-4 py-2 text-xs font-bold text-white transition active:scale-95"
+      className="inline-flex items-center justify-center gap-1.5 self-start rounded-full px-4 py-2 text-xs font-bold text-on-primary transition active:scale-95"
       style={{ backgroundColor: primaryColor }}
     >
       <Plus size={14} />

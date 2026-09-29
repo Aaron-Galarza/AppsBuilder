@@ -45,7 +45,7 @@ export function OverviewTab({ primaryColor = '#111' }: OverviewTabProps) {
               onClick={() => setRange(r.value)}
               className={cn(
                 'rounded-full px-3.5 py-1.5 text-xs font-semibold transition',
-                range === r.value ? 'text-white' : 'text-neutral-400 hover:text-white'
+                range === r.value ? 'text-on-primary' : 'text-neutral-400 hover:text-white'
               )}
               style={range === r.value ? { backgroundColor: primaryColor } : undefined}
             >

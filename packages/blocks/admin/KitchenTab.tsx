@@ -13,7 +13,7 @@ export interface KitchenTabProps {
 
 /** Cocina: pedidos activos con auto-refresh cada 30 segundos y avance de estado uno a uno */
 export function KitchenTab({ primaryColor = 'var(--color-primary)' }: KitchenTabProps) {
-  const { allOrders, loading, updateStatus, printComanda, reload } = useAdminOrders();
+  const { allOrders, loading, error, updateStatus, printComanda, reload } = useAdminOrders();
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -32,6 +32,7 @@ export function KitchenTab({ primaryColor = 'var(--color-primary)' }: KitchenTab
   return (
     <div className="flex flex-col gap-4">
       <p className="text-xs text-neutral-500">Auto-refresh cada 30 segundos · {active.length} activos</p>
+      {error && <p className="text-xs font-medium text-red-400">{error}</p>}
       {loading && active.length === 0 ? (
         <div className="space-y-2">
           {Array.from({ length: 3 }).map((_, i) => (
@@ -97,8 +98,8 @@ function NextStatusButton({
   if (!target) return null;
   return (
     <button
-      onClick={() => void updateStatus(order._id, target)}
-      className="rounded-full px-3 py-1.5 text-[11px] font-bold text-black transition hover:opacity-90 active:scale-95"
+      onClick={() => void updateStatus(order._id, target).catch(() => undefined)}
+      className="rounded-full px-3 py-1.5 text-[11px] font-bold text-on-primary transition hover:opacity-90 active:scale-95"
       style={{ backgroundColor: 'var(--color-primary)' }}
     >
       → {label}

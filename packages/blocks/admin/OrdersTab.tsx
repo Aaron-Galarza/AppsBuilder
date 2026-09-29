@@ -3,7 +3,7 @@
 import { AdminActionButtons, AdminCard, Badge, Button, cn } from '@saas/ui';
 import { useAdminOrders } from '@saas/hooks';
 import { Order, OrderStatus } from '@saas/types';
-import { formatPrice, formatTime, ORDER_STATUSES } from '@saas/utils';
+import { formatPrice, formatTime, ORDER_STATUS_TRANSITIONS, ORDER_STATUSES } from '@saas/utils';
 import { ChevronDown, MessageCircle, Printer, RefreshCw } from 'lucide-react';
 import { useState } from 'react';
 
@@ -23,7 +23,6 @@ export function OrdersTab({ primaryColor = '#111' }: OrdersTabProps) {
     updateStatus,
     printComanda,
     reload,
-    validStatuses,
   } = useAdminOrders();
 
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -145,21 +144,24 @@ export function OrdersTab({ primaryColor = '#111' }: OrdersTabProps) {
 
                     {/* Acciones de estado */}
                     <div className="flex flex-wrap items-center gap-1.5">
-                      {validStatuses.map((status) => {
+                      {ORDER_STATUSES.map(({ value: status, label }) => {
                         if (status === order.status) return null;
+                        const isNext = (ORDER_STATUS_TRANSITIONS[order.status] ?? []).includes(status);
                         return (
                           <button
                             key={status}
-                            onClick={() => updateStatus(order._id, status)}
-                            disabled={loading}
+                            onClick={() => void updateStatus(order._id, status).catch(() => undefined)}
+                            disabled={loading || !isNext}
                             className={cn(
                               'rounded-full border px-2.5 py-1 text-[10px] font-bold transition',
-                              status === 'cancelled'
-                                ? 'border-red-500/30 text-red-400 hover:bg-red-500/10'
-                                : 'border-white/10 text-neutral-300 hover:bg-white/10'
+                              isNext
+                                ? status === 'cancelled'
+                                  ? 'border-red-500/30 text-red-400 hover:bg-red-500/10'
+                                  : 'border-white/10 text-neutral-300 hover:bg-white/10'
+                                : 'cursor-not-allowed border-white/5 text-neutral-600'
                             )}
                           >
-                            → {ORDER_STATUSES.find((s) => s.value === status)?.label ?? status}
+                            → {label}
                           </button>
                         );
                       })}
@@ -208,7 +210,7 @@ function FilterChip({
       onClick={onClick}
       className={cn(
         'rounded-full border px-3 py-1.5 text-[11px] font-semibold transition',
-        active ? 'border-transparent text-white' : 'border-white/10 text-neutral-400 hover:text-white'
+        active ? 'border-transparent text-on-primary' : 'border-white/10 text-neutral-400 hover:text-white'
       )}
       style={active ? { backgroundColor: primaryColor } : undefined}
     >

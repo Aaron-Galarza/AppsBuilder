@@ -110,7 +110,7 @@ export function StatsTab({ primaryColor = 'var(--color-primary)' }: StatsTabProp
             onClick={() => setRange(r.value)}
             className={cn(
               'rounded-full px-3.5 py-1.5 text-xs font-semibold transition',
-              range === r.value ? 'bg-primary text-black' : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
+              range === r.value ? 'bg-primary text-on-primary' : 'bg-white/5 text-neutral-400 hover:bg-white/10 hover:text-white'
             )}
           >
             {r.label}
@@ -157,7 +157,7 @@ export function StatsTab({ primaryColor = 'var(--color-primary)' }: StatsTabProp
               Agrupado
             </label>
             {grouped && <span className="text-xs text-neutral-500">Vista agrupada (todos los pagos)</span>}
-            <Button size="sm" onClick={handleExport} style={{ backgroundColor: primaryColor, color: '#000' }}>Exportar CSV</Button>
+            <Button size="sm" onClick={handleExport} style={{ backgroundColor: primaryColor, color: 'var(--color-on-primary)' }}>Exportar CSV</Button>
           </div>
         </div>
 

@@ -8,38 +8,12 @@ import { useAuthStore } from './useAuthStore';
 export type OverviewRange = 'hoy' | 'ayer' | 'semana' | 'mes';
 
 const VALID_RANGES: OverviewRange[] = ['hoy', 'ayer', 'semana', 'mes'];
-/** TTL del cache: 5 min para hoy/ayer/semana, 10 min para mes */
-const ttlFor = (range: OverviewRange) => (range === 'mes' ? 10 : 5) * 60 * 1000;
 
-interface CachedStats {
-  data: AnalyticsStats;
-  savedAt: number;
-}
-
-function readCache(range: OverviewRange): CachedStats | null {
-  try {
-    const raw = localStorage.getItem(`saas-analytics-cache-${range}`);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw) as CachedStats;
-    if (Date.now() - parsed.savedAt > ttlFor(range)) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-
-function writeCache(range: OverviewRange, data: AnalyticsStats): void {
-  try {
-    localStorage.setItem(
-      `saas-analytics-cache-${range}`,
-      JSON.stringify({ data, savedAt: Date.now() } satisfies CachedStats)
-    );
-  } catch {
-    /* storage lleno o no disponible: ignorar */
-  }
-}
-
-/** Métricas del OverviewTab con cache TTL local y refetch al volver a la pestaña */
+/**
+ * Métricas del OverviewTab. Sin cache local: las métricas se agregan en vivo
+ * en el backend, así un cambio de estado se ve reflejado de inmediato.
+ * Refetch al volver a la pestaña y método `reload` para refresco manual.
+ */
 export function useAdminOverview(initialRange: OverviewRange = 'hoy') {
   const token = useAuthStore((s) => s.token);
 
@@ -51,22 +25,16 @@ export function useAdminOverview(initialRange: OverviewRange = 'hoy') {
   const fetchStats = useCallback(
     async (r: OverviewRange) => {
       const validRange = VALID_RANGES.includes(r) ? r : 'hoy';
-      const cached = readCache(validRange);
-      // Muestra cache fresco instantáneamente y refresca en background
-      if (cached) setStats(cached.data);
-
       try {
-        setLoading(!cached);
+        setLoading(true);
         const data = await apiFetch<AnalyticsStats>(
           `/api/analytics?range=${encodeURIComponent(validRange)}`,
           { headers: authHeaders(token) }
         );
-        writeCache(validRange, data);
         setStats(data);
         setError(null);
       } catch (err) {
-        // Sin cache y sin red → dejamos el error visible
-        if (!cached) setError(err instanceof Error ? err.message : 'Error al cargar métricas');
+        setError(err instanceof Error ? err.message : 'Error al cargar métricas');
       } finally {
         setLoading(false);
       }

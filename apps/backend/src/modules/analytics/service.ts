@@ -1,5 +1,5 @@
 import { AnalyticsStats } from '@saas/types';
-import { argDate, argToUTC } from '../../utils/timezone';
+import { argDate } from '../../utils/timezone';
 import { getRangeBounds, AnalyticsRange } from '../../utils/dateRange';
 import type { OrderDoc } from '../orders/model';
 import { Daily, DailyDoc, DailyTopProduct } from './model';
@@ -95,21 +95,11 @@ export async function revertTopProducts(order: OrderDoc): Promise<void> {
 }
 
 /* ------------------------------------------------------------------ */
-/* Lectura agregada para el OverviewTab                                */
+/* Lectura de métricas: en vivo desde orders (fuente única de verdad)  */
 /* ------------------------------------------------------------------ */
 
-interface CacheEntry {
-  data: AnalyticsStats;
-  expiresAt: number;
-}
-
-/** TTL: 5 min para hoy/semana, 10 min para mes */
-const cache = new Map<AnalyticsRange, CacheEntry>();
-function ttlFor(range: AnalyticsRange) {
-  return (range === 'mes' ? 10 : 5) * 60 * 1000;
-}
 function invalidateCache() {
-  cache.clear();
+  // Histórico: las métricas ya no se cachean, se agregan en vivo desde orders.
 }
 
 function emptyPaymentBreakdown() {
@@ -117,75 +107,22 @@ function emptyPaymentBreakdown() {
 }
 
 export async function getAnalytics(range: AnalyticsRange): Promise<AnalyticsStats> {
-  const cached = cache.get(range);
-  if (cached && cached.expiresAt > Date.now()) return cached.data;
-
-  const stats = await computeAnalytics(range).catch(async (err) => {
-    console.warn('[analytics] Falló la lectura de dailies:', err instanceof Error ? err.message : err);
-    // Fallback: agregación directa sobre orders (por si los dailies no existen)
-    return computeAnalyticsFromOrders(range);
-  });
-
-  cache.set(range, { data: stats, expiresAt: Date.now() + ttlFor(range) });
-  return stats;
-}
-
-async function computeAnalytics(range: AnalyticsRange): Promise<AnalyticsStats> {
-  const { from, to } = getRangeBounds(range);
-
-  // Fechas calendario argentinas dentro del rango
-  const dates: string[] = [];
-  const cursor = new Date(from.getTime());
-  while (cursor <= to) {
-    dates.push(argDate(cursor));
-    cursor.setUTCDate(cursor.getUTCDate() + 1);
-    cursor.setUTCHours(3, 0, 0, 0);
-  }
-
-  const dailies = await Daily.find({ date: { $in: dates } }).lean().exec();
-
-  const byPaymentMethod = emptyPaymentBreakdown();
-  let totalOrders = 0;
-  let totalRevenue = 0;
-  let delivered = 0;
-
-  const productMap = new Map<string, { title: string; quantity: number; revenue: number }>();
-
-  for (const daily of dailies) {
-    totalOrders += daily.orders;
-    totalRevenue += daily.revenue;
-    delivered += daily.delivered;
-    for (const key of Object.keys(byPaymentMethod) as Array<keyof typeof byPaymentMethod>) {
-      byPaymentMethod[key] += daily.byPaymentMethod[key] ?? 0;
-    }
-    for (const t of daily.topProducts) {
-      const acc = productMap.get(t.productId) ?? { title: t.title, quantity: 0, revenue: 0 };
-      acc.quantity += t.quantity;
-      acc.revenue += t.revenue;
-      productMap.set(t.productId, acc);
-    }
-  }
-
-  const topProducts = [...productMap.entries()]
-    .map(([productId, acc]) => ({ productId, ...acc }))
-    .sort((a, b) => b.quantity - a.quantity)
-    .slice(0, 5);
-
-  return {
-    range: { from: from.toISOString(), to: to.toISOString() },
-    totalOrders,
-    totalRevenue,
-    delivered,
-    byPaymentMethod,
-    topProducts,
-  };
+  return computeFromOrders(range);
 }
 
 /**
- * Fallback sin dailies: agrega directo sobre la colección orders
- * (útil tras un deploy o si el registro incremental se perdió).
+ * Estados que cuentan como venta: solo los entregados. Pendiente/
+ * Confirmado/En preparación/Listo son pedidos en curso y no impactan
+ * en las métricas hasta ser entregados.
  */
-async function computeAnalyticsFromOrders(range: AnalyticsRange): Promise<AnalyticsStats> {
+const SOLD_STATES = new Set(['delivered']);
+
+/**
+ * Métricas en vivo desde la colección orders (fuente única de verdad).
+ * Excluye cancelados y pedidos que aún no pasaron por "Listo"; así un
+ * cambio de estado se refleja al instante sin depender de snapshots.
+ */
+async function computeFromOrders(range: AnalyticsRange): Promise<AnalyticsStats> {
   const { from, to } = getRangeBounds(range);
 
   const orders = await (await import('../orders/model')).Order.find({
@@ -195,11 +132,16 @@ async function computeAnalyticsFromOrders(range: AnalyticsRange): Promise<Analyt
     .exec();
 
   const byPaymentMethod = emptyPaymentBreakdown();
+  let totalOrders = 0;
   let totalRevenue = 0;
   let delivered = 0;
   const productMap = new Map<string, { title: string; quantity: number; revenue: number }>();
 
   for (const order of orders) {
+    if (order.status === 'cancelled') continue;
+    if (!SOLD_STATES.has(order.status)) continue;
+
+    totalOrders += 1;
     totalRevenue += order.total;
     if (order.status === 'delivered') delivered += 1;
     const key = order.paymentMethod as keyof typeof byPaymentMethod;
@@ -220,7 +162,7 @@ async function computeAnalyticsFromOrders(range: AnalyticsRange): Promise<Analyt
 
   return {
     range: { from: from.toISOString(), to: to.toISOString() },
-    totalOrders: orders.length,
+    totalOrders,
     totalRevenue,
     delivered,
     byPaymentMethod,

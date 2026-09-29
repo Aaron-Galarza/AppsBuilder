@@ -11,15 +11,6 @@ export type AdminRange = 'hoy' | 'ayer' | 'semana' | 'mes';
 
 const VALID_RANGES: AdminRange[] = ['hoy', 'ayer', 'semana', 'mes'];
 
-const VALID_STATUSES: OrderStatus[] = [
-  'pending',
-  'confirmed',
-  'preparing',
-  'ready',
-  'delivered',
-  'cancelled',
-];
-
 /** Pedidos del admin con rango de fechas, filtro por estado e impresion de comanda */
 export function useAdminOrders() {
   const token = useAuthStore((s) => s.token);
@@ -70,12 +61,20 @@ export function useAdminOrders() {
 
   const updateStatus = useCallback(
     async (id: string, status: OrderStatus) => {
-      await apiFetch(`/api/orders/admin/${id}/status`, {
-        method: 'PUT',
-        headers: authHeaders(token),
-        body: JSON.stringify({ status }),
-      });
-      setOrders((prev) => prev.map((o) => (o._id === id ? { ...o, status } : o)));
+      try {
+        await apiFetch(`/api/orders/admin/${id}/status`, {
+          method: 'PUT',
+          headers: authHeaders(token),
+          body: JSON.stringify({ status }),
+        });
+        setOrders((prev) => prev.map((o) => (o._id === id ? { ...o, status } : o)));
+        setError(null);
+      } catch (err) {
+        // Sin esto el rechazo quedaba como promesa sin manejar y el admin
+        // no daba ninguna señal de que el cambio falló.
+        setError(err instanceof Error ? err.message : 'Error al actualizar el estado');
+        throw err;
+      }
     },
     [token]
   );
@@ -92,6 +91,5 @@ export function useAdminOrders() {
     updateStatus,
     printComanda,
     reload: () => fetchOrders(range),
-    validStatuses: VALID_STATUSES,
   };
 }

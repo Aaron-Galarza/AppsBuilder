@@ -1,9 +1,9 @@
 'use client';
 
-import { AdminCard, AdminInput, cn } from '@saas/ui';
+import { AdminCard, AdminInput, UrlSaveInput, cn } from '@saas/ui';
 import { useAdminConfig } from '@saas/hooks';
-import { DaySchedule, RainConfig, Schedule } from '@saas/types';
-import { Clock, CloudRain, Image as ImageIcon, Power, Route } from 'lucide-react';
+import { DaySchedule, RainConfig, Schedule, StoreStatusMode } from '@saas/types';
+import { CalendarClock, Clock, CloudRain, Image as ImageIcon, Power, Route } from 'lucide-react';
 import { useState } from 'react';
 
 export interface ConfigTabProps {
@@ -48,6 +48,7 @@ export function ConfigTab({ primaryColor = '#111' }: ConfigTabProps) {
     addDeliveryRange,
     removeDeliveryRange,
     toggleEmergency,
+    setStatusMode,
   } = useAdminConfig();
 
   if (loading && !config) return <p className="text-xs text-neutral-500">Cargando config...</p>;
@@ -106,8 +107,50 @@ export function ConfigTab({ primaryColor = '#111' }: ConfigTabProps) {
         </button>
       </AdminCard>
 
-      {/* Horarios */}
+      {/* Modo de estado */}
       <AdminCard variant="default" className="flex flex-col gap-3 p-4">
+        <h3 className="flex items-center gap-2 text-sm font-bold text-white">
+          <CalendarClock size={15} style={{ color: primaryColor }} />
+          Control del local
+        </h3>
+        <p className="text-[11px] text-neutral-500">
+          {config.statusMode === 'manual'
+            ? 'El local abre y cierra solo con el botón (sin horarios).'
+            : 'El local se abre y cierra según los horarios de atención.'}
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={() => void setStatusMode('manual' as StoreStatusMode)}
+            className={cn(
+              'flex-1 rounded-full px-3 py-2 text-xs font-bold transition active:scale-95',
+              config.statusMode === 'manual'
+                ? 'text-white'
+                : 'bg-white/5 text-neutral-400 hover:bg-white/10'
+            )}
+            style={config.statusMode === 'manual' ? { backgroundColor: primaryColor } : undefined}
+          >
+            Solo botón
+          </button>
+          <button
+            onClick={() => void setStatusMode('schedule' as StoreStatusMode)}
+            className={cn(
+              'flex-1 rounded-full px-3 py-2 text-xs font-bold transition active:scale-95',
+              config.statusMode === 'schedule'
+                ? 'text-white'
+                : 'bg-white/5 text-neutral-400 hover:bg-white/10'
+            )}
+            style={config.statusMode === 'schedule' ? { backgroundColor: primaryColor } : undefined}
+          >
+            Con horarios
+          </button>
+        </div>
+      </AdminCard>
+
+      {/* Horarios */}
+      <AdminCard
+        variant="default"
+        className={cn('flex flex-col gap-3 p-4', config.statusMode === 'manual' && 'opacity-50')}
+      >
         <h3 className="flex items-center gap-2 text-sm font-bold text-white">
           <Clock size={15} style={{ color: primaryColor }} />
           Horarios de atención
@@ -232,36 +275,6 @@ export function ConfigTab({ primaryColor = '#111' }: ConfigTabProps) {
 }
 
 /* --------------------------- Inputs helpers --------------------------- */
-
-function UrlSaveInput({
-  initial,
-  onSave,
-  placeholder,
-  cta,
-}: {
-  initial: string;
-  onSave: (value: string) => void;
-  placeholder?: string;
-  cta: string;
-}) {
-  const [value, setValue] = useState(initial);
-  return (
-    <div className="flex gap-2">
-      <input
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder={placeholder}
-        className="flex-1 rounded-md border border-white/10 bg-black/30 px-3 py-2 text-xs text-white placeholder:text-neutral-600"
-      />
-      <button
-        onClick={() => value.trim() && onSave(value.trim())}
-        className="shrink-0 rounded-md bg-white/10 px-3 py-2 text-xs font-bold text-white hover:bg-white/20"
-      >
-        {cta}
-      </button>
-    </div>
-  );
-}
 
 function NumberSaveInput({
   label,

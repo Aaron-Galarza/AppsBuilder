@@ -127,6 +127,8 @@ export async function createOrder(payload: {
   notes?: string;
   delivery?: { address: string; lat?: number; lng?: number };
   source?: 'web' | 'manual';
+  /** Envío con dirección sin coordenadas (plantilla basic): costo a coordinar. */
+  skipDeliveryCost?: boolean;
 }): Promise<OrderDoc> {
   const isManual = payload.source === 'manual';
 
@@ -158,8 +160,8 @@ export async function createOrder(payload: {
     if (typeof payload.delivery.lat === 'number' && typeof payload.delivery.lng === 'number') {
       const calc = await calculateDelivery(payload.delivery.lat, payload.delivery.lng);
       deliveryCost = calc.deliveryCost;
-    } else if (isManual) {
-      // Pedido manual sin coordenadas: costo lo define el admin después
+    } else if (isManual || payload.skipDeliveryCost === true) {
+      // Sin coordenadas: el costo lo define el negocio después (WhatsApp)
       deliveryCost = 0;
     } else {
       throw new AppError(

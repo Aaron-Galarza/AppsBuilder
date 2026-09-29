@@ -35,6 +35,8 @@ export const orderCreateSchema = z.object({
       lng: z.number().optional(),
     })
     .optional(),
+  /** Envío con dirección sin coordenadas (basic): el costo se coordina aparte */
+  skipDeliveryCost: z.boolean().optional(),
 });
 
 export const orderStatusSchema = z.object({

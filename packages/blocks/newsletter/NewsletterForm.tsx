@@ -57,7 +57,7 @@ export function NewsletterForm({ actionUrl = '/api/newsletter', primaryColor = '
         type="submit"
         disabled={status === 'sending'}
         className="shrink-0 font-bold"
-        style={{ backgroundColor: primaryColor }}
+        style={{ backgroundColor: primaryColor, color: 'var(--color-on-primary)' }}
       >
         {status === 'sending' ? 'Enviando...' : 'Suscribirme'}
       </Button>

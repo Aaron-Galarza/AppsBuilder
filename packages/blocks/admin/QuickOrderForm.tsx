@@ -192,7 +192,7 @@ export function QuickOrderForm({ products, primaryColor = '#111' }: QuickOrderFo
         }}
         disabled={submitting || !canSubmit}
         className={cn('w-full font-bold')}
-        style={{ backgroundColor: primaryColor }}
+        style={{ backgroundColor: primaryColor, color: 'var(--color-on-primary)' }}
       >
         <Send size={14} />
         {submitting ? 'Enviando...' : `Crear pedido · ${formatPrice(total)}`}
