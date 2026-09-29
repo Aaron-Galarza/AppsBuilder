@@ -6,7 +6,7 @@ import { Eye } from 'lucide-react'
 import { StepIndicator } from '../../components/StepIndicator'
 import { TemplateSelector } from '../../components/TemplateSelector'
 import { BloqueCheckbox } from '../../components/BloqueCheckbox'
-import { ColorPicker } from '../../components/ColorPicker'
+import { ColorPalette } from '../../components/ColorPalette'
 import { FontSelector } from '../../components/FontSelector'
 import { TextEditor } from '../../components/TextEditor'
 import { ImageUploader } from '../../components/ImageUploader'
@@ -18,6 +18,11 @@ import { useProductBlocks } from '../../hooks/useProductBlocks'
 import { useFormValidation } from '../../hooks/useFormValidation'
 import { publishPreviewBridge } from '../../lib/previewWindow'
 import { emitWizard } from '../../lib/telemetry'
+import {
+  TEMPLATE_BRAND_COLORS,
+  TEMPLATE_SURFACES,
+  type TemplateKey,
+} from '../../lib/preview/templateThemes'
 import { BLOCK_LABELS, DEFAULT_TEXTOS } from '../../lib/constants'
 
 const STEP_LABELS = ['Producto', 'Plantilla', 'Bloques', 'Config', 'Textos', 'Imágenes', 'Descargar']
@@ -32,6 +37,14 @@ export default function BuilderStep() {
   const [activeTextBlock, setActiveTextBlock] = useState<string | null>(
     store.selectedBlocks[0] || null
   )
+
+  // Restaura los 8 colores (marca + superficies) a los defaults de la plantilla elegida.
+  const resetAllColors = useCallback(() => {
+    const key = (store.template as TemplateKey | null) ?? 'basic'
+    store.setConfig({
+      colors: { ...store.config.colors, ...TEMPLATE_BRAND_COLORS[key], surfaces: { ...TEMPLATE_SURFACES[key] } },
+    })
+  }, [store])
 
   // Slug auto-generado desde el nombre, salvo que el usuario lo edite a mano.
   const [slugTouched, setSlugTouched] = useState(false)
@@ -195,23 +208,20 @@ export default function BuilderStep() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <ColorPicker
-                  label="Color primario"
-                  value={store.config.colors.primary}
-                  onChange={(c) => store.setConfig({ colors: { ...store.config.colors, primary: c } })}
-                />
-                <ColorPicker
-                  label="Color secundario"
-                  value={store.config.colors.secondary}
-                  onChange={(c) => store.setConfig({ colors: { ...store.config.colors, secondary: c } })}
-                />
-                <ColorPicker
-                  label="Color accent"
-                  value={store.config.colors.accent}
-                  onChange={(c) => store.setConfig({ colors: { ...store.config.colors, accent: c } })}
-                />
-              </div>
+              <ColorPalette
+                colors={{
+                  primary: store.config.colors.primary,
+                  secondary: store.config.colors.secondary,
+                  accent: store.config.colors.accent,
+                  surfaces:
+                    store.config.colors.surfaces ??
+                    TEMPLATE_SURFACES[(store.template as TemplateKey | null) ?? 'basic'],
+                }}
+                onChange={(patch) =>
+                  store.setConfig({ colors: { ...store.config.colors, ...patch } })
+                }
+                onResetAll={resetAllColors}
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FontSelector

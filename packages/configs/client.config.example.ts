@@ -13,9 +13,16 @@ export const clientConfig: ProjectConfig = {
   name: '',
   slug: '',
   colors: {
-    primary: '#0D9488',
-    secondary: '#111827',
-    accent: '#F59E0B',
+    primary: '#D4A843',
+    secondary: '#8A5A2B',
+    accent: '#E0A94F',
+    surfaces: {
+      background: '#131110',
+      foreground: '#f4f0ea',
+      card: '#1a1715',
+      muted: '#201d1a',
+      mutedForeground: '#a89e92',
+    },
   },
   fonts: {
     heading: 'Poppins',

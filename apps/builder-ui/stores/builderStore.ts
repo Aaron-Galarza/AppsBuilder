@@ -1,5 +1,11 @@
 ﻿import { create } from 'zustand'
 import { DEFAULT_TEXTOS, PRODUCT_BLOCKS, MANDATORY_BLOCKS } from '../lib/constants'
+import {
+  TEMPLATE_BRAND_COLORS,
+  TEMPLATE_SURFACES,
+  type SurfacesMap,
+  type TemplateKey,
+} from '../lib/preview/templateThemes'
 
 export interface BuilderState {
   product: 'webOrders' | 'landingPages' | null
@@ -8,7 +14,13 @@ export interface BuilderState {
   config: {
     name: string
     slug: string
-    colors: { primary: string; secondary: string; accent: string }
+    colors: {
+      primary: string
+      secondary: string
+      accent: string
+      /** Superficies neutras editables; null = usar defaults de la identidad. */
+      surfaces: SurfacesMap | null
+    }
     fonts: { heading: string; body: string }
     logo: File | null
     favicon: File | null
@@ -33,7 +45,12 @@ const initialState = {
   config: {
     name: '',
     slug: '',
-    colors: { primary: '#D4A843', secondary: '#1A1A1A', accent: '#4CAF50' },
+    colors: {
+      primary: '#D4A843',
+      secondary: '#8A5A2B',
+      accent: '#E0A94F',
+      surfaces: null as SurfacesMap | null,
+    },
     fonts: { heading: 'Poppins', body: 'Inter' },
     logo: null as File | null,
     favicon: null as File | null,
@@ -58,11 +75,24 @@ export const useBuilderStore = create<BuilderState>((set) => ({
       const product = state.product
       let available: string[] = []
       let mandatory: string[] = []
+      let colors = state.config.colors
       if (product && template) {
         available = [...(PRODUCT_BLOCKS[product]?.[template] ?? [])]
         mandatory = [...(MANDATORY_BLOCKS[product] ?? [])]
+        // Cada identidad trae sus colores de marca y superficies por defecto:
+        // al cambiar de plantilla se resetean a los defaults de la nueva.
+        const key = template as TemplateKey
+        colors = {
+          ...TEMPLATE_BRAND_COLORS[key],
+          surfaces: { ...TEMPLATE_SURFACES[key] },
+        }
       }
-      return { template, selectedBlocks: [...new Set([...mandatory, ...available])], textos }
+      return {
+        template,
+        selectedBlocks: [...new Set([...mandatory, ...available])],
+        textos,
+        config: { ...state.config, colors },
+      }
     }),
 
   setSelectedBlocks: (selectedBlocks) => set({ selectedBlocks }),

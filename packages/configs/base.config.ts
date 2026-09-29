@@ -10,6 +10,18 @@ export interface ProjectConfig {
     primary: string;
     secondary: string;
     accent: string;
+    /**
+     * Superficies neutras editables (5 hex). Si se omiten, la plantilla usa
+     * sus defaults. El borde y el anillo de foco se derivan en el CSS
+     * (`color-mix`) de foreground/primary, así que no se guardan aquí.
+     */
+    surfaces?: {
+      background: string;
+      foreground: string;
+      card: string;
+      muted: string;
+      mutedForeground: string;
+    };
   };
   fonts: {
     heading: string;

@@ -33,7 +33,7 @@ const BLOCK_COMPONENTS: Record<string, string[]> = {
   hero: ['HeroSimple', 'HeroWithCarousel'],
   layout: ['PublicLayout', 'SiteHeader', 'SiteFooter', 'StoreStatus', 'PromoBanner'],
   auth: ['LoginPage'],
-  menu: ['MenuBrowser', 'CategoryFilter', 'SearchBar', 'AddonsModal', 'ProductCard'],
+  menu: ['MenuBrowser', 'CategoryFilter', 'SearchBar', 'ProductCard', 'FeaturedBanner'],
   about: ['AboutSimple', 'AboutWithStory'],
   cta: ['CTASimple'],
   contact: ['ContactInfo'],
