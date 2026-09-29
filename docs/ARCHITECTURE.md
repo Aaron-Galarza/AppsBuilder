@@ -210,7 +210,19 @@ Arranque (`server.ts`): `validateEnv` → `connectDB` (con reintentos; sin DB ar
 
 `PORT`(4000), `NODE_ENV`, `MONGODB_URI`(default `mongodb://localhost:27017/appsbuilder-demo`), `JWT_SECRET`,
 `JWT_EXPIRES_IN`(4h), `CLIENT_URL`, `STORE_LAT/STORE_LNG`, `MAPBOX_TOKEN`, `CLOUDINARY_CLOUD_NAME/API_KEY/API_SECRET`,
-`GEOCODING_BUDGET_MONTHLY`(8000). Uso real en `apps/backend/.env` (**gitignored**); referencia en `.env.example`.
+`GEOCODING_BUDGET_MONTHLY`(8000), `STATUS_MODE`(`manual`|`schedule`). Uso real en `apps/backend/.env` (**gitignored**);
+referencia en `.env.example`.
+
+`STATUS_MODE` decide cómo se calcula si el local está abierto (`config/env.ts:parseStatusMode`, única fuente; ni el seed
+ni el service lo leen directo de `process.env`):
+
+- `manual` → **sin horarios**: el estado lo maneja solo el botón abrir/cerrar del admin. Es el caso de **basic**.
+- `schedule` → manda el horario semanal configurado. Es el caso de **standard/premium**.
+
+Si falta, el boot lo asume `schedule` y avisa por consola. Si tiene un valor inválido, corta el arranque. Ojo: el
+placeholder `INJECT_STATUS_MODE` de `.env.example` cuenta como "sin definir", así que copiar el ejemplo sin generar
+no rompe el backend. `syncStatusModeFromEnv()` aplica el valor al `StoreConfig` en cada arranque mientras
+`statusModeSource` sea `'env'`; si el dueño elige el modo a mano en `ConfigTab`, pasa a `'admin'` y el `.env` deja de mandar.
 
 ### Rutas (`routes/index.ts`), todas bajo `/api`
 
