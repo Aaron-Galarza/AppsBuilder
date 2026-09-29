@@ -12,13 +12,13 @@ orden de confirmación, login y panel admin.
 
 ```
 webOrders/templates/
-├── _basic/       — home compacta (MenuBrowser + MiniHero + StoreStatus + PromoBanner)
+├── _basic/       — home compacta (HomeHero/FeaturedBanner + CategoryFilter tabs + MenuBrowser list)
 ├── _standard/    — home con Hero + About + CTA + PromoBanner; menú en /menu
 └── _premium/     — _standard + Bloques de marketing (galería, testimonios, ofertas, newsletter)
 ```
 
 Cada template (plantilla `package.json`): Next.js ^16, React ^19, Tailwind 4, Zustand; deps locales
-`src/components/layout/PublicLayout.tsx`, `src/components/sections/MiniHero.tsx` (solo basic),
+`src/components/layout/PublicLayout.tsx`, `src/components/sections/HomeHero.tsx` (solo basic),
 `src/styles/globals.css` y `tailwind.config.ts` con placeholders `INJECT_*` que el generador reemplaza.
 
 ## Rutas (cada template)

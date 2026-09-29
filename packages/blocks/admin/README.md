@@ -6,7 +6,7 @@
 | `OrdersTab` | Filtros por estado con conteos, detalle expandible, transiciones de estado, comanda térmica y WhatsApp |
 | `MenuTab` | CRUD de Productos (con addons aplicables), Categorías (con IconPickerModal) y Adicionales |
 | `CouponsTab` | CRUD de cupones percentage/fixed |
-| `GalleryTab` | Grid de imágenes Cloudinary con upload múltiple y borrado |
+| `GalleryTab` | Grid de imágenes con upload múltiple (Cloudinary), alta por URL y borrado. Reutilizado por la sección "Galería" del admin basic |
 | `ConfigTab` | Botón pánico, horarios por día, banner con preview, recargo lluvia, rangos de envío |
 | `QuickOrderForm` | Pedido manual: productos + cliente + nota → POST /api/orders con source manual |
 

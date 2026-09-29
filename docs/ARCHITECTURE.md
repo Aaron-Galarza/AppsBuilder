@@ -167,7 +167,7 @@ El ZIP final **no debe** contener ningún `INJECT_*` sin resolver (verificado en
 | Dominio | Bloques |
 |---|---|
 | hero | HeroSimple, HeroWithCarousel, HeroWithVideo |
-| menu | MenuBrowser, MenuGrid, CategoryFilter, MenuCarousel, MenuList, SearchBar, FeaturedBanner, StoreClosed, AddonsModal, ProductCard |
+| menu | MenuBrowser, MenuGrid, CategoryFilter (`chips` en /menu, `tabs` bajo el hero), MenuCarousel, MenuList, SearchBar, FeaturedBanner, StoreClosed, ProductCard |
 | cart | CartItemCard, CartItemHeader, CartItemExtrasPanel, CartEmpty |
 | checkout | CheckoutForm, SummarySection, DeliveryTypeSelector, AddressAutocomplete, MapPicker, AddressMap, DeliveryCostPreview, CouponSection, DeliveryAddressWarningModal |
 | admin | AdminApp (level basic/standard/premium), OverviewTab, OrdersTab, MenuTab, CouponsTab, GalleryTab, ConfigTab, QuickOrderForm (+ BasicSections para basic) |
@@ -222,7 +222,7 @@ Arranque (`server.ts`): `validateEnv` → `connectDB` (con reintentos; sin DB ar
 | `/delivery` | `POST /delivery/calculate` |
 | `/coupons` | `GET|POST /admin`, `POST /validate/:code` |
 | `/analytics` | `GET ?range=hoy|ayer|semana|mes` |
-| `/gallery` | `GET /images`, `POST|DELETE /admin*` (Cloudinary) |
+| `/gallery` | `GET /images`, `POST /upload` (multipart → Cloudinary), `POST /url` (alta por URL), `DELETE /images/:id` |
 | `/geocoding` | `GET ?q=` (Mapbox, con fallback Haversine si no hay token) |
 | `/users` | `POST /login` (JWT) |
 | `/config` | `GET /`, `GET|PUT /status`, `PUT /schedule|banner|rain|emergency`, `POST|DELETE /delivery-ranges`; `PUT /schedule` valida horarios `HH:mm` por día |
@@ -237,6 +237,10 @@ products, categories, adicionales(addons), orders, delivery, coupons, analytics,
 - **Manual**: `pnpm --filter @saas/backend seed` (idempotente, upsert).
 - **Refresh demo**: `SEED_REFRESH_DEMO=1 pnpm --filter @saas/backend seed` borra orders/daily/ordercounters y
   re-rola la línea de tiempo relativa a hoy (para que el dashboard "hoy" no quede en 0 con el paso de los días).
+- **Métricas**: `GET /api/analytics` se agrega **en vivo desde la colección `orders`** (sin cache ni snapshots): solo
+  cuentan los pedidos **entregados** (`delivered`); pendiente/confirmado/en preparación/listo están en curso y no
+  impactan. Así un cambio de estado se refleja al instante. La colección `Daily` se mantiene por seed/histórico pero
+  no alimenta la lectura de métricas.
 - **Credenciales**: `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD` (default `admin@local.dev` / `admin123`), comentadas en `.env`.
 - Pedidos demo: últimos 7 días, hoy más activo, siempre con `createdAt` pasada; contador `ordercounters` sincronizado
   para collides (los reales siguen tras los demo, ej. `20260918-005`).
@@ -262,7 +266,7 @@ Rutas por template (todas importan bloques de `@saas/blocks` + `PublicLayout` de
 
 | Ruta | basic | standard | premium |
 |---|---|---|---|
-| `/` (home) | MenuBrowser list + MiniHero + StoreStatus + PromoBanner | Hero + About + CTA (condicionales por `cfg.blocks`) + PromoBanner | igual standard + secciones premium |
+| `/` (home) | HomeHero (FeaturedBanner: banner de fondo + logo/estado/búsqueda) + CategoryFilter `tabs` + MenuBrowser list | Hero + About + CTA (condicionales por `cfg.blocks`) + PromoBanner | igual standard + secciones premium |
 | `/menu` | — | menú completo | menú completo |
 | `/cart`, `/checkout`, `/order-confirmation` | ✓ | ✓ | ✓ |
 | `/login` | ✓ | ✓ | ✓ |
@@ -296,6 +300,10 @@ Config visual: CSS vars en `globals.css` (`--color-primary`, `--color-secondary`
 - **Una estética, variantes por props + lock por plantilla**: los bloques son compartidos; basic/standard/premium
   difieren en composición y props (`variant`, `columns`, `level`); qué bloques existen en el ZIP lo decide
   `cleaner.ts` (`BLOCK_COMPONENTS` + `ALWAYS_INCLUDE`) y `cfg.blocks` en runtime.
+- **Estado controlado desde la página**: si el buscador o las categorías se renderizan fuera de `MenuBrowser`
+  (p. ej. dentro del hero de basic), la página llama a `useMenu()` y le pasa el estado con la prop `menu`;
+  `MenuBrowser` entonces no vuelve a pedir el menú (`useMenu({ enabled: false })`) y se ocultan sus bloques
+  internos con `showSearch` / `showCategories`. Sin la prop `menu`, el bloque se comporta como antes.
 - **NO duplicar chrome por plantilla**: Header, Footer, StatusBar, Login, Cart/Checkout wrappers y Admin viven en
   bloques compartidos; un cambio se hace 1 vez en `packages/blocks`.
 - **Jerarquía de imports**: Plantilla → Bloques → Componentes; Bloque → Componentes/Bloques; Componente → Componentes.
