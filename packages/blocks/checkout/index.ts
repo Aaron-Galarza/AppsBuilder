@@ -6,6 +6,8 @@ export { DeliveryTypeSelector } from './DeliveryTypeSelector';
 export type { DeliveryTypeSelectorProps } from './DeliveryTypeSelector';
 export { AddressAutocomplete } from './AddressAutocomplete';
 export type { AddressAutocompleteProps } from './AddressAutocomplete';
+export { AddressSimple } from './AddressSimple';
+export type { AddressSimpleProps } from './AddressSimple';
 export { MapPicker } from './MapPicker';
 export type { MapPickerProps } from './MapPicker';
 export { CouponSection } from './CouponSection';

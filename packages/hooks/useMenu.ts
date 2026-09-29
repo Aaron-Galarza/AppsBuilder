@@ -4,7 +4,7 @@ import { Category, Addon, Product } from '@saas/types';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { apiFetch } from './lib/api';
 
-const CACHE_KEY = 'saas-menu-cache';
+const CACHE_KEY = 'saas-menu-cache-v3';
 const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutos
 
 interface MenuCache {
@@ -33,19 +33,53 @@ function writeCache(cache: MenuCache): void {
   }
 }
 
-/** Fusiona los adicionales disponibles dentro de cada producto según su categoría */
-function mergeAddonsIntoProducts(products: Product[], addons: Addon[]): Product[] {
-  return products.map((product) => ({
-    ...product,
-    addons: addons.filter(
-      (addon) =>
-        addon.available &&
-        addon.categories.some((cat) => cat._id === product.category || cat.name === product.category)
-    ),
-  }));
+/**
+ * Normaliza una categoría del addon que puede venir poblada ({_id, name})
+ * o como ObjectId suelto (GET /api/addons/public no hace populate).
+ */
+function matchesAddonCategory(category: Category, productCategory: string): boolean {
+  if (!category) return false;
+  if (typeof category === 'object') {
+    return category._id === productCategory || category.name === productCategory;
+  }
+  return String(category) === productCategory;
 }
 
-export function useMenu() {
+/**
+ * Fusiona los adicionales disponibles dentro de cada producto. Un producto puede
+ * tener adicionales por dos vías y se toman ambos:
+ *  - explícita: `product.addons` con IDs de adicionales (la API pública los manda
+ *    sin populate, como strings);
+ *  - por categoría: el adicional tiene asignada la categoría del producto
+ *    (`addon.categories` con la categoría de menú).
+ */
+function mergeAddonsIntoProducts(products: Product[], addons: Addon[]): Product[] {
+  const available = addons.filter((addon) => addon.available);
+  return products.map((product) => {
+    const rawAddons = (product.addons ?? []) as unknown as Array<string | { _id: string }>;
+    const explicitIds = new Set(
+      rawAddons.map((a) => (typeof a === 'string' ? a : a?._id)).filter(Boolean)
+    );
+    const matched = available.filter(
+      (addon) =>
+        explicitIds.has(addon._id) ||
+        (addon.categories ?? []).some((cat) => matchesAddonCategory(cat, product.category))
+    );
+    return { ...product, addons: matched };
+  });
+}
+
+export interface UseMenuOptions {
+  /**
+   * Permite montar el hook sin disparar fetch, para cuando el estado ya se pasa
+   * controlado por props (así la página y MenuBrowser no piden el menú dos veces).
+   */
+  enabled?: boolean;
+}
+
+export function useMenu(options?: UseMenuOptions) {
+  const enabled = options?.enabled ?? true;
+
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,6 +110,11 @@ export function useMenu() {
   }, []);
 
   useEffect(() => {
+    if (!enabled) {
+      setLoading(false);
+      return;
+    }
+
     const cache = readCache();
     if (cache && Date.now() - cache.savedAt < CACHE_TTL_MS) {
       // Cache fresca: mostrar al instante y refetch silencioso en background
@@ -86,9 +125,11 @@ export function useMenu() {
     } else {
       void fetchMenu(false);
     }
-  }, [fetchMenu]);
+  }, [enabled, fetchMenu]);
 
   useEffect(() => {
+    if (!enabled) return;
+
     const onVisibility = () => {
       if (document.visibilityState !== 'visible') return;
       const cache = readCache();
@@ -98,7 +139,7 @@ export function useMenu() {
     };
     document.addEventListener('visibilitychange', onVisibility);
     return () => document.removeEventListener('visibilitychange', onVisibility);
-  }, [fetchMenu]);
+  }, [enabled, fetchMenu]);
 
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -134,3 +175,6 @@ export function useMenu() {
     setSearch,
   };
 }
+
+/** Estado completo del menú: se puede pasar por props a MenuBrowser para controlarlo desde la página. */
+export type MenuState = ReturnType<typeof useMenu>;

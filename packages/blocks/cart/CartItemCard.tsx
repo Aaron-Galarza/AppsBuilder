@@ -23,10 +23,12 @@ const FALLBACK_EMOJI = '🍽️';
 export function CartItemCard({ item }: CartItemCardProps) {
   const removeItem = useCartStore((s) => s.removeItem);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
-  const updateItemAddon = useCartStore((s) => s.updateItemAddon);
 
   const [isRemoving, setIsRemoving] = useState(false);
   const [imageError, setImageError] = useState(false);
+
+  // Adicionales disponibles del producto (enriquecidos por useMenu al agregar el ítem)
+  const availableAddons = item.product.addons ?? [];
 
   // DNA signature: producto + adicionales ordenados con cantidades.
   // Si cambia (p.ej. se editó un addon desde otro lado), resetea la animación.
@@ -112,9 +114,13 @@ export function CartItemCard({ item }: CartItemCardProps) {
           </button>
         </div>
 
-        {/* Edición rápida de adicionales */}
-        {(item.addons?.length ?? 0) > 0 && (
-          <CartItemExtrasPanel cartItemId={item.cartItemId} addons={item.addons} />
+        {/* Selector de adicionales (agregar/quitar en el carrito, siempre que el producto tenga) */}
+        {availableAddons.length > 0 && (
+          <CartItemExtrasPanel
+            cartItemId={item.cartItemId}
+            availableAddons={availableAddons}
+            addons={item.addons ?? []}
+          />
         )}
       </div>
     </div>

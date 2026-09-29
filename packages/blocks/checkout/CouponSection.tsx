@@ -139,7 +139,7 @@ export function CouponSection({
           disabled={!code.trim() || loading || items.length === 0}
           size="default"
           className="shrink-0"
-          style={{ backgroundColor: primaryColor }}
+          style={{ backgroundColor: primaryColor, color: 'var(--color-on-primary)' }}
         >
           Aplicar
         </Button>

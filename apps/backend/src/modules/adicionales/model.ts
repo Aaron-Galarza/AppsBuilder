@@ -12,9 +12,8 @@ const addonSchema = new Schema<AddonDoc>(
     name: { type: String, required: [true, 'El nombre es requerido'], trim: true },
     price: { type: Number, required: [true, 'El precio es requerido'], min: 0 },
     available: { type: Boolean, default: true },
-    categories: [
-      { type: Schema.Types.ObjectId, ref: 'AddonCategory', default: [] },
-    ],
+    // Categorías de menú a las que aplica el adicional (las asigna el admin)
+    categories: [{ type: Schema.Types.ObjectId, ref: 'Category', default: [] }],
   },
   { timestamps: true }
 );

@@ -1,13 +1,13 @@
-export interface AddonCategory {
-  _id: string;
-  name: string;
-  active: boolean;
-}
+import type { Category } from './category';
 
 export interface Addon {
   _id: string;
   name: string;
   price: number;
   available: boolean;
-  categories: AddonCategory[];
+  /**
+   * Categorías de menú donde aplica el adicional. La API pública las devuelve
+   * sin populate, así que llegan como IDs.
+   */
+  categories: Category[];
 }

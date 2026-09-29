@@ -59,7 +59,7 @@ export function CartPage({ variant = 'default' }: CartPageProps) {
               <button
                 type="button"
                 onClick={() => router.push('/checkout')}
-                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-primary px-5 py-3.5 font-extrabold text-black transition-all hover:bg-primary/90 active:scale-[0.98]"
+                className="inline-flex cursor-pointer items-center gap-2 rounded-xl bg-primary px-5 py-3.5 font-extrabold text-on-primary transition-all hover:bg-primary/90 active:scale-[0.98]"
               >
                 Continuar <ArrowRight size={18} />
               </button>
@@ -141,7 +141,7 @@ export function CartPage({ variant = 'default' }: CartPageProps) {
             <button
               type="button"
               onClick={() => router.push('/checkout')}
-              className="group flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3.5 text-base font-extrabold text-black transition-all hover:bg-primary/90 active:scale-[0.98] sm:text-lg"
+              className="group flex flex-1 cursor-pointer items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3.5 text-base font-extrabold text-on-primary transition-all hover:bg-primary/90 active:scale-[0.98] sm:text-lg"
             >
               Continuar
               <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />

@@ -12,8 +12,6 @@ export interface ProductCardProps {
   isStoreOpen: boolean;
   variant?: 'horizontal' | 'vertical';
   priority?: boolean;
-  /** Se pasa cuando la app usa AddonsModal: abre el modal en vez de agregar directo */
-  onOpenAddons?: (product: Product) => void;
 }
 
 const FALLBACK_EMOJI = '🍽️';
@@ -24,7 +22,6 @@ export function ProductCard({
   isStoreOpen,
   variant = 'horizontal',
   priority = false,
-  onOpenAddons,
 }: ProductCardProps) {
   const addItem = useCartStore((s) => s.addItem);
   const [imageError, setImageError] = useState(false);
@@ -39,11 +36,7 @@ export function ProductCard({
 
   const handleAdd = () => {
     if (isButtonDisabled) return;
-    // Producto con adicionales → modal; simple → directo al carrito
-    if (onOpenAddons && (product.addons?.length ?? 0) > 0) {
-      onOpenAddons(product);
-      return;
-    }
+    // Los adicionales se eligen en el carrito; acá solo se agrega el producto
     addItem(product, 1, []);
   };
 
@@ -143,7 +136,7 @@ export function ProductCard({
             'absolute -bottom-2 -right-2 flex h-9 w-9 items-center justify-center rounded-full shadow-lg transition-all active:scale-90',
             isButtonDisabled
               ? 'cursor-not-allowed bg-muted text-muted-foreground'
-              : 'scale-100 bg-primary text-black hover:scale-110'
+              : 'scale-100 bg-primary text-on-primary hover:scale-110'
           )}
         >
           <Plus className="h-4 w-4" />

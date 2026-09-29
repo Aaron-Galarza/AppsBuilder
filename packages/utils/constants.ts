@@ -9,6 +9,16 @@ export const ORDER_STATUSES: { value: OrderStatus; label: string; color: string 
   { value: 'cancelled',  label: 'Cancelado',  color: '#ef4444' },
 ];
 
+/** Transiciones de estado permitidas (mismo orden que STATUS_TRANSITIONS del backend) */
+export const ORDER_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  pending: ['confirmed', 'cancelled'],
+  confirmed: ['preparing', 'cancelled'],
+  preparing: ['ready', 'cancelled'],
+  ready: ['delivered', 'cancelled'],
+  delivered: ['cancelled'],
+  cancelled: [],
+};
+
 export const PAYMENT_METHODS: { value: PaymentMethod; label: string }[] = [
   { value: 'cash',          label: 'Efectivo' },
   { value: 'debito',        label: 'Débito' },

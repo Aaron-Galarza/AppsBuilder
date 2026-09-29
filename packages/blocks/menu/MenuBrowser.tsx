@@ -1,9 +1,9 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { useCartStore, useMenu, useStoreStatus } from '@saas/hooks';
+import { useMemo } from 'react';
+import { useMenu, useStoreStatus } from '@saas/hooks';
+import type { MenuState } from '@saas/hooks';
 import type { Product } from '@saas/types';
-import { AddonsModal } from './AddonsModal';
 import { CategoryFilter } from './CategoryFilter';
 import { ProductCard } from './ProductCard';
 import { ProductCardSkeleton } from './ProductCardSkeleton';
@@ -16,6 +16,17 @@ export interface MenuBrowserProps {
   columns?: 2 | 3 | 4;
   primaryColor?: string;
   placeholder?: string;
+  /**
+   * Estado del menú controlado desde la página (p. ej. cuando el buscador vive en el hero).
+   * Si se omite, MenuBrowser usa su propio useMenu y no hace falta pasar nada.
+   */
+  menu?: MenuState;
+  /** Muestra el buscador propio (por defecto true). */
+  showSearch?: boolean;
+  /** Muestra la barra de categorías propia (por defecto true). */
+  showCategories?: boolean;
+  /** Presentación de la barra de categorías. */
+  categoryVariant?: 'chips' | 'tabs';
 }
 
 const GRID_CLASS = {
@@ -34,11 +45,15 @@ export function MenuBrowser({
   columns = 3,
   primaryColor,
   placeholder = 'Buscar...',
+  menu: menuProp,
+  showSearch = true,
+  showCategories = true,
+  categoryVariant = 'chips',
 }: MenuBrowserProps) {
-  const menu = useMenu();
+  // Si la página ya trae el estado, la instancia interna no pide el menú otra vez
+  const ownMenu = useMenu({ enabled: menuProp === undefined });
+  const menu = menuProp ?? ownMenu;
   const { isOpen } = useStoreStatus();
-  const addItem = useCartStore((s) => s.addItem);
-  const [addonProduct, setAddonProduct] = useState<Product | null>(null);
 
   const {
     products,
@@ -88,30 +103,42 @@ export function MenuBrowser({
 
   return (
     <div className={variant === 'list' ? 'flex flex-col gap-5' : undefined}>
-      {variant === 'grid' ? (
-        <div className="mx-auto mb-6 max-w-xl">
+      {showSearch &&
+        (variant === 'grid' ? (
+          <div className="mx-auto mb-6 max-w-xl">
+            <SearchBar searchQuery={searchQuery} onSearch={setSearch} placeholder={placeholder} />
+          </div>
+        ) : (
           <SearchBar searchQuery={searchQuery} onSearch={setSearch} placeholder={placeholder} />
-        </div>
-      ) : (
-        <SearchBar searchQuery={searchQuery} onSearch={setSearch} placeholder={placeholder} />
-      )}
+        ))}
 
-      {categories.length > 0 && (
-        <div
-          className={
-            variant === 'grid'
-              ? 'mb-8 overflow-x-auto pb-1'
-              : 'sticky top-16 z-30 -mx-4 bg-background/95 px-4 py-1 backdrop-blur-lg'
-          }
-        >
+      {showCategories &&
+        categories.length > 0 &&
+        (categoryVariant === 'tabs' ? (
+          // La franja oscura ocupa todo el ancho: no lleva contenedor
           <CategoryFilter
             categories={categories}
             selectedCategory={selectedCategory}
             onSelectCategory={selectCategory}
             primaryColor={primaryColor}
+            variant="tabs"
           />
-        </div>
-      )}
+        ) : (
+          <div
+            className={
+              variant === 'grid'
+                ? 'mb-8 overflow-x-auto pb-1'
+                : 'sticky top-16 z-30 -mx-4 bg-background/95 px-4 py-1 backdrop-blur-lg'
+            }
+          >
+            <CategoryFilter
+              categories={categories}
+              selectedCategory={selectedCategory}
+              onSelectCategory={selectCategory}
+              primaryColor={primaryColor}
+            />
+          </div>
+        ))}
 
       {variant === 'grid' && <div id="product-list-top" />}
 
@@ -142,7 +169,6 @@ export function MenuBrowser({
                     product={product}
                     isStoreOpen={isOpen}
                     variant="horizontal"
-                    onOpenAddons={setAddonProduct}
                   />
                 ))}
               </div>
@@ -167,7 +193,6 @@ export function MenuBrowser({
                     product={product}
                     isStoreOpen={isOpen}
                     variant="vertical"
-                    onOpenAddons={setAddonProduct}
                   />
                 ))}
               </div>
@@ -175,16 +200,6 @@ export function MenuBrowser({
           ))}
         </>
       )}
-
-      <AddonsModal
-        product={addonProduct}
-        isOpen={addonProduct !== null}
-        onClose={() => setAddonProduct(null)}
-        onConfirm={(product, quantity, selectedAddons) => {
-          addItem(product, quantity, selectedAddons);
-          setAddonProduct(null);
-        }}
-      />
     </div>
   );
 }

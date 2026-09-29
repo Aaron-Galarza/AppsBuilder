@@ -12,6 +12,8 @@ export interface SummarySectionProps {
   total: number;
   deliveryType: 'delivery' | 'pickup';
   isDeliveryLoading?: boolean;
+  /** Texto a mostrar en la fila de envío (plantilla basic: costo a coordinar) */
+  deliveryCostNote?: string;
 }
 
 /** Resumen del pedido: ítems + subtotal/descuento/envío/recargo/total */
@@ -23,6 +25,7 @@ export function SummarySection({
   total,
   deliveryType,
   isDeliveryLoading = false,
+  deliveryCostNote,
 }: SummarySectionProps) {
   // Evitar mismatch de hidratación con precios formateados
   const [mounted, setMounted] = useState(false);
@@ -65,6 +68,8 @@ export function SummarySection({
       {deliveryType === 'delivery' &&
         (isDeliveryLoading ? (
           <span className="self-end text-[11px] text-muted-foreground">Calculando envío...</span>
+        ) : deliveryCostNote ? (
+          <Row label="Envío" value="A coordinar" muted />
         ) : (
           <Row
             label="Envío"
@@ -93,17 +98,25 @@ function Row({
   label,
   value,
   accent,
+  muted,
 }: {
   label: string;
   value: string;
   accent?: 'green' | 'orange';
+  muted?: boolean;
 }) {
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between gap-3">
       <span className="text-neutral-600">{label}</span>
       <span
         className={
-          accent === 'green' ? 'font-semibold text-green-600' : accent === 'orange' ? 'font-semibold text-orange-600' : 'font-medium'
+          muted
+            ? 'text-[11px] font-medium text-muted-foreground'
+            : accent === 'green'
+              ? 'font-semibold text-green-600'
+              : accent === 'orange'
+                ? 'font-semibold text-orange-600'
+                : 'font-medium'
         }
       >
         {value}
