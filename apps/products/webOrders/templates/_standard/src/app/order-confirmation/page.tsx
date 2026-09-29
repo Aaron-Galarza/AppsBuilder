@@ -36,7 +36,14 @@ export default function OrderConfirmationPage() {
       .then(() => JSON.parse(raw) as OrderSnapshot)
       .then((parsed) => {
         if (mounted) {
-          setOrder(parsed)
+          // Normaliza por si el snapshot quedó incompleto o de una versión anterior
+          setOrder({
+            ...parsed,
+            items: (Array.isArray(parsed.items) ? parsed.items : []).map((item) => ({
+              ...item,
+              addons: Array.isArray(item.addons) ? item.addons : []
+            }))
+          })
           sessionStorage.removeItem('order_confirmation')
         }
       })

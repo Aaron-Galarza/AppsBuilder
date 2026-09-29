@@ -83,7 +83,7 @@ export default function CheckoutPage() {
             <button
               key={method}
               onClick={() => setPaymentMethod(method)}
-              className={`flex-1 rounded-xl px-2 py-2.5 text-sm font-bold capitalize transition-all ${paymentMethod === method ? 'bg-primary text-black' : 'bg-muted border border-border text-muted-foreground hover:text-foreground'}`}
+              className={`flex-1 rounded-xl px-2 py-2.5 text-sm font-bold capitalize transition-all ${paymentMethod === method ? 'bg-primary text-on-primary' : 'bg-muted border border-border text-muted-foreground hover:text-foreground'}`}
             >
               {method === 'cash' ? 'Efectivo' : method}
             </button>
@@ -119,7 +119,7 @@ export default function CheckoutPage() {
         <button
           onClick={handleConfirmOrder}
           disabled={isConfirmDisabled}
-          className={`flex w-full items-center justify-center gap-2 rounded-xl py-4 text-lg font-extrabold transition-all duration-300 ${isConfirmDisabled ? 'cursor-not-allowed bg-muted text-muted-foreground' : 'bg-primary text-black hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'}`}
+          className={`flex w-full items-center justify-center gap-2 rounded-xl py-4 text-lg font-extrabold transition-all duration-300 ${isConfirmDisabled ? 'cursor-not-allowed bg-muted text-muted-foreground' : 'bg-primary text-on-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'}`}
         >
           {submitting ? 'Enviando pedido...' : 'Confirmar Pedido'}
           {!isConfirmDisabled && <CheckCircle2 size={20} />}

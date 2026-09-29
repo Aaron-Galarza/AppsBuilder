@@ -3,19 +3,16 @@
 import Link from 'next/link'
 import { ArrowLeft, CheckCircle2, Receipt } from 'lucide-react'
 import {
-  AddressAutocomplete,
+  AddressSimple,
   CheckoutForm,
   CouponSection,
-  DeliveryAddressWarningModal,
   DeliveryTypeSelector,
   SummarySection,
 } from '@saas/blocks/checkout'
-import { useCartStore, useCheckout, useDelivery } from '@saas/hooks'
-import type { AddressResult } from '@saas/types'
+import { useCheckout } from '@saas/hooks'
 
 export default function CheckoutPage() {
-  useDelivery()
-
+  // Basic: dirección de texto libre (sin mapa ni cálculo de costo de envío)
   const {
     items,
     deliveryType,
@@ -24,23 +21,8 @@ export default function CheckoutPage() {
     paymentMethod, setPaymentMethod,
     couponCode, couponLoading, couponError, validateCoupon, handleCouponInput,
     submitting, submitError, isConfirmDisabled, handleConfirmOrder,
-    unresolvedAddressModal, confirmUnresolvedDelivery, cancelUnresolvedDelivery, deliveryAddress,
     total, subtotal, discount, surcharge,
-  } = useCheckout()
-
-  const deliveryCoordinates = useCartStore((s) => s.deliveryCoordinates)
-  const setDeliveryAddress = useCartStore((s) => s.setDeliveryAddress)
-  const clearDelivery = useCartStore((s) => s.clearDelivery)
-
-  const addressValue: AddressResult | null =
-    deliveryType === 'delivery' && deliveryAddress && deliveryCoordinates
-      ? { address: deliveryAddress, lat: deliveryCoordinates.lat, lng: deliveryCoordinates.lng }
-      : null
-
-  const handleAddressChange = (result: AddressResult | null) => {
-    if (result) setDeliveryAddress(result.address, { lat: result.lat, lng: result.lng })
-    else clearDelivery()
-  }
+  } = useCheckout(undefined, { requireDeliveryCoordinates: false })
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 pb-12 pt-4">
@@ -62,12 +44,7 @@ export default function CheckoutPage() {
       {deliveryType === 'delivery' && (
         <section>
           <h2 className="mb-3 px-1 text-sm font-bold uppercase tracking-wider text-muted-foreground">Dirección de entrega</h2>
-          <AddressAutocomplete
-            value={addressValue}
-            onChange={handleAddressChange}
-            onClear={clearDelivery}
-            placeholder="Tu dirección..."
-          />
+          <AddressSimple placeholder="Tu dirección y referencia..." />
         </section>
       )}
 
@@ -83,7 +60,7 @@ export default function CheckoutPage() {
             <button
               key={method}
               onClick={() => setPaymentMethod(method)}
-              className={`flex-1 rounded-xl px-2 py-2.5 text-sm font-bold capitalize transition-all ${paymentMethod === method ? 'bg-primary text-black' : 'bg-muted border border-border text-muted-foreground hover:text-foreground'}`}
+              className={`flex-1 rounded-xl px-2 py-2.5 text-sm font-bold capitalize transition-all ${paymentMethod === method ? 'bg-primary text-on-primary' : 'bg-muted border border-border text-muted-foreground hover:text-foreground'}`}
             >
               {method === 'cash' ? 'Efectivo' : method}
             </button>
@@ -108,6 +85,7 @@ export default function CheckoutPage() {
           total={total}
           deliveryType={deliveryType}
           isDeliveryLoading={false}
+          deliveryCostNote="El costo del envío lo confirma el negocio por WhatsApp"
         />
       </section>
 
@@ -119,19 +97,12 @@ export default function CheckoutPage() {
         <button
           onClick={handleConfirmOrder}
           disabled={isConfirmDisabled}
-          className={`flex w-full items-center justify-center gap-2 rounded-xl py-4 text-lg font-extrabold transition-all duration-300 ${isConfirmDisabled ? 'cursor-not-allowed bg-muted text-muted-foreground' : 'bg-primary text-black hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'}`}
+          className={`flex w-full items-center justify-center gap-2 rounded-xl py-4 text-lg font-extrabold transition-all duration-300 ${isConfirmDisabled ? 'cursor-not-allowed bg-muted text-muted-foreground' : 'bg-primary text-on-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-[0.98]'}`}
         >
           {submitting ? 'Enviando pedido...' : 'Confirmar Pedido'}
           {!isConfirmDisabled && <CheckCircle2 size={20} />}
         </button>
       </section>
-
-      <DeliveryAddressWarningModal
-        isOpen={unresolvedAddressModal}
-        addressText={deliveryAddress}
-        onConfirm={confirmUnresolvedDelivery}
-        onCancel={cancelUnresolvedDelivery}
-      />
     </div>
   )
 }

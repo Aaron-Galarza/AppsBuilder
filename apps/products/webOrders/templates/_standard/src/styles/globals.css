@@ -12,15 +12,21 @@
   --color-primary: INJECT_PRIMARY_COLOR;
   --color-secondary: INJECT_SECONDARY_COLOR;
   --color-accent: INJECT_ACCENT_COLOR;
+  --color-on-primary: INJECT_ON_PRIMARY_COLOR;
+  --color-on-secondary: INJECT_ON_SECONDARY_COLOR;
+  --color-on-accent: INJECT_ON_ACCENT_COLOR;
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary-foreground: var(--color-on-secondary);
 
-  /* Superficies neutras frías */
-  --color-background: #0c0e11;
-  --color-foreground: #eef1f4;
-  --color-card: #15181d;
-  --color-muted: #1c2026;
-  --color-muted-foreground: #9aa3ad;
-  --color-border: rgba(238, 241, 244, 0.1);
-  --color-ring: rgba(148, 163, 184, 0.5);
+  /* Superficies neutras frías (editables desde el wizard) */
+  --color-background: INJECT_SURFACE_BACKGROUND;
+  --color-foreground: INJECT_SURFACE_FOREGROUND;
+  --color-card: INJECT_SURFACE_CARD;
+  --color-muted: INJECT_SURFACE_MUTED;
+  --color-muted-foreground: INJECT_SURFACE_MUTED_FOREGROUND;
+  /* Borde y anillo derivados: se adaptan aunque cambien foreground/primary */
+  --color-border: color-mix(in srgb, var(--color-foreground) 15%, transparent);
+  --color-ring: color-mix(in srgb, var(--color-primary) 45%, transparent);
 
   /* Radio medio: pills geométricas, ni duro ni exagerado */
   --radius-xs: 0.25rem;
@@ -56,13 +62,13 @@
   }
 }
 
-/* Etiqueta "eyebrow" moderna: pequeña, neutra, sobria */
+/* Etiqueta "eyebrow" moderna: pequeña, del color accent, sobria */
 @utility eyebrow {
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--color-muted-foreground);
+  color: var(--color-accent);
 }
 
 @utility hairline {

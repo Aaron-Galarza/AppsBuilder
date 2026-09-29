@@ -84,11 +84,11 @@ export default function HomePage() {
           {/* BLOCK: cta */}
           <section className="mx-auto w-full max-w-5xl px-6 pb-16">
             <div
-              className="flex flex-col items-center gap-4 rounded-3xl px-8 py-14 text-center text-black"
+              className="flex flex-col items-center gap-4 rounded-3xl px-8 py-14 text-center text-on-primary"
               style={{ backgroundColor: 'var(--color-primary)' }}
             >
               <h2 className="font-heading text-2xl font-bold sm:text-3xl">{cta['title'] ?? ''}</h2>
-              <p className="max-w-md text-sm text-black/75">{cta['subtitle'] ?? ''}</p>
+              <p className="max-w-md text-sm text-on-primary/75">{cta['subtitle'] ?? ''}</p>
               <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
                 <Link
                   href="/menu"

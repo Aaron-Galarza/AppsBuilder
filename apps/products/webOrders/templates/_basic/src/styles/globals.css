@@ -12,15 +12,21 @@
   --color-primary: INJECT_PRIMARY_COLOR;
   --color-secondary: INJECT_SECONDARY_COLOR;
   --color-accent: INJECT_ACCENT_COLOR;
+  --color-on-primary: INJECT_ON_PRIMARY_COLOR;
+  --color-on-secondary: INJECT_ON_SECONDARY_COLOR;
+  --color-on-accent: INJECT_ON_ACCENT_COLOR;
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary-foreground: var(--color-on-secondary);
 
-  /* Superficies cálidas */
-  --color-background: #131110;
-  --color-foreground: #f4f0ea;
-  --color-card: #1a1715;
-  --color-muted: #201d1a;
-  --color-muted-foreground: #a89e92;
-  --color-border: rgba(244, 240, 234, 0.1);
-  --color-ring: rgba(212, 168, 67, 0.4);
+  /* Superficies cálidas (editables desde el wizard) */
+  --color-background: INJECT_SURFACE_BACKGROUND;
+  --color-foreground: INJECT_SURFACE_FOREGROUND;
+  --color-card: INJECT_SURFACE_CARD;
+  --color-muted: INJECT_SURFACE_MUTED;
+  --color-muted-foreground: INJECT_SURFACE_MUTED_FOREGROUND;
+  /* Borde y anillo derivados: se adaptan aunque cambien foreground/primary */
+  --color-border: color-mix(in srgb, var(--color-foreground) 15%, transparent);
+  --color-ring: color-mix(in srgb, var(--color-primary) 45%, transparent);
 
   /* Radios suaves de barrio (menos generosos que premium) */
   --radius-xs: 0.25rem;
@@ -56,13 +62,13 @@
   }
 }
 
-/* Etiqueta "eyebrow" de barrio: pequeña, espaciada, cálida */
+/* Etiqueta "eyebrow" de barrio: pequeña, espaciada, del color accent */
 @utility eyebrow {
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: var(--color-accent);
 }
 
 /* Regla divisoria cálida */

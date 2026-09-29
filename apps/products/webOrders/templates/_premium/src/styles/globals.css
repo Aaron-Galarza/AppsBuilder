@@ -12,15 +12,21 @@
   --color-primary: INJECT_PRIMARY_COLOR;
   --color-secondary: INJECT_SECONDARY_COLOR;
   --color-accent: INJECT_ACCENT_COLOR;
+  --color-on-primary: INJECT_ON_PRIMARY_COLOR;
+  --color-on-secondary: INJECT_ON_SECONDARY_COLOR;
+  --color-on-accent: INJECT_ON_ACCENT_COLOR;
+  --color-primary-foreground: var(--color-on-primary);
+  --color-secondary-foreground: var(--color-on-secondary);
 
-  /* Superficies cálidas y profundas, con borde dorado sutil */
-  --color-background: #0a0908;
-  --color-foreground: #f5f2eb;
-  --color-card: #17140f;
-  --color-muted: #1f1b14;
-  --color-muted-foreground: #a89f92;
-  --color-border: rgba(233, 214, 168, 0.16);
-  --color-ring: rgba(212, 168, 67, 0.45);
+  /* Superficies cálidas y profundas (editables desde el wizard) */
+  --color-background: INJECT_SURFACE_BACKGROUND;
+  --color-foreground: INJECT_SURFACE_FOREGROUND;
+  --color-card: INJECT_SURFACE_CARD;
+  --color-muted: INJECT_SURFACE_MUTED;
+  --color-muted-foreground: INJECT_SURFACE_MUTED_FOREGROUND;
+  /* Hairline dorada editorial: sigue al primary; anillo igual */
+  --color-border: color-mix(in srgb, var(--color-primary) 20%, transparent);
+  --color-ring: color-mix(in srgb, var(--color-primary) 45%, transparent);
 
   /* Radios generosos para el aire editorial */
   --radius-xs: 0.25rem;
@@ -56,13 +62,13 @@
   }
 }
 
-/* Etiqueta editorial: muy espaciada, dorada, acompañando títulos serif */
+/* Etiqueta editorial: muy espaciada, del color accent, acompañando títulos serif */
 @utility eyebrow {
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
-  color: var(--color-primary);
+  color: var(--color-accent);
 }
 
 /* Hairline dorada característica de la identidad premium */
