@@ -11,10 +11,12 @@ import {
   rainBodySchema,
   removeDeliveryRange,
   scheduleBodySchema,
+  statusModeSchema,
   updateBanner,
   updateEmergency,
   updateRain,
   updateSchedule,
+  updateStatusMode,
 } from './controller';
 
 const router: Router = Router();
@@ -28,6 +30,7 @@ router.put('/schedule', requireAuth, validate(scheduleBodySchema), updateSchedul
 router.put('/banner', requireAuth, validate(bannerSchema), updateBanner);
 router.put('/rain', requireAuth, validate(rainBodySchema), updateRain);
 router.put('/emergency', requireAuth, validate(emergencySchema), updateEmergency);
+router.put('/status-mode', requireAuth, validate(statusModeSchema), updateStatusMode);
 router.post('/delivery-ranges', requireAuth, validate(deliveryRangeSchema), addDeliveryRange);
 router.delete('/delivery-ranges/:id', requireAuth, removeDeliveryRange);
 

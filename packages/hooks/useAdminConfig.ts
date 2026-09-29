@@ -1,6 +1,6 @@
 'use client';
 
-import { DeliveryRange, RainConfig, Schedule, StoreConfig } from '@saas/types';
+import { DeliveryRange, RainConfig, Schedule, StoreConfig, StoreStatusMode } from '@saas/types';
 import { useCallback, useEffect, useState } from 'react';
 import { apiFetch, authHeaders } from './lib/api';
 import { useAuthStore } from './useAuthStore';
@@ -99,6 +99,19 @@ export function useAdminConfig() {
     await reload();
   }, [token, config?.emergencyClosed, reload]);
 
+  /** Modo de estado del local: 'manual' (solo botón) o 'schedule' (horarios) */
+  const setStatusMode = useCallback(
+    async (statusMode: StoreStatusMode) => {
+      await apiFetch('/api/config/status-mode', {
+        method: 'PUT',
+        headers: authHeaders(token),
+        body: JSON.stringify({ statusMode }),
+      });
+      await reload();
+    },
+    [token, reload]
+  );
+
   return {
     config,
     loading,
@@ -110,5 +123,6 @@ export function useAdminConfig() {
     addDeliveryRange,
     removeDeliveryRange,
     toggleEmergency,
+    setStatusMode,
   };
 }

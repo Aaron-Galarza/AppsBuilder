@@ -45,6 +45,7 @@ const deliveryRangeSchema = z.object({
 
 const bannerSchema = z.object({ bannerUrl: z.string().trim().max(500) });
 const emergencySchema = z.object({ closed: z.boolean() });
+const statusModeSchema = z.object({ statusMode: z.enum(['manual', 'schedule']) });
 
 /** Bodies completos esperados por los PUT (el schema interior va anidado) */
 const scheduleBodySchema = z.object({ schedule: scheduleSchema });
@@ -80,12 +81,26 @@ export const updateEmergency = asyncHandler(async (req: Request, res: Response) 
   config.emergencyClosed = req.body.closed;
   await config.save();
 
-  // Notificar a todos los clientes conectados que el local cambió de estado
+  // Notificar a todos los clientes conectados que el local cambió de estado.
+  // Se relee el status real: `!emergencyClosed` mentía en modo schedule (fuera de
+  // horario igual se cerraba).
   const { getIO } = await import('../../socket/socket');
-  getIO().to('public').emit('store-status', {
-    isOpen: !config.emergencyClosed,
-    emergencyClosed: config.emergencyClosed,
-  });
+  getIO().to('public').emit('store-status', await checkStoreStatus());
+
+  sendSuccess(res, config);
+});
+
+/** PUT /api/config/status-mode — modo de estado del local (manual/schedule) */
+export const updateStatusMode = asyncHandler(async (req: Request, res: Response) => {
+  const config = await StoreConfig.getOrCreateConfig();
+  config.statusMode = req.body.statusMode;
+  // Elección explícita del dueño: a partir de acá STATUS_MODE del .env no la pisa.
+  config.statusModeSource = 'admin';
+  await config.save();
+
+  // Notificar el cambio de estado (si pasó a manual queda abierto salvo botón)
+  const { getIO } = await import('../../socket/socket');
+  getIO().to('public').emit('store-status', await checkStoreStatus());
 
   sendSuccess(res, config);
 });
@@ -116,4 +131,5 @@ export {
   deliveryRangeSchema,
   bannerSchema,
   emergencySchema,
+  statusModeSchema,
 };

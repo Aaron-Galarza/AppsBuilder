@@ -8,7 +8,6 @@ import { StoreConfig } from '../modules/schedules/model';
 import { Category } from '../modules/categories/model';
 import { Product } from '../modules/products/model';
 import { Addon } from '../modules/adicionales/model';
-import { AddonCategory } from '../modules/adicionales/model.category';
 import { Order } from '../modules/orders/model';
 import { Coupon } from '../modules/coupons/model';
 import { Daily } from '../modules/analytics/model';
@@ -379,6 +378,11 @@ async function seedStoreConfig(): Promise<void> {
   config.set({
     isOpen: schedule.emergencyClosed ? false : true,
     emergencyClosed: schedule.emergencyClosed === true,
+    // Modo del local: 'manual' → basic (solo botón), 'schedule' → horarios (standard/premium).
+    // El generador inyecta STATUS_MODE en el .env según plantilla (INJECT_STATUS_MODE).
+    statusMode: process.env.STATUS_MODE === 'manual' ? 'manual' : 'schedule',
+    // Viene del .env, no de una elección del dueño → syncStatusModeFromEnv() puede corregirlo.
+    statusModeSource: 'env',
     bannerUrl: String(schedule.bannerUrl ?? ''),
     rain: { enabled: false, extraCost: 0 },
     schedule: {
@@ -403,7 +407,6 @@ async function seed(): Promise<void> {
   await upsertMany(User, prepareUsers(passwordHash), 'users', 'email');
   console.log(`[seed] Admin: ${(process.env.SEED_ADMIN_EMAIL ?? 'admin@local.dev').toLowerCase()} / ${password}`);
   await upsertMany(Category, SEED.categories, 'categories');
-  await upsertMany(AddonCategory, SEED.addonCategories, 'addonCategories');
   await upsertMany(Addon, normalizeAddons(SEED.addons), 'addons');
   await upsertMany(Product, normalizeProducts(SEED.products), 'products');
   await upsertMany(Coupon, SEED.coupons, 'coupons');

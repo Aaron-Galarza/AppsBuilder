@@ -4,6 +4,7 @@ import { connectDB } from './config/db';
 import { createApp } from './app';
 import { initSocket } from './socket/socket';
 import { ensureSeeded } from './scripts/seed';
+import { syncStatusModeFromEnv } from './modules/schedules/service';
 
 async function main(): Promise<void> {
   // Fallar rápido si falta config crítica
@@ -18,6 +19,14 @@ async function main(): Promise<void> {
       await ensureSeeded();
     } catch (err) {
       console.error('[server] Auto-seed falló:', err);
+    }
+
+    // STATUS_MODE del .env manda mientras el dueño no lo haya cambiado a mano.
+    // Sin esto, una base ya sembrada queda en 'schedule' y basic no abre nunca.
+    try {
+      await syncStatusModeFromEnv();
+    } catch (err) {
+      console.error('[server] No se pudo aplicar STATUS_MODE:', err);
     }
   }
 

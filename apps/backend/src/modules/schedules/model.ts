@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import type { RainConfig, Schedule } from '@saas/types';
+import type { RainConfig, Schedule, StoreStatusMode, StoreStatusModeSource } from '@saas/types';
 
 export interface DeliveryRangeDoc {
   _id: mongoose.Types.ObjectId;
@@ -11,6 +11,8 @@ export interface DeliveryRangeDoc {
 export interface StoreConfigDoc extends mongoose.Document {
   isOpen: boolean;
   emergencyClosed: boolean;
+  statusMode: StoreStatusMode;
+  statusModeSource: StoreStatusModeSource;
   bannerUrl?: string;
   rain: RainConfig;
   schedule: Schedule;
@@ -54,6 +56,11 @@ const storeConfigSchema = new Schema<StoreConfigDoc>(
   {
     isOpen: { type: Boolean, default: true },
     emergencyClosed: { type: Boolean, default: false },
+    // manual: abierto salvo botón de cierre (basic). schedule: horarios (standard/premium).
+    statusMode: { type: String, enum: ['manual', 'schedule'], default: 'schedule' },
+    // 'env': el modo viene de STATUS_MODE (inyectado por el generador según plantilla).
+    // 'admin': el dueño lo eligió a mano en ConfigTab → el .env deja de mandar.
+    statusModeSource: { type: String, enum: ['env', 'admin'], default: 'env' },
     bannerUrl: { type: String, default: '' },
     rain: {
       enabled: { type: Boolean, default: false },
