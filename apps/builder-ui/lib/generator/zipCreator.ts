@@ -1,4 +1,4 @@
-import type { FileEntry } from './types'
+import type { EnvSource, FileEntry } from './types'
 
 interface ZipState {
   product: 'webOrders' | 'landingPages'
@@ -8,6 +8,7 @@ interface ZipState {
     name: string
     slug: string
   }
+  envSource?: EnvSource
 }
 
 const MANDATORY_BLOCKS: Record<string, string[]> = {
@@ -56,7 +57,7 @@ git push origin main
 }
 
 function generateReadme(state: ZipState): string {
-  const { product, template, config } = state
+  const { product, template, config, envSource = 'template' } = state
   const deployWeb = `cd apps/products/${product}/templates/${template}\nvercel deploy --prod`
 
   const deployAdmin = product === 'webOrders'
@@ -67,9 +68,37 @@ function generateReadme(state: ZipState): string {
     ? `\n\n### Backend (solo webOrders)\ncd apps/backend\nrender deploy --prod`
     : ''
 
+  const dbSection: Record<EnvSource, string> = {
+    preview:
+      'El `.env` del backend ya quedó apuntando a la base de datos de prueba, la misma que usa el preview. No hay que tocar nada para levantarlo.',
+    custom:
+      'El `.env` del backend ya quedó con las variables que pegaste al generar el proyecto.',
+    template:
+      '> **Falta configurar la base de datos.** Completá `MONGODB_URI` en `apps/backend/.env`.\n>\n> Sin base de datos el backend igual levanta, pero todas las APIs devuelven `503 Servicio sin base de datos disponible` y el menú no carga.\n>\n> Andá a https://www.mongodb.com/atlas, creá un cluster gratis, en *Database Access* creá un usuario y en *Network Access* agregá tu IP (o `0.0.0.0/0` para probar). Después copiá la connection string:\n>\n> ```\n> MONGODB_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<db>?retryWrites=true&w=majority\n> ```',
+  }
+
   return `# ${config.name}
 
-Generado con AppsBuilder
+Generado con AppsBuilder — plantilla \`${template}\`
+
+## Correr en local
+
+\`\`\`bash
+pnpm install
+pnpm dev
+\`\`\`
+
+| Servicio | URL |
+| --- | --- |
+| Backend | http://localhost:4000 |
+| Web | http://localhost:3000 |
+${product === 'webOrders' ? '| Admin | http://localhost:3002 |\n' : ''}
+El backend siembra solo datos demo si la base está vacía.
+Para volver a generarlos: \`SEED_REFRESH_DEMO=1 pnpm --filter @saas/backend seed\`
+
+## Base de datos
+
+${dbSection[envSource]}
 
 ## Deploy${deployBackend}${deployAdmin}
 
@@ -77,7 +106,9 @@ Generado con AppsBuilder
 ${deployWeb}
 
 ## Variables de entorno
-Completar .env.local antes de deployar (ver .env.local de cada app)
+El \`.env\` del backend ya viene escrito. Para deploy, cargá las mismas
+variables en el panel del proveedor (Render / Vercel) y completá
+\`NEXT_PUBLIC_API_URL\` en el \`.env.local\` de cada frontend con la URL pública del backend.
 
 ## Sync con master
 chmod +x sync-master.sh
@@ -108,6 +139,30 @@ export async function createZip(
 
   const workspaceYaml = `packages:\n  - 'packages/*'\n  - 'apps/*'\n  - 'apps/products/*'\n  - 'apps/products/*/templates/*'\n`
   zip.file('pnpm-workspace.yaml', workspaceYaml)
+
+  // tsconfig.base.json: apps/backend/tsconfig.json lo extiende con
+  // "../../tsconfig.base.json". Sin este archivo en la raíz del proyecto el
+  // typecheck del backend generado falla con TS5083 y se pierden esModuleInterop,
+  // target y downlevelIteration.
+  const tsconfigBase = JSON.stringify(
+    {
+      compilerOptions: {
+        target: 'ES2020',
+        module: 'ESNext',
+        moduleResolution: 'Bundler',
+        strict: true,
+        esModuleInterop: true,
+        skipLibCheck: true,
+        forceConsistentCasingInFileNames: true,
+        declaration: true,
+        declarationMap: true,
+        sourceMap: true,
+      },
+    },
+    null,
+    2
+  )
+  zip.file('tsconfig.base.json', tsconfigBase)
 
   const syncScript = generateSyncScript(state.selectedBlocks, state.product)
   zip.file('sync-master.sh', syncScript)

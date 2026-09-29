@@ -1,4 +1,13 @@
-import type { FileEntry } from './types'
+import crypto from 'crypto'
+import fs from 'fs/promises'
+import path from 'path'
+import type { EnvSource, EnvSetup, FileEntry } from './types'
+import {
+  TEMPLATE_SURFACES,
+  contrastText,
+  type SurfacesMap,
+  type TemplateKey,
+} from '../preview/templateThemes'
 
 interface InjectorState {
   product: 'webOrders' | 'landingPages' | null
@@ -6,11 +15,24 @@ interface InjectorState {
   config: {
     name: string
     slug: string
-    colors: { primary: string; secondary: string; accent: string }
+    colors: {
+      primary: string
+      secondary: string
+      accent: string
+      surfaces: SurfacesMap | null
+    }
     fonts: { heading: string; body: string }
   }
   textos: Record<string, Record<string, string>>
   selectedBlocks: string[]
+}
+
+/** Superficies efectivas: las editadas por el usuario o los defaults de la identidad. */
+function surfacesFor(state: InjectorState): SurfacesMap {
+  return (
+    state.config.colors.surfaces ??
+    TEMPLATE_SURFACES[(state.template as TemplateKey | null) ?? 'basic']
+  )
 }
 
 function hexValid(hex: string): boolean {
@@ -29,12 +51,27 @@ function strOr(val: string | string[] | undefined): string {
 type ImageUrls = Record<string, string | string[]>
 
 function injectTailwind(content: string, state: InjectorState): string {
+  let result = injectColors(content, state)
+  result = result.replace(/INJECT_FONT_HEADING/g, state.config.fonts.heading)
+  result = result.replace(/INJECT_FONT_BODY/g, state.config.fonts.body)
+  return result
+}
+
+/** Reemplaza los tokens de color y superficies en un texto (tailwind.config o globals.css). */
+function injectColors(content: string, state: InjectorState): string {
   let result = content
   result = result.replace(/INJECT_PRIMARY_COLOR/g, state.config.colors.primary)
   result = result.replace(/INJECT_SECONDARY_COLOR/g, state.config.colors.secondary)
   result = result.replace(/INJECT_ACCENT_COLOR/g, state.config.colors.accent)
-  result = result.replace(/INJECT_FONT_HEADING/g, state.config.fonts.heading)
-  result = result.replace(/INJECT_FONT_BODY/g, state.config.fonts.body)
+  result = result.replace(/INJECT_ON_PRIMARY_COLOR/g, contrastText(state.config.colors.primary))
+  result = result.replace(/INJECT_ON_SECONDARY_COLOR/g, contrastText(state.config.colors.secondary))
+  result = result.replace(/INJECT_ON_ACCENT_COLOR/g, contrastText(state.config.colors.accent))
+  const s = surfacesFor(state)
+  result = result.replace(/INJECT_SURFACE_BACKGROUND/g, s.background)
+  result = result.replace(/INJECT_SURFACE_FOREGROUND/g, s.foreground)
+  result = result.replace(/INJECT_SURFACE_CARD/g, s.card)
+  result = result.replace(/INJECT_SURFACE_MUTED/g, s.muted)
+  result = result.replace(/INJECT_SURFACE_MUTED_FOREGROUND/g, s.mutedForeground)
   return result
 }
 
@@ -112,11 +149,9 @@ function injectTextos(
   result = result.replace(/INJECT_HERO_IMAGE_URL/g, strOr(imageUrls['hero']))
   result = result.replace(/INJECT_ABOUT_IMAGE_URL/g, strOr(imageUrls['about']))
 
-  result = result.replace(/INJECT_PRIMARY_COLOR/g, state.config.colors.primary)
-  result = result.replace(/INJECT_SECONDARY_COLOR/g, state.config.colors.secondary)
-  result = result.replace(/INJECT_ACCENT_COLOR/g, state.config.colors.accent)
-  result = result.replace(/INJECT_FONT_HEADING/g, state.config.fonts.heading)
-  result = result.replace(/INJECT_FONT_BODY/g, state.config.fonts.body)
+  // Colores/superficies (redundante con 'tailwind' por si el globals.css
+  // se procesa por esta vía, que es la real en Tailwind v4).
+  result = injectColors(result, state)
 
   return result
 }
@@ -153,6 +188,8 @@ function injectEnv(
   result = result.replace(/INJECT_API_URL/g, '')
   result = result.replace(/INJECT_TENANT_NAME/g, state.config.name)
   result = result.replace(/INJECT_MAPBOX_TOKEN/g, '')
+  // Modo de estado del local según plantilla: basic = solo botón, resto = horarios
+  result = result.replace(/INJECT_STATUS_MODE/g, state.template === 'basic' ? 'manual' : 'schedule')
   return result
 }
 
@@ -242,6 +279,7 @@ export const clientConfig: ProjectConfig = {
     primary: ${JSON.stringify(cfg.colors.primary)},
     secondary: ${JSON.stringify(cfg.colors.secondary)},
     accent: ${JSON.stringify(cfg.colors.accent)},
+    surfaces: ${JSON.stringify(surfacesFor(state))},
   },
   fonts: {
     heading: ${JSON.stringify(cfg.fonts.heading)},
@@ -275,7 +313,89 @@ export type { ProjectConfig } from './base.config';
   }
 }
 
-export function renameEnvFiles(files: FileEntry[]): FileEntry[] {
+/**
+ * Variables que se copian al .env del ZIP cuando el usuario elige
+ * "importar .env de prueba" o pega su propio bloque clave:valor.
+ */
+const EXPORTABLE_ENV_KEYS = [
+  'MONGODB_URI',
+  'JWT_SECRET',
+  'JWT_EXPIRES_IN',
+  'STORE_LAT',
+  'STORE_LNG',
+  'MAPBOX_TOKEN',
+  'CLOUDINARY_CLOUD_NAME',
+  'CLOUDINARY_API_KEY',
+  'CLOUDINARY_API_SECRET',
+  'GEOCODING_BUDGET_MONTHLY',
+  'SEED_ADMIN_EMAIL',
+  'SEED_ADMIN_PASSWORD',
+] as const
+
+/** CORS del proyecto exportado: storefront en 3000 y admin en 3002. */
+const EXPORTED_CLIENT_URL = 'http://localhost:3000,http://localhost:3002'
+
+/** Parser mínimo de .env: solo KEY=VALUE; ignora comentarios, vacíos y comillas. */
+function parseDotEnv(raw: string): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const line of raw.split(/\r?\n/)) {
+    const t = line.trim()
+    if (!t || t.startsWith('#')) continue
+    const eq = t.indexOf('=')
+    if (eq === -1) continue
+    const key = t.slice(0, eq).trim()
+    let val = t.slice(eq + 1).trim()
+    if (val.length > 1 && ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'")))) {
+      val = val.slice(1, -1)
+    }
+    if (key) out[key] = val
+  }
+  return out
+}
+
+/**
+ * Lee el .env del backend del master: es exactamente el que usa el preview
+ * del wizard, así que el ZIP arranca contra la misma base de datos.
+ */
+async function readPreviewEnv(): Promise<Record<string, string>> {
+  try {
+    const masterRoot = path.resolve(process.cwd(), '../..')
+    const raw = await fs.readFile(path.join(masterRoot, 'apps/backend/.env'), 'utf-8')
+    return parseDotEnv(raw)
+  } catch {
+    return {}
+  }
+}
+
+/** Secret JWT aleatorio por export: nunca se reparte el mismo entre clientes. */
+function randomJwtSecret(): string {
+  return crypto.randomBytes(32).toString('hex')
+}
+
+/**
+ * Escribe una clave solo en su línea real de configuración.
+ * Usar String.replace con un string es inseguro acá: la primera aparición de
+ * MONGODB_URI= está en el bloque de comentarios del ejemplo, no en la config.
+ */
+function setEnvValue(content: string, key: string, value: string): string {
+  // Ojo: el flag 'm' va en el constructor, `(?m)` no existe en JS.
+  const line = new RegExp(`^${key}=.*$`, 'm')
+  return line.test(content)
+    ? content.replace(line, `${key}=${value}`)
+    : `${content.trimEnd()}\n${key}=${value}\n`
+}
+
+export async function renameEnvFiles(
+  files: FileEntry[],
+  env?: EnvSetup
+): Promise<FileEntry[]> {
+  const source: EnvSource = env?.source ?? 'template'
+  const provided = source === 'preview'
+    ? await readPreviewEnv()
+    : source === 'custom'
+      ? env?.values ?? {}
+      : {}
+
   return files.map((file) => {
     if (file.path.endsWith('.env.local.example')) {
       const newPath = file.path.replace('.env.local.example', '.env.local')
@@ -287,7 +407,23 @@ export function renameEnvFiles(files: FileEntry[]): FileEntry[] {
       return { path: newPath, content: envContent }
     }
     if (file.path.endsWith('apps/backend/.env.example')) {
-      const envContent = String(file.content).replace('MONGODB_URI=mongodb://localhost:27017/saas-orders', 'MONGODB_URI=')
+      let envContent = String(file.content)
+
+      for (const key of EXPORTABLE_ENV_KEYS) {
+        const value = provided[key]
+        if (value) envContent = setEnvValue(envContent, key, value)
+      }
+
+      // En el master 3001 es el builder; en el ZIP ese puerto es el admin.
+      envContent = setEnvValue(envContent, 'CLIENT_URL', EXPORTED_CLIENT_URL)
+
+      if (!provided.JWT_SECRET) {
+        envContent = setEnvValue(envContent, 'JWT_SECRET', randomJwtSecret())
+      }
+      if (!provided.MONGODB_URI) {
+        envContent = setEnvValue(envContent, 'MONGODB_URI', '')
+      }
+
       return { path: 'apps/backend/.env', content: envContent }
     }
     return file

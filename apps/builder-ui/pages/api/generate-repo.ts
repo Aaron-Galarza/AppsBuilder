@@ -35,6 +35,10 @@ const BuilderStateSchema = z.object({
     logo: z.string().nullable().optional(),
     favicon: z.string().nullable().optional(),
   }).optional(),
+  envSetup: z.object({
+    source: z.enum(['template', 'preview', 'custom']),
+    values: z.record(z.string()).optional(),
+  }).optional(),
 })
 
 export const config = {
@@ -66,7 +70,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const { imagenes, configImages, ...rest } = parsed.data
+    const { imagenes, configImages, envSetup, ...rest } = parsed.data
 
     const imagenesFiles: Record<string, File | File[] | null> = {}
     if (imagenes) {
@@ -104,7 +108,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         msg: STAGE_LABELS[p.stage] ?? p.stage,
         data: { stage: p.stage, pct: p.pct },
       })
-    })
+    }, envSetup)
 
     res.setHeader('Content-Type', 'application/zip')
     res.setHeader('Content-Disposition', `attachment; filename="${slug}.zip"`)

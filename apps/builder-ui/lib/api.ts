@@ -32,7 +32,8 @@ export async function filesToBase64(
 
 export async function generateRepo(
   state: BuilderState,
-  onProgress?: (pct: number) => void
+  onProgress?: (pct: number) => void,
+  envSetup?: { source: 'template' | 'preview' | 'custom'; values?: Record<string, string> }
 ): Promise<Blob> {
   onProgress?.(0)
 
@@ -58,6 +59,7 @@ export async function generateRepo(
     textos: state.textos,
     imagenes: base64Imagenes,
     configImages: base64Config,
+    envSetup,
   }
 
   onProgress?.(60)

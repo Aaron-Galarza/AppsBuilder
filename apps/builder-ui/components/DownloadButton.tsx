@@ -5,6 +5,7 @@ import { Download, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { useBuilderStore } from '../stores/builderStore'
 import { generateRepo, downloadBlob } from '../lib/api'
 import { emitWizard } from '../lib/telemetry'
+import { EnvSetupModal, type EnvSetupResult } from './EnvSetupModal'
 
 type Status = 'idle' | 'loading' | 'success' | 'error'
 
@@ -12,9 +13,13 @@ export function DownloadButton() {
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [progress, setProgress] = useState(0)
+  const [envOpen, setEnvOpen] = useState(false)
+  const [envSetup, setEnvSetup] = useState<EnvSetupResult | null>(null)
   const store = useBuilderStore()
 
-  const handleDownload = async () => {
+  // `setup` se recibe por parámetro: leer `envSetup` del closure arrancaría con el
+  // valor viejo (null) porque setEnvSetup todavía no se aplicó al render actual.
+  const handleDownload = async (setup: EnvSetupResult | null = envSetup) => {
     setStatus('loading')
     setErrorMsg('')
     setProgress(0)
@@ -23,7 +28,7 @@ export function DownloadButton() {
     emitWizard('Generando ZIP: ' + slug, { slug })
 
     try {
-      const blob = await generateRepo(store, (pct) => setProgress(pct))
+      const blob = await generateRepo(store, (pct) => setProgress(pct), setup ?? undefined)
 
       downloadBlob(blob, `${slug}.zip`)
 
@@ -46,7 +51,7 @@ export function DownloadButton() {
       )}
 
       <button
-        onClick={handleDownload}
+        onClick={() => setEnvOpen(true)}
         disabled={status === 'loading'}
         className={`btn btn-ok-solid w-full py-3 text-sm tracking-[0.1em] uppercase ${
           status === 'success' ? '!bg-muted-foreground !border-muted-foreground !text-background' : ''
@@ -63,6 +68,17 @@ export function DownloadButton() {
           {errorMsg}
         </p>
       )}
+
+      <EnvSetupModal
+        open={envOpen}
+        busy={status === 'loading'}
+        onClose={() => setEnvOpen(false)}
+        onConfirm={(setup) => {
+          setEnvSetup(setup)
+          setEnvOpen(false)
+          void handleDownload(setup)
+        }}
+      />
     </div>
   )
 }

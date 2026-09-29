@@ -1,4 +1,4 @@
-﻿import type { FileEntry, GeneratorContext, GeneratorConfig } from './types'
+﻿import type { FileEntry, GeneratorContext, GeneratorConfig, EnvSetup } from './types'
 import { readMasterFiles } from './fileProcessor'
 import { cleanUnusedBlocks } from './cleaner'
 import { injectConfig, generateSiteConfig, renameEnvFiles } from './injector'
@@ -15,12 +15,14 @@ export interface GenerateProgress {
 
 export async function generateRepo(
   state: BuilderState,
-  onProgress?: (p: GenerateProgress) => void
+  onProgress?: (p: GenerateProgress) => void,
+  env?: EnvSetup
 ): Promise<Buffer> {
   const ctx: GeneratorContext = {
     product: state.product!,
     template: state.template!,
     selectedBlocks: state.selectedBlocks,
+    env,
   }
 
   const bump = (stage: string, pct: number) => onProgress?.({ stage, pct })
@@ -44,7 +46,7 @@ export async function generateRepo(
   }
 
   const injectedFiles = injectConfig(cleanedFiles, injectorState, imageUrls)
-  const renamedFiles = renameEnvFiles(injectedFiles)
+  const renamedFiles = await renameEnvFiles(injectedFiles, ctx.env)
 
   const siteConfig = generateSiteConfig(injectorState, imageUrls)
   renamedFiles.push(siteConfig)
@@ -55,6 +57,7 @@ export async function generateRepo(
     template: state.template!,
     selectedBlocks: state.selectedBlocks,
     config: state.config,
+    envSource: ctx.env?.source ?? 'template',
   })
 
   bump('done', 100)
