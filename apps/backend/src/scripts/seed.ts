@@ -1,7 +1,7 @@
 ﻿import mongoose, { Types } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import 'dotenv/config';
-import { validateEnv } from '../config/env';
+import { getEnv, validateEnv } from '../config/env';
 import { connectDB } from '../config/db';
 import { User } from '../modules/users/model';
 import { StoreConfig } from '../modules/schedules/model';
@@ -390,8 +390,9 @@ async function seedStoreConfig(): Promise<void> {
     isOpen: schedule.emergencyClosed ? false : true,
     emergencyClosed: schedule.emergencyClosed === true,
     // Modo del local: 'manual' → basic (solo botón), 'schedule' → horarios (standard/premium).
-    // El generador inyecta STATUS_MODE en el .env según plantilla (INJECT_STATUS_MODE).
-    statusMode: process.env.STATUS_MODE === 'manual' ? 'manual' : 'schedule',
+    // Se resuelve desde config/env (parseStatusMode) para no repetir el parseo ni caer
+    // en silencio a 'schedule' cuando STATUS_MODE falta en el .env.
+    statusMode: getEnv().statusMode,
     // Viene del .env, no de una elección del dueño → syncStatusModeFromEnv() puede corregirlo.
     statusModeSource: 'env',
     bannerUrl: String(schedule.bannerUrl ?? ''),

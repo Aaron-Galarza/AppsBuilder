@@ -1,4 +1,5 @@
 import { AppError } from '../../utils/AppError';
+import { getEnv } from '../../config/env';
 import { argWeekday, isArgNowBetween } from '../../utils/timezone';
 import type { StoreStatusMode } from '@saas/types';
 import { StoreConfig } from './model';
@@ -57,7 +58,7 @@ export async function assertStoreOpen(): Promise<void> {
  * horario (20:00-23:59 en el seed) y da el mismo resultado con el local abierto o cerrado.
  */
 export async function syncStatusModeFromEnv(): Promise<void> {
-  const envMode: StoreStatusMode = process.env.STATUS_MODE === 'manual' ? 'manual' : 'schedule';
+  const envMode: StoreStatusMode = getEnv().statusMode;
   const config = await StoreConfig.getOrCreateConfig();
 
   // Si el dueño eligió el modo a mano en ConfigTab, el .env deja de mandar.
