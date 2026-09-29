@@ -6,5 +6,7 @@ export { AdminSelect } from './AdminSelect';
 export type { SelectOption } from './AdminSelect';
 export { AdminActionButtons } from './AdminActionButtons';
 export { AdminProductRow } from './AdminProductRow';
+export { UrlSaveInput } from './UrlSaveInput';
+export type { UrlSaveInputProps } from './UrlSaveInput';
 export { IconPickerModal } from './IconPickerModal';
 export type { IconOption } from './IconPickerModal';

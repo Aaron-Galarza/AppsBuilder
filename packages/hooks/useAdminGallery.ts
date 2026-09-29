@@ -78,5 +78,22 @@ export function useAdminGallery() {
     [token]
   );
 
-  return { images, loading, uploading, error, upload, remove, reload };
+  const addByUrl = useCallback(
+    async (url: string) => {
+      try {
+        setError(null);
+        await apiFetch<GalleryImage>('/api/gallery/url', {
+          method: 'POST',
+          headers: { ...authHeaders(token), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ url }),
+        });
+        await reload();
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error al agregar la imagen');
+      }
+    },
+    [token, reload]
+  );
+
+  return { images, loading, uploading, error, upload, addByUrl, remove, reload };
 }

@@ -63,24 +63,30 @@ export async function uploadImage(buffer: Buffer): Promise<GalleryImageDoc> {
   return GalleryImage.create({ url: result.secure_url, publicId });
 }
 
+/** Registra una imagen por URL (alternativa simple cuando no hay Cloudinary configurado) */
+export async function addImageByUrl(url: string): Promise<GalleryImageDoc> {
+  const publicId = `url/${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  return GalleryImage.create({ url, publicId });
+}
+
 export async function listImages(): Promise<GalleryImageDoc[]> {
   return GalleryImage.find().sort({ createdAt: -1 }).limit(100).exec();
 }
 
-/** Borra de Cloudinary + DB */
+/** Borra de Cloudinary + DB (si no hay Cloudinary, solo borra el registro) */
 export async function deleteImage(id: string): Promise<void> {
-  if (!configure()) throw new Error('Cloudinary no está configurado');
-
   const image = await GalleryImage.findById(id).exec();
   if (!image) return;
 
-  try {
-    await cloudinary.uploader.destroy(image.publicId);
-  } catch (err) {
-    console.warn(
-      '[gallery] No se pudo borrar de Cloudinary:',
-      err instanceof Error ? err.message : err
-    );
+  if (configure()) {
+    try {
+      await cloudinary.uploader.destroy(image.publicId);
+    } catch (err) {
+      console.warn(
+        '[gallery] No se pudo borrar de Cloudinary:',
+        err instanceof Error ? err.message : err
+      );
+    }
   }
 
   await GalleryImage.findByIdAndDelete(id).exec();

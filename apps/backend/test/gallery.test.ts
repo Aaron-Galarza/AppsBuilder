@@ -42,6 +42,7 @@ describe('Gallery API', () => {
   test('todas las rutas requieren token (401 sin auth)', async () => {
     expect((await request(APP).get('/api/gallery/images')).status).toBe(401);
     expect((await request(APP).post('/api/gallery/upload')).status).toBe(401);
+    expect((await request(APP).post('/api/gallery/url')).status).toBe(401);
     expect((await request(APP).delete('/api/gallery/images/c10000000000000000000055')).status).toBe(401);
   });
 
@@ -95,5 +96,33 @@ describe('Gallery API', () => {
       .set(auth(token));
     expect(res.status).toBe(200);
     expect(res.body.data.id).toBe('c10000000000000000000055');
+  });
+
+  test('POST /api/gallery/url sin body o con URL inválida → 400', async () => {
+    const empty = await request(APP).post('/api/gallery/url').set(auth(token)).send({});
+    expect(empty.status).toBe(400);
+
+    const invalid = await request(APP)
+      .post('/api/gallery/url')
+      .set(auth(token))
+      .send({ url: 'no-es-url' });
+    expect(invalid.status).toBe(400);
+  });
+
+  test('POST /api/gallery/url con URL válida → 201 y queda en la lista', async () => {
+    const res = await request(APP)
+      .post('/api/gallery/url')
+      .set(auth(token))
+      .send({ url: 'https://example.com/foto.webp' });
+    expect(res.status).toBe(201);
+    expect(res.body.data.url).toBe('https://example.com/foto.webp');
+    expect(res.body.data.publicId).toMatch(/^url\//);
+
+    const list = await request(APP).get('/api/gallery/images').set(auth(token));
+    expect(list.body.data).toHaveLength(1);
+    expect(list.body.data[0].url).toBe('https://example.com/foto.webp');
+
+    const del = await request(APP).delete(`/api/gallery/images/${res.body.data._id}`).set(auth(token));
+    expect(del.status).toBe(200);
   });
 });

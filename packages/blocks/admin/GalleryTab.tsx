@@ -1,6 +1,7 @@
 'use client';
 
 import { useAdminGallery } from '@saas/hooks';
+import { UrlSaveInput } from '@saas/ui';
 import { Trash2, UploadCloud } from 'lucide-react';
 import { useRef } from 'react';
 
@@ -8,9 +9,9 @@ export interface GalleryTabProps {
   primaryColor?: string;
 }
 
-/** Galería de imágenes: grid con upload múltiple y borrado */
+/** Galería de imágenes: grid con upload múltiple, alta por URL y borrado */
 export function GalleryTab({}: GalleryTabProps) {
-  const { images, uploading, error, upload, remove } = useAdminGallery();
+  const { images, uploading, error, upload, addByUrl, remove } = useAdminGallery();
   const inputRef = useRef<HTMLInputElement>(null);
 
   return (
@@ -44,6 +45,12 @@ export function GalleryTab({}: GalleryTabProps) {
           }}
         />
       </button>
+
+      <UrlSaveInput
+        cta="Agregar"
+        placeholder="O pegá la URL de una imagen..."
+        onSave={(url) => void addByUrl(url)}
+      />
 
       {error && <p className="text-xs font-medium text-red-400">{error}</p>}
 
