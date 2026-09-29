@@ -46,6 +46,12 @@ export function createApp(): Application {
     res.json({ success: true, data: { message: 'API funcionando', version: '1.0.0', db: isDBReady() ? 'up' : 'down' } });
   });
 
+  // Healthcheck: es lo que consulta render.yaml (healthCheckPath).
+  // Responde 200 mientras el proceso levanta; el estado de la DB va en el cuerpo.
+  app.get('/api/health', (_req, res) => {
+    res.json({ success: true, data: { status: 'ok', db: isDBReady() ? 'up' : 'down', uptime: process.uptime() } });
+  });
+
   app.use('/api', mainRouter);
 
   // 404 para rutas desconocidas
