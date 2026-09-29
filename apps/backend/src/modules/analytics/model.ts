@@ -37,9 +37,13 @@ const dailySchema = new Schema<DailyDoc>(
       transferencia: { type: Number, default: 0 },
       _id: false,
     },
+    // `topProducts` es histórico: las métricas se agregan en vivo desde `orders`
+    // (ver `computeFromOrders`), así que este campo no se lee. Por eso `productId`
+    // NO es required: el seed lo poblaba con '' y cualquier `daily.save()` posterior
+    // revalidaba el documento entero y fallaba con "Path `productId` is required".
     topProducts: [
       {
-        productId: { type: String, required: true },
+        productId: { type: String, default: '' },
         title: { type: String, required: true },
         quantity: { type: Number, default: 0 },
         revenue: { type: Number, default: 0 },

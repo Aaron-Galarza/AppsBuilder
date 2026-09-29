@@ -312,9 +312,18 @@ function generateOrders(): GeneratedOrder[] {
   return orders;
 }
 
+/** Acumulador por producto dentro de un día. Guarda el productId real para no
+ *  generar históricos con `productId: ''`, que luego rompe `daily.save()`. */
+interface DailyTopProductAcc {
+  productId: string;
+  title: string;
+  qty: number;
+  revenue: number;
+}
+
 /** Agrega pedidos generados en documentos daily por día. */
 function buildDaily(orders: GeneratedOrder[]): RawDoc[] {
-  const byDay = new Map<string, { orders: number; delivered: number; cancelled: number; revenue: number; byPaymentMethod: Record<string, number>; topProducts: Map<string, { qty: number; revenue: number }> }>();
+  const byDay = new Map<string, { orders: number; delivered: number; cancelled: number; revenue: number; byPaymentMethod: Record<string, number>; topProducts: Map<string, DailyTopProductAcc> }>();
 
   for (const order of orders) {
     const date = dateKeyIn(order.createdAt as Date);
@@ -324,7 +333,7 @@ function buildDaily(orders: GeneratedOrder[]): RawDoc[] {
       cancelled: 0,
       revenue: 0,
       byPaymentMethod: { cash: 0, debito: 0, credito: 0, transferencia: 0 },
-      topProducts: new Map<string, { qty: number; revenue: number }>(),
+      topProducts: new Map<string, DailyTopProductAcc>(),
     };
 
     acc.orders += 1;
@@ -336,11 +345,13 @@ function buildDaily(orders: GeneratedOrder[]): RawDoc[] {
     );
 
     for (const item of (order.items ?? []) as Array<{ productId: unknown; title: string; quantity: number; itemTotal: number }>) {
-      const title = item.title;
-      const prev = acc.topProducts.get(title) ?? { qty: 0, revenue: 0 };
+      const productId = item.productId == null ? '' : String(item.productId);
+      // Se agrupa por productId; si el pedido no lo trae, se cae al título.
+      const key = productId || `title:${item.title}`;
+      const prev = acc.topProducts.get(key) ?? { productId, title: item.title, qty: 0, revenue: 0 };
       prev.qty += item.quantity;
       prev.revenue = round(prev.revenue + item.itemTotal);
-      acc.topProducts.set(title, prev);
+      acc.topProducts.set(key, prev);
     }
 
     byDay.set(date, acc);
@@ -355,10 +366,10 @@ function buildDaily(orders: GeneratedOrder[]): RawDoc[] {
     cancelled: acc.cancelled,
     revenue: acc.revenue,
     byPaymentMethod: acc.byPaymentMethod,
-    topProducts: [...acc.topProducts.entries()]
-      .sort((a, b) => b[1].qty - a[1].qty)
+    topProducts: [...acc.topProducts.values()]
+      .sort((a, b) => b.qty - a.qty)
       .slice(0, 5)
-      .map(([title, v]) => ({ productId: '', title, quantity: v.qty, revenue: v.revenue })),
+      .map((t) => ({ productId: t.productId, title: t.title, quantity: t.qty, revenue: t.revenue })),
   }));
 }
 
