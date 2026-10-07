@@ -137,7 +137,17 @@ export async function createZip(
   }
   zip.file('package.json', JSON.stringify(rootPkg, null, 2))
 
-  const workspaceYaml = `packages:\n  - 'packages/*'\n  - 'apps/*'\n  - 'apps/products/*'\n  - 'apps/products/*/templates/*'\n`
+  const workspaceYaml = `packages:
+  - 'packages/*'
+  - 'apps/*'
+  - 'apps/products/*'
+  - 'apps/products/*/templates/*'
+
+allowBuilds:
+  '@parcel/watcher': true
+  esbuild: true
+  unrs-resolver: true
+`
   zip.file('pnpm-workspace.yaml', workspaceYaml)
 
   // tsconfig.base.json: apps/backend/tsconfig.json lo extiende con

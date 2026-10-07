@@ -1,23 +1,26 @@
-{
-  "name": "apps-builder",
-  "private": true,
-  "packageManager": "pnpm@9.15.9",
-  "engines": {
-    "node": ">=20",
-    "pnpm": ">=9"
-  },
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "type-check": "turbo run type-check",
-    "start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/appsbuilder.ps1",
-    "appsbuilder": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/appsbuilder.ps1",
-    "install-cmd": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-command.ps1",
-    "stop": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop.ps1"
-  },
-  "devDependencies": {
-    "turbo": "^2.10.11",
-    "typescript": "^5.0.0"
-  }
+﻿{
+    "name":  "apps-builder",
+    "private":  true,
+    "packageManager":  "pnpm@9.15.9",
+    "engines":  {
+                    "node":  "\u003e=20",
+                    "pnpm":  "\u003e=9"
+                },
+    "scripts":  {
+                    "dev":  "turbo run dev",
+                    "build":  "turbo run build",
+                    "lint":  "turbo run lint",
+                    "type-check":  "turbo run type-check",
+                    "start":  "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/appsbuilder.ps1",
+                    "appsbuilder":  "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/appsbuilder.ps1",
+                    "install-cmd":  "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/install-command.ps1",
+                    "stop":  "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/stop.ps1",
+                    "setup":  "powershell -ExecutionPolicy Bypass -File scripts/install-command.ps1",
+                    "devAll":  "powershell -ExecutionPolicy Bypass -File scripts/appsbuilder.ps1",
+                    "postinstall":  "powershell -ExecutionPolicy Bypass -File scripts/install-after-install.ps1"
+                },
+    "devDependencies":  {
+                            "turbo":  "^2.10.11",
+                            "typescript":  "^5.0.0"
+                        }
 }
