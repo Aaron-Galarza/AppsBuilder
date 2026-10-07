@@ -143,6 +143,14 @@ export async function createZip(
   - 'apps/products/*'
   - 'apps/products/*/templates/*'
 
+# pnpm >= 10.1: permite los build scripts de estas dependencias
+# (si falta, pnpm bloquea sus postinstall con ERR_PNPM_IGNORED_BUILDS).
+onlyBuiltDependencies:
+  - '@parcel/watcher'
+  - esbuild
+  - unrs-resolver
+
+# pnpm >= 10.26 y v11: reemplaza a onlyBuiltDependencies.
 allowBuilds:
   '@parcel/watcher': true
   esbuild: true
