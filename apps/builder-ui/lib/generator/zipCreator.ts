@@ -130,6 +130,11 @@ export async function createZip(
   const rootPkg = {
     name: state.config.slug || 'project',
     private: true,
+    packageManager: 'pnpm@9.15.9',
+    engines: {
+      node: '>=20',
+      pnpm: '>=9',
+    },
     scripts: {
       dev: 'pnpm --filter "./apps/**" dev',
       build: 'pnpm --filter "./apps/**" build',
@@ -155,6 +160,11 @@ allowBuilds:
   '@parcel/watcher': true
   esbuild: true
   unrs-resolver: true
+
+# Red de seguridad: si un pnpm reescribe los allowBuilds a null (pendiente de
+# revisión), strictDepBuilds=false hace que el install no falle con
+# ERR_PNPM_IGNORED_BUILDS; los scripts corren con un warning.
+strictDepBuilds: false
 `
   zip.file('pnpm-workspace.yaml', workspaceYaml)
 
